@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Mediterranean Utilidades</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+
+<style>
+/* ===== Reset ===== */
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: Arial, sans-serif;
+  display:flex; 
+  min-height:100vh; 
+  background: linear-gradient(135deg, #0d1117, #004e92, #00c6ff);
+  background-size: 300% 300%;
+  animation:moverFondo 12s ease infinite;
+  color:white;
+  overflow-x:hidden;
+}
+
+/* ===== Fondo Canvas ===== */
+#bgCanvas {
+  position: fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  z-index:-2;
+}
+
+/* ===== Logo superior ===== */
+.logo-superior {
+  position: fixed;
+  top: -35px;
+  left: 300px; 
+  z-index: 2000;
+}
+.logo-superior img {
+  width: 180px;
+  height: auto;
+  filter: drop-shadow(0 0 8px rgba(0,242,254,0.8));
+  transition: transform 0.3s ease;
+}
+.logo-superior img:hover {
+  transform: scale(1.05);
+}
+
+/* ===== Barra lateral (original con puntos flotando) ===== */
+.sidebar {
+  position: fixed;
+  top: 0; left: 0;
+  width: 240px;
+  height: 100%;
+  background: linear-gradient(135deg, #050d1c, #0a1f3d, #0e2a47, #122f68);
+  background-size: 400% 400%;
+  animation: sidebarAnim 10s ease infinite;
+  padding-top: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  z-index: 1000;
+  box-shadow: 2px 0 25px rgba(0,0,0,0.8);
+  position: relative;
+  overflow: hidden;
+}
+.sidebar::before {
+  content: "";
+  position: absolute;
+  top:0; left:0;
+  width:100%; height:100%;
+  background: radial-gradient(circle, rgba(0,242,254,0.4) 1px, transparent 1px);
+  background-size: 40px 40px;
+  animation: moverPuntos 6s linear infinite;
+  opacity: 0.6;
+}
+.sidebar::after {
+  content: "";
+  position: absolute;
+  top:0; left:0;
+  width:100%; height:100%;
+  background: linear-gradient(transparent, rgba(0,242,254,0.1), transparent);
+  animation: brillo 4s linear infinite;
+}
+.sidebar a {
+  color: #00f2fe;
+  text-decoration: none;
+  padding: 12px 20px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  margin: 0 15px;
+  text-shadow: 0 0 8px #00f2fe, 0 0 15px #4facfe;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+  z-index: 2;
+}
+.sidebar a:hover, .sidebar a.active {
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  transform: translateX(6px) scale(1.05);
+  box-shadow: 0 0 15px #00f2fe, inset 0 0 10px #00f2fe;
+}
+.sidebar a i { font-size: 18px; }
+
+/* ===== Contenido principal ===== */
+.main-content {
+  margin-left: 60px;
+  flex: 1;
+  padding: 100px 20px 20px;
+}
+
+h1 { margin:15px 0 25px; text-shadow:0 0 15px rgba(0,0,0,0.6); }
+.container {
+  width:100%;
+  max-width:1100px;
+  background:rgba(255,255,255,0.05);
+  backdrop-filter:blur(12px);
+  padding:25px;
+  border-radius:20px;
+  box-shadow:0 8px 25px rgba(0,0,0,0.4);
+  animation:fadeInUp 1s ease;
+}
+
+/* ===== Tarjetas de utilidades ===== */
+.util-grid {
+  display:grid;
+  grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
+  gap:20px;
+}
+.util-card {
+  background:rgba(255,255,255,0.08);
+  padding:20px;
+  border-radius:15px;
+  box-shadow:0 5px 20px rgba(0,0,0,0.4);
+  text-align:center;
+  transition: all 0.3s ease;
+}
+.util-card:hover {
+  transform: translateY(-6px) scale(1.03);
+  box-shadow:0 8px 25px rgba(0,242,254,0.6);
+}
+.util-card i {
+  font-size:40px;
+  color:#00f2fe;
+  margin-bottom:12px;
+  text-shadow:0 0 12px #00f2fe;
+}
+.util-card h3 {
+  margin-bottom:10px;
+  font-size:20px;
+}
+.util-card p {
+  font-size:14px;
+  color:#ddd;
+}
+
+/* ===== Calculadora ===== */
+.calculadora {
+  margin-top: 20px;
+  background: rgba(255,255,255,0.1);
+  padding: 15px;
+  border-radius: 12px;
+}
+.calculadora input {
+  width: 100%;
+  padding: 10px;
+  font-size: 18px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  border: none;
+  text-align: right;
+}
+.calculadora button {
+  width: 23%;
+  margin: 1%;
+  padding: 12px;
+  font-size: 18px;
+  border: none;
+  border-radius: 8px;
+  background: #00c6ff;
+  color: white;
+  cursor: pointer;
+}
+.calculadora button:hover {
+  background: #004e92;
+}
+
+/* ===== Generador de Código de Barras ===== */
+.barra-container {
+  margin-top: 25px;
+  text-align: center;
+}
+.barra-container input {
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  margin-right: 10px;
+}
+.barra-container button {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 8px;
+  background: #00c6ff;
+  color: white;
+  cursor: pointer;
+}
+.barra-container button:hover {
+  background: #004e92;
+}
+
+/* ===== Animaciones ===== */
+@keyframes fadeInUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+@keyframes moverFondo {0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@keyframes sidebarAnim {0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@keyframes moverPuntos {from{background-position:0 0}to{background-position:40px 40px}}
+@keyframes brillo {from{transform:translateY(-100%)}to{transform:translateY(100%)}}
+</style>
+</head>
+<body>
+
+<!-- ===== Fondo Canvas ===== -->
+<canvas id="bgCanvas"></canvas>
+
+<!-- ===== Logo superior ===== -->
+<div class="logo-superior">
+  <img src="images/LogoMediterranean1992.png" alt="Logo Mediterranean">
+</div>
+
+<!-- ===== Barra lateral ===== -->
+<div class="sidebar">
+  <a href="#"><i class="fas fa-house"></i> Inicio</a>
+  <a href="#"><i class="fas fa-building"></i> Sucursales</a>
+  <a href="#"><i class="fas fa-user"></i> Usuarios</a>
+  <a href="#"><i class="fas fa-chart-line"></i> Reportes</a>
+  <a href="#" class="active"><i class="fas fa-gears"></i> Utilidades</a>
+</div>
+
+<!-- ===== Contenido principal ===== -->
+<div class="main-content">
+  <h1>Panel de Utilidades</h1>
+  <div class="container">
+    <div class="util-grid">
+      <div class="util-card">
+        <i class="fas fa-database"></i>
+        <h3>Respaldo de Datos</h3>
+        <p>Genera copias de seguridad automáticas de la base de datos.</p>
+      </div>
+      <div class="util-card">
+        <i class="fas fa-sync"></i>
+        <h3>Sincronización</h3>
+        <p>Sincroniza inventarios entre sucursales de manera rápida y segura.</p>
+      </div>
+      <div class="util-card">
+        <i class="fas fa-user-shield"></i>
+        <h3>Gestión de Permisos</h3>
+        <p>Administra accesos y roles de usuarios en el sistema.</p>
+      </div>
+      <div class="util-card">
+        <i class="fas fa-chart-pie"></i>
+        <h3>Analítica Avanzada</h3>
+        <p>Accede a reportes visuales y estadísticas del negocio.</p>
+      </div>
+      <div class="util-card">
+        <i class="fas fa-cogs"></i>
+        <h3>Configuración</h3>
+        <p>Ajusta parámetros generales del sistema y preferencias.</p>
+      </div>
+      <div class="util-card">
+        <i class="fas fa-bug"></i>
+        <h3>Diagnóstico</h3>
+        <p>Detecta errores y genera registros de actividad del sistema.</p>
+      </div>
+      <div class="util-card">
+        <i class="fas fa-calculator"></i>
+        <h3>Calculadora</h3>
+        <p>Realiza operaciones rápidas directamente en el sistema.</p>
+        <div class="calculadora">
+          <input type="text" id="pantalla" readonly>
+          <br>
+          <button onclick="press('7')">7</button>
+          <button onclick="press('8')">8</button>
+          <button onclick="press('9')">9</button>
+          <button onclick="press('/')">÷</button>
+          <button onclick="press('4')">4</button>
+          <button onclick="press('5')">5</button>
+          <button onclick="press('6')">6</button>
+          <button onclick="press('*')">×</button>
+          <button onclick="press('1')">1</button>
+          <button onclick="press('2')">2</button>
+          <button onclick="press('3')">3</button>
+          <button onclick="press('-')">−</button>
+          <button onclick="press('0')">0</button>
+          <button onclick="press('.')">.</button>
+          <button onclick="calcular()">=</button>
+          <button onclick="press('+')">+</button>
+          <button onclick="limpiar()" style="width:98%">C</button>
+        </div>
+      </div>
+      <div class="util-card">
+        <i class="fas fa-barcode"></i>
+        <h3>Generador de Códigos de Barras</h3>
+        <p>Introduce un valor y genera un código de barras instantáneo.</p>
+        <div class="barra-container">
+          <input type="text" id="codigoInput" placeholder="Escribe un código">
+          <button onclick="generarCodigo()">Generar</button>
+          <br><br>
+          <svg id="barcode"></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ===== Fondo partículas con líneas ===== */
+const canvas=document.getElementById("bgCanvas");const ctx=canvas.getContext("2d");
+canvas.width=window.innerWidth;canvas.height=window.innerHeight;let particles=[];
+class Particle{constructor(){this.x=Math.random()*canvas.width;this.y=Math.random()*canvas.height;this.radius=Math.random()*2+1;this.speedX=(Math.random()-0.5)*1;this.speedY=(Math.random()-0.5)*1;}draw(){ctx.beginPath();ctx.arc(this.x,this.y,this.radius,0,Math.PI*2);ctx.fillStyle="rgba(255,255,255,0.7)";ctx.fill();}update(){this.x+=this.speedX;this.y+=this.speedY;if(this.x<0||this.x>canvas.width)this.speedX*=-1;if(this.y<0||this.y>canvas.height)this.speedY*=-1;this.draw();}}
+function initParticles(){particles=[];for(let i=0;i<100;i++){particles.push(new Particle());}}
+function connectParticles(){for(let a=0;a<particles.length;a++){for(let b=a;b<particles.length;b++){let dx=particles[a].x-particles[b].x;let dy=particles[a].y-particles[b].y;let dist=Math.sqrt(dx*dx+dy*dy);if(dist<120){ctx.beginPath();ctx.strokeStyle=`rgba(0,242,254,${1-dist/120})`;ctx.lineWidth=1;ctx.moveTo(particles[a].x,particles[a].y);ctx.lineTo(particles[b].x,particles[b].y);ctx.stroke();ctx.closePath();}}}}
+function animateParticles(){ctx.clearRect(0,0,canvas.width,canvas.height);particles.forEach(p=>p.update());connectParticles();requestAnimationFrame(animateParticles);}
+initParticles();animateParticles();
+window.addEventListener("resize",()=>{canvas.width=window.innerWidth;canvas.height=window.innerHeight;initParticles();})
+
+/* ===== Calculadora ===== */
+function press(num){document.getElementById("pantalla").value+=num;}
+function limpiar(){document.getElementById("pantalla").value="";}
+function calcular(){try{document.getElementById("pantalla").value=eval(document.getElementById("pantalla").value);}catch{document.getElementById("pantalla").value="Error";}}
+
+/* ===== Generador de Código de Barras ===== */
+function generarCodigo(){
+  let valor=document.getElementById("codigoInput").value;
+  if(valor.trim()!==""){
+    JsBarcode("#barcode", valor, {format:"CODE128", lineColor:"#00f2fe", width:2, height:60, displayValue:true});
+  }
+}
+</script>
+
+</body>
+</html>

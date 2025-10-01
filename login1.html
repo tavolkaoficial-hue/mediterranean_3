@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Mediterranean</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #0a1f44, #004e92, #000000);
+      overflow: hidden;
+    }
+
+    #particles {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+    }
+
+    .login-card {
+      position: relative;
+      z-index: 1;
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(15px);
+      border-radius: 20px;
+      padding: 40px 30px;
+      max-width: 380px;
+      text-align: center;
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.3);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+      animation: fadeIn 0.8s ease;
+      overflow: hidden;
+    }
+
+    .logo {
+      width: 200px;
+      margin-bottom: 15px;
+      animation: spinIn 1s ease forwards, shine 3s infinite linear;
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(20px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+
+    @keyframes spinIn {
+      from {transform: rotate(-360deg) scale(0.5); opacity: 0;}
+      to {transform: rotate(0) scale(1); opacity: 1;}
+    }
+
+    @keyframes shine {
+      0% { filter: drop-shadow(0 0 0px #101db1); }
+      50% { filter: drop-shadow(0 0 10px #030f77); }
+      100% { filter: drop-shadow(0 0 0px #4a2bb1); }
+    }
+
+    .login-card h2 {
+      margin-bottom: 20px;
+      font-size: 26px;
+      color: #ffffff;
+    }
+
+    .input-group {
+      margin-bottom: 20px;
+      text-align: left;
+      position: relative;
+    }
+
+    .input-group label {
+      font-size: 14px;
+      display: block;
+      margin-bottom: 5px;
+      color: #000000;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid rgb(255, 0, 0);
+      background: rgba(255,255,255,0.15);
+      color: #ffffff;
+      outline: none;
+      font-size: 14px;
+      transition: 0.3s;
+    }
+
+    .input-group input:focus {
+      border-color: #f4c430;
+      box-shadow: 0 0 8px rgba(244,196,48,0.8);
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 12px;
+      top: 36px;
+      cursor: pointer;
+      font-size: 18px;
+      color: #f4c430;
+    }
+
+    .login-btn {
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #004e92, #0a1f44);
+      color: #f4c430;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.3s;
+      animation: pulse 2s infinite;
+    }
+
+    .login-btn:hover {
+      transform: scale(1.03);
+      box-shadow: 0 5px 15px rgba(244,196,48,0.5);
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    .extra-links {
+      margin-top: 15px;
+      font-size: 14px;
+    }
+
+    .extra-links a {
+      color: #f4c430;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .extra-links a:hover {
+      text-decoration: underline;
+    }
+
+    .shake { animation: shake 0.4s ease; }
+    @keyframes shake {
+      0% { transform: translate(0px); }
+      25% { transform: translate(4px); }
+      50% { transform: translate(-4px); }
+      75% { transform: translate(4px); }
+      100% { transform: translate(0px); }
+    }
+
+    .portal-effect::after {
+      content: "";
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 0; height: 0;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(244,196,48,0.6), rgba(0,0,0,0));
+      transform: translate(-50%, -50%);
+      animation: portalExpand 1s forwards;
+      z-index: 2;
+    }
+    @keyframes portalExpand {
+      from { width: 0; height: 0; opacity: 1; }
+      to { width: 600px; height: 600px; opacity: 0; }
+    }
+
+    .hide { display: none !important; }
+
+    .access-screen {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: black;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      color: #00ff99;
+      font-family: monospace;
+      font-size: 40px;
+      letter-spacing: 3px;
+      z-index: 999;
+      opacity: 0;
+      animation: fadeInAccess 2s forwards;
+    }
+
+    .access-screen h1 {
+      animation: flicker 2s infinite;
+    }
+
+    @keyframes fadeInAccess {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes flicker {
+      0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; }
+      20%, 22%, 24%, 55% { opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <audio id="clickSound" src="https://assets.mixkit.co/sfx/preview/mixkit-sci-fi-click-900.mp3" preload="auto"></audio>
+  <canvas id="particles"></canvas>
+
+  <div class="login-card" id="loginCard">
+    <img src="images/LogoMediterranean1992.png" alt="Logo Mediterranean" class="logo">
+    <h2>Iniciar Sesión</h2> 
+    
+    <form id="loginForm">
+      <div class="input-group">
+        <label for="username">Usuario</label>
+        <input type="text" id="username" placeholder="Ingresa tu usuario" required>
+      </div>
+      <div class="input-group">
+        <label for="password">Contraseña</label>
+        <input type="password" id="password" placeholder="********" required>
+        <span class="toggle-password" onclick="togglePassword()">👁️</span>
+      </div>
+      <button type="submit" class="login-btn">Entrar</button>
+    </form>
+    <div class="extra-links">
+      <p><a href="#">¿Olvidaste tu contraseña?</a></p>
+      <p><a href="#">Crear cuenta</a></p>
+    </div>
+  </div>
+
+  <div class="access-screen hide" id="accessScreen">
+    <h1>✔ ACCESO CONCEDIDO</h1>
+    <p>Bienvenido al sistema Mediterranean</p>
+  </div>
+
+  <script>
+    function togglePassword() {
+      const pwd = document.getElementById("password");
+      pwd.type = pwd.type === "password" ? "text" : "password";
+    }
+
+    document.getElementById("loginForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const card = document.getElementById("loginCard");
+      const sound = document.getElementById("clickSound");
+
+      // Sonido futurista
+      sound.play();
+
+      // Vibración
+      card.classList.add("shake");
+
+      // NOMBRE DE TU INTERFAZ PRINCIPAL (solo cambia aquí)
+      const interfazPrincipal = "mediterranean.html"; // <- Cambia el nombre de tu archivo HTML
+
+      // Portal y acceso concedido
+      setTimeout(() => {
+        card.classList.remove("shake");
+        card.classList.add("portal-effect");
+
+        setTimeout(() => {
+          card.classList.add("hide");
+          document.getElementById("accessScreen").classList.remove("hide");
+
+          // Redirige a la interfaz principal después de 2 segundos
+          setTimeout(() => {
+            window.location.href = interfazPrincipal;
+          }, 2000);
+
+        }, 1000);
+      }, 500);
+    });
+
+    // Fondo partículas
+    const canvas = document.getElementById("particles");
+    const ctx = canvas.getContext("2d");
+    let particlesArray;
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    window.addEventListener("resize", function(){
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      init();
+    });
+
+    class Particle {
+      constructor(x, y, size, speedX, speedY) {
+        this.x = x;
+        this.y = y;
+        this.size = size;
+        this.speedX = speedX;
+        this.speedY = speedY;
+      }
+      update(){
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if(this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+        if(this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+      }
+      draw(){
+        ctx.fillStyle = "rgba(244,196,48,0.7)";
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.closePath();
+        ctx.fill();
+      }
+    }
+
+    function init(){
+      particlesArray = [];
+      for(let i=0; i < 60; i++){
+        let size = Math.random() * 3 + 1;
+        let x = Math.random() * canvas.width;
+        let y = Math.random() * canvas.height;
+        let speedX = (Math.random() - 0.5) * 1;
+        let speedY = (Math.random() - 0.5) * 1;
+        particlesArray.push(new Particle(x, y, size, speedX, speedY));
+      }
+    }
+
+    function animate(){
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particlesArray.forEach(p => {
+        p.update();
+        p.draw();
+      });
+      requestAnimationFrame(animate);
+    }
+
+    init();
+    animate();
+  </script>
+</body>
+</html>
