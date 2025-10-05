@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Registro - Mediterranean</title>
+  <style>
+    body { 
+      font-family: Arial, sans-serif; 
+      background: #0a1f44; 
+      color: white; 
+      display: flex; 
+      justify-content: center; 
+      align-items: center; 
+      height: 100vh;
+    }
+    .form-container {
+      background: rgba(255,255,255,0.1);
+      padding: 30px;
+      border-radius: 10px;
+      width: 350px;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 5px;
+      border: none;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      background: #f4c430;
+      color: #000;
+      font-weight: bold;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover { background: #ffdb58; }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h2>Crear cuenta</h2>
+    <form action="registro.php" method="POST">
+      <label for="usuarios">Usuario</label>
+      <input type="text" id="usuarios" name="usuarios" required>
+
+      <label for="password">Contraseña</label>
+      <input type="password" id="password" name="password" required>
+
+      <button type="submit">Registrar</button>
+    </form>
+    <p><a href="login.html" style="color:#f4c430;">Ya tengo cuenta</a></p>
+  </div>
+</body>
+</html>

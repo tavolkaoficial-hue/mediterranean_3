@@ -1,3 +1,11 @@
+<?php
+session_start();
+if (!isset($_SESSION["usuarios"])) {
+    header("Location: login.html");
+    exit();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -6,24 +14,24 @@
   <title>Mediterranean</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
-<!-- Olas -->
-<div class="olas">
-  <div class="ola ola1"></div>
-  <div class="ola ola2"></div>
-  <div class="ola ola3"></div>
-</div>
-
-<!-- Burbujas -->
-<div class="burbujas">
-  <div class="burbuja"></div>
-  <div class="burbuja"></div>
-  <div class="burbuja"></div>
-  <div class="burbuja"></div>
-  <div class="burbuja"></div>
-  <div class="burbuja"></div>
-</div>
-
 <body>
+
+  <!-- Olas -->
+  <div class="olas">
+    <div class="ola ola1"></div>
+    <div class="ola ola2"></div>
+    <div class="ola ola3"></div>
+  </div>
+
+  <!-- Burbujas -->
+  <div class="burbujas">
+    <div class="burbuja"></div>
+    <div class="burbuja"></div>
+    <div class="burbuja"></div>
+    <div class="burbuja"></div>
+    <div class="burbuja"></div>
+    <div class="burbuja"></div>
+  </div>
 
   <!-- Barra superior -->
   <div class="top-bar">
@@ -33,19 +41,23 @@
     <div class="menu">
       <a onclick="mostrarSeccion('menu')">Menu</a>
       <a onclick="mostrarSeccion('acerca')">Acerca De Nosotros</a>
-      <a onclick="mostrarSeccion('usuario')">Pefil</a>
+      <a onclick="mostrarSeccion('usuario')">Perfil</a>
+      <a href="logout.php" class="logout-btn">Cerrar Sesión</a>
     </div>
   </div>
 
   <!-- Sección de inicio -->
   <div id="inicio" class="section active">
     <div class="content">
+      <div class="bienvenida">
+        <h2>Bienvenido, <?php echo htmlspecialchars($_SESSION["usuarios"]); ?> 👋</h2>
+        <p>Selecciona una opción para continuar</p>
+      </div>
+
       <div class="card" onclick="window.location.href='productos.html'">
-  <img src="images/productoswood.png" alt="Productos" />
-
-  <span>Productos</span>
-</div>
-
+        <img src="images/productoswood.png" alt="Productos" />
+        <span>Productos</span>
+      </div>
 
       <div class="card" onclick="window.location.href='sucursales.html'">
         <img src="images/sucursaleswood.png" alt="Sucursales" />
@@ -62,14 +74,12 @@
         <span>Reportes</span>
       </div>
 
-      <div class="card" onclick="mostrarSeccion('Utilidades')">
-        <img src="images/stockwood.png" alt="Utilidades" />
-        <span>Utilidades</span>
+      <div class="card" onclick="mostrarSeccion('stock')">
+        <img src="images/stockwood.png" alt="Stock" />
+        <span>Stock</span>
       </div>
     </div>
   </div>
-
-  
 
   <!-- Sección usuarios -->
   <div id="usuarios" class="section">
@@ -112,7 +122,7 @@
   <div id="acerca" class="section">
     <h1>Acerca de Nosotros</h1>
     <div class="form-box">
-      <p>Somos Mediterranean, una empresa que tiene el compromiso de ofrecer el mejor servicio de control de inventarios del mercado en Bogota y Colombia.</p>
+      <p>Somos Mediterranean, una empresa que tiene el compromiso de ofrecer el mejor servicio de control de inventarios del mercado en Bogotá y Colombia.</p>
       <button class="back-btn" onclick="mostrarSeccion('inicio')">Volver al Inicio</button>
     </div>
   </div>
@@ -125,8 +135,6 @@
 
   <!-- Script -->
   <script>
-
-    
     function mostrarSeccion(id) {
       document.querySelectorAll(".section").forEach(sec => sec.classList.remove("active"));
       document.getElementById(id).classList.add("active");
