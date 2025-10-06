@@ -296,6 +296,79 @@ button:hover {
   z-index: 0;
 }
 
+/* ===== Bienvenida (arriba a la derecha con animación) ===== */
+#inicio .content {
+  position: relative; /* define el área donde se posicionará la bienvenida */
+  justify-content: center;
+  align-items: center;
+}
+
+
 /* ===== Animaciones ===== */
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px);} to { opacity: 1; transform: translateY(0);} }
+
+/* ===== Sección de inicio personalizada ===== */
+#inicio .content {
+  position: relative;          /* para que .bienvenida se posicione dentro */
+  display: flex;               /* usamos flex para controlar alineación */
+  flex-direction: column;      /* apilamos bienvenida + fila de tarjetas */
+  align-items: center;         /* centramos horizontalmente */
+  justify-content: center;     /* centramos verticalmente */
+  height: calc(100vh - 80px);  /* ocupa toda la pantalla menos la barra superior */
+  text-align: center;
+}
+
+/* ===== Bienvenida en la esquina superior derecha ===== */
+.bienvenida {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  text-align: right;
+  z-index: 5;
+
+  background: rgba(0, 0, 0, 0.3);
+  padding: 10px 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0, 242, 254, 0.4);
+
+  opacity: 0;
+  transform: translateX(50px);
+  animation: aparecerBienvenida 1.5s ease-out forwards;
+}
+
+/* Animación de bienvenida */
+@keyframes aparecerBienvenida {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ===== Contenedor de tarjetas ===== */
+#inicio .tarjetas {
+  display: flex;
+  justify-content: center; /* centra las tarjetas horizontalmente */
+  align-items: center;
+  gap: 2rem; /* espacio entre tarjetas */
+  flex-wrap: nowrap; /* evita que bajen a otra línea */
+}
+
+/* Aseguramos que las tarjetas conserven su estilo original */
+#inicio .card {
+  background-color: rgba(255,255,255,0.05);
+  backdrop-filter: blur(10px);
+  padding: 1.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+  text-align: center;
+  width: 200px;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+

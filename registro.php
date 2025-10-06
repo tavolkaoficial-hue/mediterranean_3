@@ -19,10 +19,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     // Recoger datos del formulario
     $usuario = trim($_POST["usuarios"]);
+    $correo = trim($_POST["correo"]);
+    $telefono = trim($_POST["telefono"]);
     $password = trim($_POST["password"]);
 
     // Validar campos vacíos
-    if (empty($usuario) || empty($password)) {
+    if (empty($usuario) || empty($correo) || empty($telefono) || empty($password))  {
         echo "<script>alert('⚠ Por favor completa todos los campos'); window.history.back();</script>";
         exit();
     }
@@ -40,12 +42,25 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         exit();
     }
 
+    // Verificar si el correo ya existe
+    $stmt = $conn->prepare("SELECT id FROM usuarios WHERE correo = ?");
+    $stmt->bind_param("s", $correo);
+    $stmt->execute();
+    $stmt->store_result();
+
+    if ($stmt->num_rows > 0) {
+        echo "<script>alert('⚠ El correo ya existe'); window.history.back();</script>";
+        $stmt->close();
+        $conn->close();
+        exit();
+    }
+
     // Encriptar la contraseña
     $passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
     // Insertar usuario nuevo
-    $stmt = $conn->prepare("INSERT INTO usuarios (usuarios, password) VALUES (?, ?)");
-    $stmt->bind_param("ss", $usuario, $passwordHash);
+    $stmt = $conn->prepare("INSERT INTO usuarios (usuarios, correo, telefono, password) VALUES (?, ?, ?, ?)");
+    $stmt->bind_param("ssss", $usuario, $correo, $telefono, $passwordHash);
 
     if ($stmt->execute()) {
         echo "<script>alert('✅ Usuario registrado correctamente'); window.location='/Mediterranean_3/login.html';</script>";

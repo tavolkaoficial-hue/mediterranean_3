@@ -2,57 +2,100 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Login Mediterranean</title>
+  <title>Login - Mediterranean</title>
+  <!-- Fuente e íconos -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
   <style>
-    body {
+    /* ===== Reset ===== */
+    * {
       margin: 0;
-      height: 100vh;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, #0a1f44, #004e92, #000000);
+      height: 100vh;
+      color: #fff;
+      background: linear-gradient(135deg, #0d1117, #004e92, #00c6ff);
+      background-size: 300% 300%;
+      animation: moverFondo 12s ease infinite;
+      overflow: hidden;
     }
 
+    /* ===== Partículas de fondo ===== */
+    #bgCanvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+
+    /* ===== Tarjeta del login ===== */
     .login-card {
-      background: rgba(255, 255, 255, 0.12);
-      backdrop-filter: blur(15px);
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(12px);
       border-radius: 20px;
-      padding: 40px 30px;
-      max-width: 380px;
+      padding: 40px 35px;
+      width: 350px;
       text-align: center;
-      color: #fff;
-      border: 1px solid rgba(255,255,255,0.3);
-      box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+      animation: fadeInUp 1s ease;
+    }
+
+    .login-card img {
+      width: 150px;
+      margin-bottom: 15px;
+      filter: drop-shadow(0 0 20px rgba(0,242,254,0.8));
+      transition: transform 0.3s ease, filter 0.3s ease;
+    }
+
+    .login-card img:hover {
+      transform: scale(1.05);
+      filter: drop-shadow(0 0 30px rgba(0,242,254,1));
     }
 
     .login-card h2 {
-      margin-bottom: 20px;
-      font-size: 26px;
-      color: #ffffff;
+      margin-bottom: 25px;
+      font-size: 24px;
+      color: #00f2fe;
+      text-shadow: 0 0 10px #00f2fe;
     }
 
     .input-group {
-      margin-bottom: 20px;
+      margin-bottom: 18px;
       text-align: left;
     }
 
     .input-group label {
       font-size: 14px;
-      display: block;
-      margin-bottom: 5px;
       color: #f4c430;
+      margin-bottom: 5px;
+      display: block;
+      font-weight: bold;
     }
 
     .input-group input {
       width: 100%;
       padding: 12px;
       border-radius: 10px;
-      border: 1px solid #f4c430;
-      background: rgba(255,255,255,0.15);
-      color: #ffffff;
+      border: none;
       outline: none;
       font-size: 14px;
+      background: rgba(255, 255, 255, 0.8);
+      color: #000;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .input-group input:focus {
+      transform: scale(1.05);
+      box-shadow: 0 0 10px #00f2fe;
     }
 
     .login-btn {
@@ -60,16 +103,18 @@
       padding: 12px;
       border: none;
       border-radius: 10px;
-      background: linear-gradient(135deg, #004e92, #0a1f44);
-      color: #f4c430;
+      background: linear-gradient(90deg, #00f2fe, #4facfe);
+      color: white;
       font-size: 16px;
       font-weight: bold;
       cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      margin-top: 5px;
     }
 
     .login-btn:hover {
-      transform: scale(1.03);
-      box-shadow: 0 5px 15px rgba(244,196,48,0.5);
+      transform: scale(1.05);
+      box-shadow: 0 0 15px #00f2fe;
     }
 
     .extra-links {
@@ -86,18 +131,34 @@
     .extra-links a:hover {
       text-decoration: underline;
     }
+
+    /* ===== Animaciones ===== */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes moverFondo {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
   </style>
 </head>
 <body>
+
+  <canvas id="bgCanvas"></canvas>
+
   <div class="login-card">
-    <h2>Iniciar Sesión</h2> 
+    <img src="images/LogoMediterranean1992.png" alt="Logo Mediterranean">
+    <h2>Iniciar Sesión</h2>
     <form action="login.php" method="POST">
       <div class="input-group">
-        <label for="username">Usuario</label>
+        <label for="username"><i class="fas fa-user"></i> Usuario</label>
         <input type="text" id="username" name="username" required>
       </div>
       <div class="input-group">
-        <label for="password">Contraseña</label>
+        <label for="password"><i class="fas fa-lock"></i> Contraseña</label>
         <input type="password" id="password" name="password" required>
       </div>
       <button type="submit" class="login-btn">Entrar</button>
@@ -107,5 +168,77 @@
       <p><a href="registro.html">Crear cuenta</a></p>
     </div>
   </div>
+
+  <script>
+    /* ===== Fondo de partículas animado ===== */
+    const canvas = document.getElementById("bgCanvas");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    let particles = [];
+
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.radius = Math.random() * 2 + 1;
+        this.speedX = (Math.random() - 0.5);
+        this.speedY = (Math.random() - 0.5);
+      }
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(255,255,255,0.7)";
+        ctx.fill();
+      }
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+        this.draw();
+      }
+    }
+
+    function initParticles() {
+      particles = [];
+      for (let i = 0; i < 120; i++) particles.push(new Particle());
+    }
+
+    function connectParticles() {
+      for (let a = 0; a < particles.length; a++) {
+        for (let b = a; b < particles.length; b++) {
+          let dx = particles[a].x - particles[b].x;
+          let dy = particles[a].y - particles[b].y;
+          let dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 120) {
+            ctx.beginPath();
+            ctx.strokeStyle = `rgba(0,242,254,${1 - dist / 120})`;
+            ctx.lineWidth = 1;
+            ctx.moveTo(particles[a].x, particles[a].y);
+            ctx.lineTo(particles[b].x, particles[b].y);
+            ctx.stroke();
+            ctx.closePath();
+          }
+        }
+      }
+    }
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => p.update());
+      connectParticles();
+      requestAnimationFrame(animateParticles);
+    }
+
+    initParticles();
+    animateParticles();
+
+    window.addEventListener("resize", () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      initParticles();
+    });
+  </script>
 </body>
 </html>

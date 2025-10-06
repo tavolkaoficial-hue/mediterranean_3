@@ -15,6 +15,7 @@ if (!isset($_SESSION["usuarios"])) {
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+  
 
   <!-- Olas -->
   <div class="olas">
@@ -39,21 +40,21 @@ if (!isset($_SESSION["usuarios"])) {
       <a onclick="mostrarSeccion('inicio')">MEDITERRANEAN</a>
     </div>
     <div class="menu">
-      <a onclick="mostrarSeccion('menu')">Menu</a>
       <a onclick="mostrarSeccion('acerca')">Acerca De Nosotros</a>
       <a onclick="mostrarSeccion('usuario')">Perfil</a>
       <a href="logout.php" class="logout-btn">Cerrar Sesión</a>
     </div>
   </div>
 
-  <!-- Sección de inicio -->
   <div id="inicio" class="section active">
-    <div class="content">
-      <div class="bienvenida">
-        <h2>Bienvenido, <?php echo htmlspecialchars($_SESSION["usuarios"]); ?> 👋</h2>
-        <p>Selecciona una opción para continuar</p>
-      </div>
+  <div class="content">
+    <div class="bienvenida">
+      <h2>Bienvenido, <?php echo htmlspecialchars($_SESSION["usuarios"]); ?> 👋</h2>
+      <p>Selecciona una opción para continuar</p>
+    </div>
 
+    <!-- Contenedor de tarjetas -->
+    <div class="tarjetas">
       <div class="card" onclick="window.location.href='productos.html'">
         <img src="images/productoswood.png" alt="Productos" />
         <span>Productos</span>
@@ -80,6 +81,8 @@ if (!isset($_SESSION["usuarios"])) {
       </div>
     </div>
   </div>
+</div>
+
 
   <!-- Sección usuarios -->
   <div id="usuarios" class="section">

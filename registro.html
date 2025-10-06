@@ -1,57 +1,228 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Registro - Mediterranean</title>
-  <style>
-    body { 
-      font-family: Arial, sans-serif; 
-      background: #0a1f44; 
-      color: white; 
-      display: flex; 
-      justify-content: center; 
-      align-items: center; 
-      height: 100vh;
-    }
-    .form-container {
-      background: rgba(255,255,255,0.1);
-      padding: 30px;
-      border-radius: 10px;
-      width: 350px;
-    }
-    input {
-      width: 100%;
-      padding: 10px;
-      margin: 8px 0;
-      border-radius: 5px;
-      border: none;
-    }
-    button {
-      width: 100%;
-      padding: 10px;
-      background: #f4c430;
-      color: #000;
-      font-weight: bold;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    button:hover { background: #ffdb58; }
-  </style>
+<meta charset="UTF-8">
+<title>Registro - Mediterranean</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+/* ===== Reset ===== */
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0d1117, #004e92, #00c6ff);
+  background-size: 300% 300%;
+  animation: moverFondo 12s ease infinite;
+  color: white;
+  overflow: hidden;
+}
+
+/* Fondo de partículas */
+canvas#bgCanvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+/* ===== Caja del formulario ===== */
+.form-container {
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(12px);
+  padding: 40px 35px;
+  border-radius: 20px;
+  width: 350px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+  animation: fadeInUp 1.2s ease;
+  text-align: center;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+/* ===== Logo arriba ===== */
+.form-container img {
+  width: 150px;
+  margin-bottom: 15px;
+  border-radius: 10px;
+}
+
+/* ===== Título ===== */
+.form-container h2 {
+  margin-bottom: 20px;
+  color: #00f2fe;
+  text-shadow: 0 0 10px #00f2fe;
+  font-size: 22px;
+}
+
+.form-container label {
+  display: block;
+  text-align: left;
+  margin-bottom: 5px;
+  color: #f4c430;
+  font-weight: bold;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  background: rgba(255,255,255,0.85);
+  color: #000;
+  transition: all 0.3s ease;
+}
+
+input:focus {
+  transform: scale(1.05);
+  box-shadow: 0 0 10px #00f2fe;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(90deg,#00f2fe,#4facfe);
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px #00f2fe;
+}
+
+p {
+  margin-top: 15px;
+}
+
+p a {
+  color: #f4c430;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+p a:hover {
+  text-decoration: underline;
+}
+
+/* ===== Animaciones ===== */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes moverFondo {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+</style>
 </head>
 <body>
-  <div class="form-container">
-    <h2>Crear cuenta</h2>
-    <form action="registro.php" method="POST">
-      <label for="usuarios">Usuario</label>
-      <input type="text" id="usuarios" name="usuarios" required>
 
-      <label for="password">Contraseña</label>
-      <input type="password" id="password" name="password" required>
+<canvas id="bgCanvas"></canvas>
 
-      <button type="submit">Registrar</button>
-    </form>
-    <p><a href="login.html" style="color:#f4c430;">Ya tengo cuenta</a></p>
-  </div>
+<div class="form-container">
+  <!-- Logo arriba -->
+  <img src="images/LogoMediterranean1992.png" alt="Logo Mediterranean">
+
+  <h2><i class="fa-solid fa-user-plus"></i> Crear cuenta</h2>
+  <form action="registro.php" method="POST">
+
+    <label for="usuarios">Nombre Usuario</label>
+    <input type="text" id="usuarios" name="usuarios" required>
+    <label for="correo">Correo</label>
+    <input type="email" id="correo" name="correo" required>
+     <label for="telefono">telefono</label>
+    <input type="tel" id="telefono" name="telefono" required>
+     <label for="password">Contraseña</label>
+    <input type="password" id="password" name="password" required>
+
+    <button type="submit">Registrar</button>
+  </form>
+  <p><a href="login.html">Ya tengo cuenta</a></p>
+</div>
+
+<script>
+/* ===== Fondo partículas ===== */
+const canvas=document.getElementById("bgCanvas");
+const ctx=canvas.getContext("2d");
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+let particles=[];
+
+class Particle {
+  constructor(){
+    this.x=Math.random()*canvas.width;
+    this.y=Math.random()*canvas.height;
+    this.radius=Math.random()*2+1;
+    this.speedX=(Math.random()-0.5)*1;
+    this.speedY=(Math.random()-0.5)*1;
+  }
+  draw(){
+    ctx.beginPath();
+    ctx.arc(this.x,this.y,this.radius,0,Math.PI*2);
+    ctx.fillStyle="rgba(255,255,255,0.7)";
+    ctx.fill();
+  }
+  update(){
+    this.x+=this.speedX;
+    this.y+=this.speedY;
+    if(this.x<0||this.x>canvas.width)this.speedX*=-1;
+    if(this.y<0||this.y>canvas.height)this.speedY*=-1;
+    this.draw();
+  }
+}
+
+function initParticles(){
+  particles=[];
+  for(let i=0;i<100;i++){
+    particles.push(new Particle());
+  }
+}
+
+function connectParticles(){
+  for(let a=0;a<particles.length;a++){
+    for(let b=a;b<particles.length;b++){
+      let dx=particles[a].x-particles[b].x;
+      let dy=particles[a].y-particles[b].y;
+      let dist=Math.sqrt(dx*dx+dy*dy);
+      if(dist<120){
+        ctx.beginPath();
+        ctx.strokeStyle=`rgba(0,242,254,${1-dist/120})`;
+        ctx.lineWidth=1;
+        ctx.moveTo(particles[a].x,particles[a].y);
+        ctx.lineTo(particles[b].x,particles[b].y);
+        ctx.stroke();
+      }
+    }
+  }
+}
+
+function animate(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles.forEach(p=>p.update());
+  connectParticles();
+  requestAnimationFrame(animate);
+}
+
+initParticles();
+animate();
+window.addEventListener("resize",()=>{
+  canvas.width=window.innerWidth;
+  canvas.height=window.innerHeight;
+  initParticles();
+});
+</script>
 </body>
 </html>
