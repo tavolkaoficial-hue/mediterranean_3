@@ -2,52 +2,75 @@
 include("conexion.php");
 header("Content-Type: application/json");
 
+// Asegurarse de que la carpeta uploads exista
+$uploadDir = "uploads/";
+if (!file_exists($uploadDir)) {
+    mkdir($uploadDir, 0777, true);
+}
+
 $accion = $_GET['accion'] ?? '';
 
 switch ($accion) {
-  case "listar":
-    $res = $conn->query("SELECT * FROM productos ORDER BY id DESC");
-    $data = [];
-    while ($row = $res->fetch_assoc()) $data[] = $row;
-    echo json_encode($data);
-    break;
 
-  case "agregar":
-    $nombre = $_POST['nombre'];
-    $precio = $_POST['precio'];
-    $stock  = $_POST['stock'];
-    $desc   = $_POST['descripcion'];
+    case "listar":
+        $res = $conn->query("SELECT * FROM productos ORDER BY id DESC");
+        $data = [];
+        while ($row = $res->fetch_assoc()) $data[] = $row;
+        echo json_encode($data);
+        break;
 
-    // Manejo de imagen
-    if (isset($_FILES['img'])) {
-      $imgName = time() . "_" . basename($_FILES['img']['name']);
-      $ruta = "uploads/" . $imgName;
-      move_uploaded_file($_FILES['img']['tmp_name'], $ruta);
-    } else {
-      $ruta = "";
-    }
+    case "agregar":
+        $nombre = $_POST['nombre'] ?? '';
+        $precio = $_POST['precio'] ?? 0;
+        $stock  = $_POST['stock'] ?? 0;
+        $desc   = $_POST['descripcion'] ?? '';
 
-    $stmt = $conn->prepare("INSERT INTO productos (img, nombre, precio, stock, descripcion) VALUES (?, ?, ?, ?, ?)");
-    $stmt->bind_param("ssdis", $ruta, $nombre, $precio, $stock, $desc);
-    $stmt->execute();
+        // Manejo seguro de imagen
+        if (isset($_FILES['img']) && $_FILES['img']['error'] === 0) {
+            $imgName = time() . "_" . basename($_FILES['img']['name']);
+            $ruta = $uploadDir . $imgName;
+            if (!move_uploaded_file($_FILES['img']['tmp_name'], $ruta)) {
+                echo json_encode(["success" => false, "error" => "No se pudo guardar la imagen."]);
+                exit;
+            }
+        } else {
+            $ruta = "";
+        }
 
-    echo json_encode(["success" => true]);
-    break;
+        $stmt = $conn->prepare("INSERT INTO productos (img, nombre, precio, stock, descripcion) VALUES (?, ?, ?, ?, ?)");
+        $stmt->bind_param("ssdis", $ruta, $nombre, $precio, $stock, $desc);
+        if ($stmt->execute()) {
+            echo json_encode(["success" => true]);
+        } else {
+            echo json_encode(["success" => false, "error" => $stmt->error]);
+        }
+        break;
 
-  case "eliminar":
-    $id = $_POST['id'];
-    $conn->query("DELETE FROM productos WHERE id=$id");
-    echo json_encode(["success" => true]);
-    break;
+    case "eliminar":
+        $id = intval($_POST['id'] ?? 0);
+        $stmt = $conn->prepare("DELETE FROM productos WHERE id = ?");
+        $stmt->bind_param("i", $id);
+        if ($stmt->execute()) {
+            echo json_encode(["success" => true]);
+        } else {
+            echo json_encode(["success" => false, "error" => $stmt->error]);
+        }
+        break;
 
-  case "actualizarStock":
-    $id = $_POST['id'];
-    $stock = $_POST['stock'];
-    $conn->query("UPDATE productos SET stock=$stock WHERE id=$id");
-    echo json_encode(["success" => true]);
-    break;
+    case "actualizarStock":
+        $id = intval($_POST['id'] ?? 0);
+        $stock = intval($_POST['stock'] ?? 0);
+        $stmt = $conn->prepare("UPDATE productos SET stock = ? WHERE id = ?");
+        $stmt->bind_param("ii", $stock, $id);
+        if ($stmt->execute()) {
+            echo json_encode(["success" => true]);
+        } else {
+            echo json_encode(["success" => false, "error" => $stmt->error]);
+        }
+        break;
 
-  default:
-    echo json_encode(["error" => "Acción no válida"]);
+    default:
+        echo json_encode(["error" => "Acción no válida"]);
+        break;
 }
 ?>

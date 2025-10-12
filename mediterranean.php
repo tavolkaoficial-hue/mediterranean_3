@@ -65,23 +65,22 @@ if (!isset($_SESSION["usuarios"])) {
         <span>Sucursales</span>
       </div>
 
-      <div class="card" onclick="mostrarSeccion('usuarios')">
+      <div class="card" onclick="window.location.href='usuarios.html'">
         <img src="images/usuariowood.png" alt="Usuarios" />
         <span>Usuarios</span>
       </div>
 
-      <div class="card" onclick="mostrarSeccion('reportes')">
+      <div class="card" onclick="window.location.href='reportes.html'">
         <img src="images/reportewood.png" alt="Reportes" />
         <span>Reportes</span>
       </div>
 
-      <div class="card" onclick="mostrarSeccion('stock')">
-        <img src="images/stockwood.png" alt="Stock" />
-        <span>Stock</span>
+      <div class="card" onclick="window.location.href='utilidades.html'">
+        <img src="images/stockwood.png" alt="utilidades" />
+        <span>utilidades</span>
       </div>
     </div>
   </div>
-</div>
 
 
   <!-- Sección usuarios -->

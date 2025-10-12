@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Panel de Sucursales - Mediterranean</title>
 
-<!-- Font Awesome para íconos -->
+<!-- Font Awesome -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
 <!-- Librerías externas -->
@@ -14,159 +14,115 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
+/* ===== Estilos generales ===== */
 body {
-  margin:0;
-  font-family:'Segoe UI',sans-serif;
-  background:transparent;
-  color:var(--text);
-  transition: background 0.3s,color 0.3s;
-  overflow-x:hidden;
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: transparent;
+  color: var(--text);
+  overflow-x: hidden;
 }
 :root { --text:#fff; --card-bg:rgba(255,255,255,0.1); }
 [data-theme="light"] { --text:#222; --card-bg:#fff; }
 
-#background { position:fixed; top:0; left:0; width:100vw; height:100vh; background:linear-gradient(135deg,#004e92,#0a1f44); z-index:-2; }
-#particles { position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:-1; }
-
-.logo-img { width: 150px; height:auto; display:block; animation:glow 4s ease-in-out infinite; }
-@keyframes glow { 
-  0% { filter:drop-shadow(0 0 5px #00eaff) drop-shadow(0 0 10px #f4c430); }
-  50% { filter:drop-shadow(0 0 20px #00eaff) drop-shadow(0 0 40px #f4c430); }
-  100% { filter:drop-shadow(0 0 5px #00eaff) drop-shadow(0 0 10px #f4c430); }
-}
-
-.theme-toggle {
-  cursor:pointer;
-  background:#f4c430;
-  border:none;
-  padding:6px 12px;
-  border-radius:8px;
-  font-weight:bold;
+/* ===== Fondo ===== */
+#background {
   position: fixed;
-  top: 15px;
-  right: 20px;
-  z-index: 1100;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: linear-gradient(135deg,#004e92,#0a1f44);
+  z-index: -2;
+}
+#particles {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  z-index: -1;
+  pointer-events: none;
 }
 
-/* ==================== BARRA LATERAL ==================== */
+/* ===== Sidebar ===== */
 .sidebar {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 230px;
-  height: 100%;
-  background: linear-gradient(135deg, rgba(0,78,146,0.95), rgba(10,31,68,0.95));
-  backdrop-filter: blur(12px);
-  padding-top: 60px;
+  top: 0; left: 0;
+  width: 240px; height: 100%;
+  background: linear-gradient(135deg,#050d1c,#0a1f3d,#0e2a47,#122f68);
+  background-size: 400% 400%;
+  animation: sidebarAnim 10s ease infinite;
+  padding-top: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
   z-index: 1000;
-  box-shadow: 4px 0 20px rgba(0, 234, 255, 0.3);
+  box-shadow: 2px 0 25px rgba(0,0,0,0.8);
   overflow: hidden;
 }
-
-.sidebar ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.sidebar ul li {
-  margin: 25px 0;
-  text-align: left;
-  padding-left: 25px;
-}
-
-.sidebar ul li a {
-  color: #00eaff;
-  text-decoration: none;
-  font-weight: bold;
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  transition: all 0.3s ease;
-}
-
-.sidebar ul li a:hover {
-  color: #f4c430;
-  text-shadow: 0 0 10px #f4c430, 0 0 20px #f4c430;
-}
-
 .sidebar::before {
   content: "";
   position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: conic-gradient(from 0deg, #00eaff, #f4c430, #00eaff);
-  animation: rotateBg 8s linear infinite;
-  z-index: -1;
-  opacity: 0.15;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: radial-gradient(circle,rgba(0,242,254,0.4) 1px,transparent 1px);
+  background-size: 40px 40px;
+  animation: moverPuntos 6s linear infinite;
+  opacity: 0.6;
+}
+.sidebar::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: linear-gradient(transparent,rgba(0,242,254,0.1),transparent);
+  animation: brillo 4s linear infinite;
 }
 
-@keyframes rotateBg {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+/* Enlaces sidebar */
+.sidebar a {
+  color: #00f2fe;
+  text-decoration: none;
+  padding: 12px 20px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  margin: 0 15px;
+  text-shadow: 0 0 8px #00f2fe, 0 0 15px #4facfe;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+  z-index: 2;
+}
+.sidebar a:hover,
+.sidebar a.active {
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  transform: translateX(6px) scale(1.05);
+  box-shadow: 0 0 15px #00f2fe, inset 0 0 10px #00f2fe;
 }
 
-/* Ajustar contenido para que no quede debajo de la barra */
+/* Animaciones sidebar */
+@keyframes sidebarAnim { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+@keyframes moverPuntos { from{background-position:0 0} to{background-position:40px 40px} }
+@keyframes brillo { from{transform:translateY(-100%)} to{transform:translateY(100%)} }
+
+/* ===== Contenido ===== */
 .container {
   margin-left: 250px;
-  display:grid;
-  grid-template-columns:1fr 2fr;
-  gap:20px;
-  padding:20px;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 20px;
+  padding: 20px;
 }
-
-/* ==================== CONTENIDO ==================== */
-.card { background:var(--card-bg); padding:15px; border-radius:15px; box-shadow:0 4px 15px rgba(0,0,0,0.3); }
-.map-container { height: 250px; border-radius:15px; }
-.notifications { max-height:150px; overflow-y:auto; font-size:14px; }
-.chat-box { max-height:200px; overflow-y:auto; margin-bottom:10px; background:rgba(0,0,0,0.2); padding:10px; border-radius:10px; }
-.chat-input { width:100%; padding:8px; border-radius:8px; border:none; }
-.stars { color:gold; font-size:20px; }
-input[type=text], textarea, input[type=password] { width:100%; padding:6px; margin-top:4px; margin-bottom:8px; border-radius:6px; border:1px solid #ccc; background:rgba(255,255,255,0.2); color:#fff; }
-button.save-btn, button.login-btn { background:#00eaff; border:none; padding:6px 12px; border-radius:6px; cursor:pointer; font-weight:bold; color:#000; margin-top:4px; }
-
-/* ==================== BIENVENIDA ==================== */
-#welcome-screen {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg,#004e92,#0a1f44);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-  transition: opacity 1s ease;
-}
-#welcome-screen img { width: 300px; animation: glow 4s ease-in-out infinite; }
-#welcome-screen.hidden { opacity: 0; pointer-events: none; visibility: hidden; }
+.card { background: var(--card-bg); padding: 15px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+.map-container { height: 250px; border-radius: 15px; }
+.notifications { max-height: 150px; overflow-y: auto; font-size: 14px; }
+.chat-box { max-height: 200px; overflow-y: auto; margin-bottom: 10px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 10px; }
+.chat-input { width: 100%; padding: 8px; border-radius: 8px; border: none; }
+.theme-toggle { cursor: pointer; background: #f4c430; border: none; padding: 6px 12px; border-radius: 8px; font-weight: bold; position: fixed; top: 15px; right: 20px; z-index: 1100; }
 </style>
 </head>
 <body>
-<div id="background"></div>
-<canvas id="particles"></canvas>
-
-<!-- Pantalla de bienvenida -->
-<div id="welcome-screen">
-  <img src="images/LogoMediterranean1992.png" alt="Logo Bienvenida">
-</div>
-
-<!-- Barra lateral -->
-<div class="sidebar">
-  <ul>
-    <li><a href="#"><i class="fa-solid fa-house"></i> Inicio</a></li>
-    <li><a href="#"><i class="fa-solid fa-building"></i> Sucursales</a></li>
-    <li><a href="#"><i class="fa-solid fa-user"></i> Usuarios</a></li>
-    <li><a href="#"><i class="fa-solid fa-chart-line"></i> Reportes</a></li>
-    <li><a href="#"><i class="fa-solid fa-gears"></i> Utilidades</a></li>
-  </ul>
-</div>
-
-<!-- Botón de tema -->
+  <!-- Botón de tema -->
 <button class="theme-toggle" onclick="toggleTheme()">🌙 Modo Claro</button>
 
 <div class="container">
@@ -176,14 +132,16 @@ button.save-btn, button.login-btn { background:#00eaff; border:none; padding:6px
       <h3>🔔 Notificaciones</h3>
       <div class="notifications" id="notifications"></div>
     </div>
+
     <div class="card">
       <h3>💬 Chat interno</h3>
       <div class="chat-box" id="chatBox"></div>
       <input class="chat-input" id="chatInput" placeholder="Escribe un mensaje..." onkeydown="sendChat(event)">
     </div>
+
     <div class="card">
       <h3>⭐ Desempeño</h3>
-      <p>Sucursal Centro Bogota: <span class="stars">⭐⭐⭐⭐☆</span></p>
+      <p>Sucursal Centro Bogotá: <span class="stars">⭐⭐⭐⭐☆</span></p>
       <p>Sucursal Keneddy: <span class="stars">⭐⭐⭐☆☆</span></p>
     </div>
   </div>
@@ -229,22 +187,207 @@ button.save-btn, button.login-btn { background:#00eaff; border:none; padding:6px
 </div>
 
 <script>
-// ================== BIENVENIDA ==================
-window.addEventListener("load", () => {
-  setTimeout(() => {
-    document.getElementById("welcome-screen").classList.add("hidden");
-  }, 2500);
-});
-
-// ================== USUARIOS ==================
+// ===== Usuarios =====
 let users = [
-  { username:"admin", password:"admin2025", role:"admin" },
-  { username:"supervisor", password:"super2025", role:"supervisor" },
-  { username:"cajero", password:"cajero2025", role:"viewer" }
+  { username: "admin", password: "admin2025", role: "admin" },
+  { username: "supervisor", password: "super2025", role: "supervisor" },
+  { username: "cajero", password: "cajero2025", role: "viewer" }
 ];
 let currentUser = null;
 
-// ================== THEME ==================
+// ===== Tema =====
+function toggleTheme() {
+  let body = document.body;
+  if (body.getAttribute("data-theme") === "light") {
+    body.removeAttribute("data-theme");
+    document.querySelector(".theme-toggle").innerText = "🌙 Modo Claro";
+  } else {
+    body.setAttribute("data-theme", "light");
+    document.querySelector(".theme-toggle").innerText = "🌙 Modo Oscuro";
+  }
+}
+
+// ===== Mapa =====
+let map = L.map('map').setView([4.6195, -74.1673], 14);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18 }).addTo(map);
+
+let sucursales = {
+  "Keneddy": {
+    coords: [4.6195, -74.1673],
+    stock: 120,
+    ventas: 90,
+    direccion: "Calle 10 # 68-25, Barrio El Socorro, Kennedy",
+    telefono: "+57 3219513533",
+    supervisor: "Carlos Pérez",
+    horario: "Lunes a Sábado 8:00am - 8:00pm",
+    personal: ["Cajeros", "Vendedores", "Seguridad", "Limpieza"]
+  },
+  "Centro": {
+    coords: [4.7110, -74.0721],
+    stock: 60,
+    ventas: 40,
+    direccion: "Carrera 45 # 120-15, Usaquén",
+    telefono: "+57 601 7894561",
+    supervisor: "María Gómez",
+    horario: "Lunes a Domingo 9:00am - 7:00pm",
+    personal: ["Cajeros", "Vendedores", "Repartidores", "Gerente"]
+  }
+};
+
+for (let suc in sucursales) {
+  let marker = L.marker(sucursales[suc].coords).addTo(map);
+  marker.on("click", () => mostrarDetalles(suc));
+}
+
+function mostrarDetalles(nombre) {
+  let data = sucursales[nombre];
+  let editable = (currentUser && (currentUser.role === "admin" || currentUser.role === "supervisor"));
+
+  let detalle = `
+    <h4>${nombre}</h4>
+    <p><b>Dirección:</b> <input type="text" id="dir" value="${data.direccion}" ${editable ? "" : "disabled"}></p>
+    <p><b>Teléfono:</b> <input type="text" id="tel" value="${data.telefono}" ${editable ? "" : "disabled"}></p>
+    <p><b>Supervisor:</b> <input type="text" id="sup" value="${data.supervisor}" ${editable ? "" : "disabled"}></p>
+    <p><b>Horario:</b> <input type="text" id="horario" value="${data.horario}" ${editable ? "" : "disabled"}></p>
+    <p><b>Personal:</b> <textarea id="pers" ${editable ? "" : "disabled"}>${data.personal.join(", ")}</textarea></p>
+    ${editable ? `<button class="save-btn" onclick="guardarDetalles('${nombre}')">Guardar Cambios</button>` : ""}
+  `;
+  document.getElementById("detalleSucursal").innerHTML = detalle;
+}
+
+function guardarDetalles(nombre) {
+  sucursales[nombre].direccion = document.getElementById("dir").value;
+  sucursales[nombre].telefono = document.getElementById("tel").value;
+  sucursales[nombre].supervisor = document.getElementById("sup").value;
+  sucursales[nombre].horario = document.getElementById("horario").value;
+  sucursales[nombre].personal = document.getElementById("pers").value.split(",").map(s => s.trim());
+  alert("✅ Detalles actualizados");
+}
+
+// ===== Dashboard =====
+let ctxChart = document.getElementById("dashboardChart").getContext("2d");
+new Chart(ctxChart, {
+  type: 'bar',
+  data: {
+    labels: Object.keys(sucursales),
+    datasets: [
+      { label: 'Stock', data: Object.values(sucursales).map(s => s.stock), backgroundColor: '#f4c430' },
+      { label: 'Ventas', data: Object.values(sucursales).map(s => s.ventas), backgroundColor: '#00eaff' }
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { labels: { color: 'var(--text)' } } },
+    scales: {
+      x: { ticks: { color: 'var(--text)' } },
+      y: { ticks: { color: 'var(--text)' } }
+    }
+  }
+});
+
+// ===== Notificaciones =====
+let notifications = document.getElementById("notifications");
+function addNotification(msg) {
+  let p = document.createElement("p");
+  p.innerText = msg;
+  notifications.prepend(p);
+}
+addNotification("⚠️ Stock bajo en Producto B - Sucursal Norte");
+addNotification("✅ Ventas diarias en Centro superaron el objetivo");
+addNotification("✅ ADSO, Análisis y Desarrollo de Software - Pedro Guevara");
+
+// ===== Chat =====
+let chatBox = document.getElementById("chatBox");
+function sendChat(e) {
+  if (e.key === "Enter") {
+    let input = document.getElementById("chatInput");
+    if (input.value.trim() !== "") {
+      let msg = document.createElement("div");
+      msg.innerText = "👤 Gerente: " + input.value;
+      chatBox.appendChild(msg);
+      chatBox.scrollTop = chatBox.scrollHeight;
+      input.value = "";
+    }
+  }
+}
+
+// ===== Historial =====
+let history = document.getElementById("history");
+let movimientos = [
+  "Entrada de 20 unidades de Producto A en Centro",
+  "Salida de 5 unidades de Producto C en Norte",
+  "Entrada de 15 unidades de Producto B en Centro"
+];
+movimientos.forEach(m => {
+  let li = document.createElement("li");
+  li.innerText = m;
+  history.appendChild(li);
+});
+
+// ===== Login =====
+function login() {
+  let user = document.getElementById("username").value;
+  let pass = document.getElementById("password").value;
+  let found = users.find(u => u.username === user && u.password === pass);
+  let msg = document.getElementById("loginMsg");
+
+  if (found) {
+    currentUser = found;
+    msg.innerText = "Bienvenido " + found.username + " (" + found.role + ")";
+    document.getElementById("loginCard").style.display = "none";
+    document.getElementById("changePassCard").style.display = (found.role === "admin" || found.role === "supervisor") ? "block" : "none";
+  } else {
+    msg.innerText = "❌ Usuario o contraseña incorrectos";
+  }
+}
+
+// ===== Cambiar Contraseña =====
+function cambiarPassword() {
+  const oldPass = document.getElementById("oldPass").value;
+  const newPass = document.getElementById("newPass").value;
+  const confirmPass = document.getElementById("confirmPass").value;
+  const msg = document.getElementById("passMsg");
+
+  if (oldPass !== currentUser.password) {
+    msg.innerText = "❌ La contraseña actual es incorrecta.";
+    return;
+  }
+  if (newPass.length < 4) {
+    msg.innerText = "❌ La nueva contraseña debe tener al menos 4 caracteres.";
+    return;
+  }
+  if (newPass !== confirmPass) {
+    msg.innerText = "❌ Las nuevas contraseñas no coinciden.";
+    return;
+  }
+  currentUser.password = newPass;
+  msg.innerText = "✅ Contraseña cambiada correctamente.";
+  document.getElementById("oldPass").value = "";
+  document.getElementById("newPass").value = "";
+  document.getElementById("confirmPass").value = "";
+}
+</script>
+
+
+<div id="background"></div>
+<canvas id="particles"></canvas>
+
+<!-- Sidebar -->
+<div class="sidebar">
+  <a href="#" data-section="Menu" class="fas fa-building">Menu Principal</a>
+  <a href="#" data-section="mediterranean.php" class="active">Productos</a>
+  <a href="#" data-section="sucursales.html">Sucursales</a>
+  <a href="#" data-section="usuarios">Usuarios</a>
+  <a href="#" data-section="reportes">Reportes</a>
+  <a href="#" data-section="utilidades">Utilidades</a>
+</div>
+
+<button class="theme-toggle" onclick="toggleTheme()">🌙 Modo Claro</button>
+
+
+
+<script>
+// ===== Modo claro / oscuro =====
 function toggleTheme(){
   let body=document.body;
   if(body.getAttribute("data-theme")==="light"){
@@ -256,138 +399,77 @@ function toggleTheme(){
   }
 }
 
-// ================== MAPA ==================
-let map = L.map('map').setView([4.6195,-74.1673],14);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{ maxZoom:18 }).addTo(map);
 
-let sucursales = {
-  "Keneddy": { coords:[4.6195,-74.1673], stock:120, ventas:90, direccion:"Calle 10 # 68-25, Barrio El Socorro, Kennedy", telefono:"+57 3219513533", supervisor:"Carlos Pérez", horario:"Lunes a Sábado 8:00am - 8:00pm", personal:["Cajeros","Vendedores","Seguridad","Limpieza"] },
-  "Centro": { coords:[4.7110,-74.0721], stock:60, ventas:40, direccion:"Carrera 45 # 120-15, Usaquén", telefono:"+57 601 7894561", supervisor:"María Gómez", horario:"Lunes a Domingo 9:00am - 7:00pm", personal:["Cajeros","Vendedores","Repartidores","Gerente"] }
-};
+// ===== Fondo de partículas =====
+window.onload = function() {
+  const canvas = document.getElementById("particles");
+  const ctx = canvas.getContext("2d");
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  let particles = [];
 
-for(let suc in sucursales){
-  let marker = L.marker(sucursales[suc].coords).addTo(map);
-  marker.on("click",()=>mostrarDetalles(suc));
-}
-
-function mostrarDetalles(nombre){
-  let data = sucursales[nombre];
-  let editable = (currentUser && (currentUser.role==="admin" || currentUser.role==="supervisor"));
-  let detalle = `
-    <h4>${nombre}</h4>
-    <p><b>Dirección:</b> <input type="text" id="dir" value="${data.direccion}" ${editable?"":"disabled"}></p>
-    <p><b>Teléfono:</b> <input type="text" id="tel" value="${data.telefono}" ${editable?"":"disabled"}></p>
-    <p><b>Supervisor:</b> <input type="text" id="sup" value="${data.supervisor}" ${editable?"":"disabled"}></p>
-    <p><b>Horario:</b> <input type="text" id="horario" value="${data.horario}" ${editable?"":"disabled"}></p>
-    <p><b>Personal:</b> <textarea id="pers" ${editable?"":"disabled"}>${data.personal.join(", ")}</textarea></p>
-    ${editable?'<button class="save-btn" onclick="guardarDetalles(\''+nombre+'\')">Guardar Cambios</button>':""}
-  `;
-  document.getElementById("detalleSucursal").innerHTML = detalle;
-}
-
-function guardarDetalles(nombre){
-  sucursales[nombre].direccion = document.getElementById("dir").value;
-  sucursales[nombre].telefono = document.getElementById("tel").value;
-  sucursales[nombre].supervisor = document.getElementById("sup").value;
-  sucursales[nombre].horario = document.getElementById("horario").value;
-  sucursales[nombre].personal = document.getElementById("pers").value.split(",").map(s=>s.trim());
-  alert("✅ Detalles actualizados");
-}
-
-// ================== DASHBOARD ==================
-let ctx = document.getElementById("dashboardChart").getContext("2d");
-new Chart(ctx, {
-  type:'bar',
-  data:{
-    labels:Object.keys(sucursales),
-    datasets:[
-      { label:'Stock', data:Object.values(sucursales).map(s=>s.stock), backgroundColor:'#f4c430' },
-      { label:'Ventas', data:Object.values(sucursales).map(s=>s.ventas), backgroundColor:'#00eaff' }
-    ]
-  },
-  options:{ responsive:true, plugins:{legend:{labels:{color:'var(--text)'}}}, scales:{ x:{ticks:{color:'var(--text)'}}, y:{ticks:{color:'var(--text)'}} } }
-});
-
-// ================== NOTIFICACIONES ==================
-let notifications=document.getElementById("notifications");
-function addNotification(msg){ let p=document.createElement("p"); p.innerText=msg; notifications.prepend(p); }
-addNotification("⚠️ Stock bajo en Producto B - Sucursal Norte");
-addNotification("✅ Ventas diarias en Centro superaron el objetivo");
-addNotification("✅ ADSO, Analisis y Desarrollo de Software - Pedro Guevara");
-
-// ================== CHAT ==================
-let chatBox=document.getElementById("chatBox");
-function sendChat(e){
-  if(e.key==="Enter"){
-    let input=document.getElementById("chatInput");
-    if(input.value.trim()!==""){
-      let msg=document.createElement("div");
-      msg.innerText="👤 Gerente: "+input.value;
-      chatBox.appendChild(msg);
-      chatBox.scrollTop = chatBox.scrollHeight;
-      input.value="";
+  class Particle {
+    constructor() {
+      this.x = Math.random() * canvas.width;
+      this.y = Math.random() * canvas.height;
+      this.radius = Math.random() * 2 + 1;
+      this.speedX = (Math.random() - 0.5) * 1;
+      this.speedY = (Math.random() - 0.5) * 1;
+    }
+    draw() {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(0,242,254,0.7)";
+      ctx.fill();
+    }
+    update() {
+      this.x += this.speedX;
+      this.y += this.speedY;
+      if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+      if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+      this.draw();
     }
   }
-}
 
-// ================== HISTORIAL ==================
-let history=document.getElementById("history");
-let movimientos=["Entrada de 20 unidades de Producto A en Centro","Salida de 5 unidades de Producto C en Norte","Entrada de 15 unidades de Producto B en Centro"];
-movimientos.forEach(m=>{ let li=document.createElement("li"); li.innerText=m; history.appendChild(li); });
-
-// ================== PARTICULAS ==================
-const canvas=document.getElementById("particles");
-const ctxParticles=canvas.getContext("2d");
-let particlesArray=[];
-const numParticles=100;
-const maxDistance=120;
-const colors=["#00eaff","#f4c430"];
-function resizeCanvas(){ canvas.width=window.innerWidth; canvas.height=window.innerHeight; }
-window.addEventListener("resize",resizeCanvas);
-resizeCanvas();
-class Particle{
-  constructor(){ this.x=Math.random()*canvas.width; this.y=Math.random()*canvas.height; this.vx=(Math.random()-0.5)*1; this.vy=(Math.random()-0.5)*1; this.size=2; this.color=colors[Math.floor(Math.random()*colors.length)]; }
-  update(){ this.x+=this.vx; this.y+=this.vy; if(this.x<0||this.x>canvas.width) this.vx*=-1; if(this.y<0||this.y>canvas.height) this.vy*=-1; }
-  draw(){ ctxParticles.beginPath(); ctxParticles.arc(this.x,this.y,this.size,0,Math.PI*2); ctxParticles.fillStyle=this.color; ctxParticles.fill(); }
-}
-function initParticles(){ particlesArray=[]; for(let i=0;i<numParticles;i++){ particlesArray.push(new Particle()); } }
-function connectParticles(){ for(let a=0;a<particlesArray.length;a++){ for(let b=a;b<particlesArray.length;b++){ let dx=particlesArray[a].x-particlesArray[b].x; let dy=particlesArray[a].y-particlesArray[b].y; let dist=Math.sqrt(dx*dx+dy*dy); if(dist<maxDistance){ ctxParticles.beginPath(); ctxParticles.strokeStyle="rgba(255,255,255,"+(1-dist/maxDistance)+")"; ctxParticles.lineWidth=0.5; ctxParticles.moveTo(particlesArray[a].x,particlesArray[a].y); ctxParticles.lineTo(particlesArray[b].x,particlesArray[b].y); ctxParticles.stroke(); } } } }
-function animate(){ ctxParticles.clearRect(0,0,canvas.width,canvas.height); particlesArray.forEach(p=>{ p.update(); p.draw(); }); connectParticles(); requestAnimationFrame(animate); }
-initParticles(); animate();
-
-// ================== LOGIN ==================
-function login(){
-  let user=document.getElementById("username").value;
-  let pass=document.getElementById("password").value;
-  let found=users.find(u=>u.username===user && u.password===pass);
-  let msg=document.getElementById("loginMsg");
-  if(found){
-    currentUser=found;
-    msg.innerText="Bienvenido "+found.username+" ("+found.role+")";
-    document.getElementById("loginCard").style.display="none";
-    document.getElementById("changePassCard").style.display = (found.role==="admin"||found.role==="supervisor")?"block":"none";
-  } else {
-    msg.innerText="❌ Usuario o contraseña incorrectos";
+  function initParticles() {
+    particles = [];
+    for (let i = 0; i < 120; i++) particles.push(new Particle());
   }
-}
 
-// ================== CAMBIO DE CONTRASEÑA ==================
-function cambiarPassword(){
-  const oldPass=document.getElementById("oldPass").value;
-  const newPass=document.getElementById("newPass").value;
-  const confirmPass=document.getElementById("confirmPass").value;
-  const msg=document.getElementById("passMsg");
+  function connectParticles() {
+    for (let a = 0; a < particles.length; a++) {
+      for (let b = a; b < particles.length; b++) {
+        let dx = particles[a].x - particles[b].x;
+        let dy = particles[a].y - particles[b].y;
+        let dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 120) {
+          ctx.beginPath();
+          ctx.strokeStyle = `rgba(0,242,254,${1 - dist / 120})`;
+          ctx.lineWidth = 1;
+          ctx.moveTo(particles[a].x, particles[a].y);
+          ctx.lineTo(particles[b].x, particles[b].y);
+          ctx.stroke();
+        }
+      }
+    }
+  }
 
-  if(oldPass!==currentUser.password){ msg.innerText="❌ La contraseña actual es incorrecta."; return; }
-  if(newPass.length<4){ msg.innerText="❌ La nueva contraseña debe tener al menos 4 caracteres."; return; }
-  if(newPass!==confirmPass){ msg.innerText="❌ Las nuevas contraseñas no coinciden."; return; }
+  function animateParticles() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => p.update());
+    connectParticles();
+    requestAnimationFrame(animateParticles);
+  }
 
-  currentUser.password=newPass;
-  msg.innerText="✅ Contraseña cambiada correctamente.";
-  document.getElementById("oldPass").value="";
-  document.getElementById("newPass").value="";
-  document.getElementById("confirmPass").value="";
-}
+  initParticles();
+  animateParticles();
+
+  window.addEventListener("resize", () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    initParticles();
+  });
+};
 </script>
 </body>
 </html>
