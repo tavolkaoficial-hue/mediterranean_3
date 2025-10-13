@@ -44,13 +44,12 @@ body {
 }
 .logo-superior img:hover { transform: scale(1.05); }
 
-/* ===== Barra lateral ===== */
+/* ===== Sidebar ===== */
 .sidebar {
   position: fixed;
   top: 0; left: 0;
-  width: 240px;
-  height: 100%;
-  background: linear-gradient(135deg, #050d1c, #0a1f3d, #0e2a47, #122f68);
+  width: 240px; height: 100%;
+  background: linear-gradient(135deg,#050d1c,#0a1f3d,#0e2a47,#122f68);
   background-size: 400% 400%;
   animation: sidebarAnim 10s ease infinite;
   padding-top: 40px;
@@ -61,25 +60,54 @@ body {
   box-shadow: 2px 0 25px rgba(0,0,0,0.8);
   overflow: hidden;
 }
+.sidebar::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: radial-gradient(circle,rgba(0,242,254,0.4) 1px,transparent 1px);
+  background-size: 40px 40px;
+  animation: moverPuntos 6s linear infinite;
+  opacity: 0.6;
+}
+.sidebar::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: linear-gradient(transparent,rgba(0,242,254,0.1),transparent);
+  animation: brillo 4s linear infinite;
+}
+
+/* Enlaces sidebar */
 .sidebar a {
   color: #00f2fe;
   text-decoration: none;
   padding: 12px 20px;
   font-weight: bold;
+  transition: all 0.3s ease;
   border-radius: 8px;
   margin: 0 15px;
   text-shadow: 0 0 8px #00f2fe, 0 0 15px #4facfe;
   display: flex;
   align-items: center;
   gap: 10px;
-  transition: all 0.3s ease;
+  position: relative;
+  z-index: 2;
 }
-.sidebar a:hover, .sidebar a.active {
+.sidebar a:hover,
+.sidebar a.active {
   background: rgba(255,255,255,0.1);
   color: #fff;
   transform: translateX(6px) scale(1.05);
   box-shadow: 0 0 15px #00f2fe, inset 0 0 10px #00f2fe;
 }
+
+/* Animaciones sidebar */
+@keyframes sidebarAnim { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+@keyframes moverPuntos { from{background-position:0 0} to{background-position:40px 40px} }
+@keyframes brillo { from{transform:translateY(-100%)} to{transform:translateY(100%)} }
+
 
 /* ===== Contenido principal ===== */
 .main-content {
@@ -146,13 +174,14 @@ tbody tr:hover { background: rgba(0,242,254,0.15); }
   <img src="images/LogoMediterranean1992.png" alt="Logo Mediterranean">
 </div>
 
-<!-- ===== Barra lateral ===== -->
+<!-- Sidebar -->
 <div class="sidebar">
-  <a href="#"><i class="fas fa-house"></i> Inicio</a>
-  <a href="#"><i class="fas fa-building"></i> Sucursales</a>
-  <a href="#"><i class="fas fa-user"></i> Usuarios</a>
-  <a href="#" class="active"><i class="fas fa-chart-line"></i> Reportes</a>
-  <a href="#"><i class="fas fa-gears"></i> Utilidades</a>
+  <a href="#" data-section="Menu" class="fas fa-building">Menu Principal</a>
+  <a href="#" data-section="mediterranean.php" class="active">Productos</a>
+  <a href="#" data-section="sucursales.html">Sucursales</a>
+  <a href="#" data-section="usuarios">Usuarios</a>
+  <a href="#" data-section="reportes">Reportes</a>
+  <a href="#" data-section="utilidades">Utilidades</a>
 </div>
 
 <!-- ===== Contenido principal ===== -->

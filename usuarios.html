@@ -1,22 +1,104 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<title>Mediterranean Usuarios </title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<style>
-/* ===== Reset ===== */
-* { margin:0; padding:0; box-sizing:border-box; }
-body {
-  font-family: Arial, sans-serif;
-  display:flex; 
-  min-height:100vh; 
-  background: linear-gradient(135deg, #0d1117, #004e92, #00c6ff);
-  background-size: 300% 300%;
-  animation:moverFondo 12s ease infinite;
-  color:white;
-  overflow-x:hidden;
+  <meta charset="UTF-8">
+  <title>Mediterranean Usuarios</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    /* ===== Reset ===== */
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: Arial, sans-serif;
+      display:flex;
+      min-height:100vh;
+      background: linear-gradient(135deg,#0d1117,#004e92,#00c6ff);
+      background-size:300% 300%;
+      animation:moverFondo 12s ease infinite;
+      color:white;
+      overflow-x:hidden;
+    }
+
+    /* ===== Fondo ===== */
+#background {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: linear-gradient(135deg,#004e92,#0a1f44);
+  z-index: -2;
 }
+#particles {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  z-index: -1;
+  pointer-events: none;
+}
+
+
+/* ===== Sidebar ===== */
+.sidebar {
+  position: fixed;
+  top: 0; left: 0;
+  width: 240px; height: 100%;
+  background: linear-gradient(135deg,#050d1c,#0a1f3d,#0e2a47,#122f68);
+  background-size: 400% 400%;
+  animation: sidebarAnim 10s ease infinite;
+  padding-top: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  z-index: 1000;
+  box-shadow: 2px 0 25px rgba(0,0,0,0.8);
+  overflow: hidden;
+}
+.sidebar::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: radial-gradient(circle,rgba(0,242,254,0.4) 1px,transparent 1px);
+  background-size: 40px 40px;
+  animation: moverPuntos 6s linear infinite;
+  opacity: 0.6;
+}
+.sidebar::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: linear-gradient(transparent,rgba(0,242,254,0.1),transparent);
+  animation: brillo 4s linear infinite;
+}
+
+/* Enlaces sidebar */
+.sidebar a {
+  color: #00f2fe;
+  text-decoration: none;
+  padding: 12px 20px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  margin: 0 15px;
+  text-shadow: 0 0 8px #00f2fe, 0 0 15px #4facfe;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+  z-index: 2;
+}
+.sidebar a:hover,
+.sidebar a.active {
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  transform: translateX(6px) scale(1.05);
+  box-shadow: 0 0 15px #00f2fe, inset 0 0 10px #00f2fe;
+}
+
+/* Animaciones sidebar */
+@keyframes sidebarAnim { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+@keyframes moverPuntos { from{background-position:0 0} to{background-position:40px 40px} }
+@keyframes brillo { from{transform:translateY(-100%)} to{transform:translateY(100%)} }
 
 /* ===== Fondo Canvas ===== */
 #bgCanvas {
@@ -26,15 +108,48 @@ body {
   z-index:-2;
 }
 
-/* ===== Logo superior ===== */
+    /* ===== Sidebar ===== */
+    .sidebar {
+      position: fixed; top:0; left:0;
+      width: 240px; height: 100%;
+      background: linear-gradient(135deg,#050d1c,#0a1f3d,#0e2a47,#122f68);
+      background-size: 400% 400%;
+      animation: sidebarAnim 10s ease infinite;
+      padding-top: 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      box-shadow: 2px 0 25px rgba(0,0,0,0.8);
+      z-index: 100;
+    }
+    .sidebar a {
+      color: #00f2fe;
+      text-decoration: none;
+      padding: 12px 20px;
+      font-weight: bold;
+      border-radius: 8px;
+      margin: 0 15px;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .sidebar a:hover,
+    .sidebar a.active {
+      background: rgba(255,255,255,0.1);
+      transform: translateX(6px);
+      color: #fff;
+    }
+
+    /* ===== Logo superior ===== */
 .logo-superior {
-  position: fixed;
-  top: -40px;
-  left: 350px; /* queda justo a la derecha de la barra lateral */
+  position: relative;
+  top: -35px;
+  left: 300px; 
   z-index: 2000;
 }
 .logo-superior img {
-  width: 200px;
+  width: 180px;
   height: auto;
   filter: drop-shadow(0 0 8px rgba(0,242,254,0.8));
   transition: transform 0.3s ease;
@@ -43,140 +158,312 @@ body {
   transform: scale(1.05);
 }
 
+    /* ===== Contenido principal ===== */
+    .main-content {
+      margin-left: 100px;
+      flex: 1;
+      padding: 100px 20px;
+    }
 
+    h1 {
+      margin-bottom: 20px;
+      text-shadow: 0 0 10px rgba(0,0,0,0.5);
+    }
 
-/* ===== Contenido principal ===== */
-.main-content {
-  margin-left: 100px;
-  flex: 1;
-  padding: 100px 20px 20px; /* dejamos espacio arriba para el logo */
-}
+    .container {
+      background: rgba(255,255,255,0.05);
+      padding: 25px;
+      border-radius: 20px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+      max-width: 1000px;
+    }
 
-h1 { margin:15px 0 15px; text-shadow:0 0 15px rgba(0,0,0,0.6); }
-.container {
-  width:100%;
-  max-width:1100px;
-  background:rgba(255,255,255,0.05);
-  backdrop-filter:blur(12px);
-  padding:25px;
-  border-radius:20px;
-  box-shadow:0 8px 25px rgba(0,0,0,0.4);
-  animation:fadeInUp 1s ease;
-}
+    form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    form input, form select, form button {
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+    }
+    form input, form select {
+      flex: 1 1 calc(25% - 12px);
+      background: rgba(255,255,255,0.8);
+      color: black;
+    }
+    form button {
+      flex: 1 1 100%;
+      background: linear-gradient(90deg,#00f2fe,#4facfe);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
 
-/* ===== Formularios y tablas ===== */
-form { display:flex; flex-wrap:wrap; gap:12px; margin-bottom:10px; justify-content:space-between; }
-form input, form button { padding:12px; border:none; border-radius:10px; flex:1 1 calc(25% - 12px); outline:none; transition: all 0.3s ease; }
-form input { background:rgba(255,255,255,0.8); color:black; }
-form input:focus { transform:scale(1.05); box-shadow:0 0 10px #00f2fe; }
-form button { background:linear-gradient(90deg,#00f2fe,#4facfe); color:white; font-weight:bold; cursor:pointer; flex:1 1 100%; }
-form button:hover { transform:scale(1.05); box-shadow:0 0 15px #00f2fe; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+      background: rgba(255,255,255,0.1);
+    }
+    th, td {
+      padding: 12px;
+      text-align: center;
+    }
+    th {
+      background: rgba(0,0,0,0.5);
+    }
+    tr:hover {
+      background: rgba(255,255,255,0.1);
+    }
+    .btn-eliminar {
+      background: #ff4c4c;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 6px 12px;
+      cursor: pointer;
+    }
 
-.table-container { max-height:400px; overflow-y:auto; width:100%; border-radius:15px; margin-top:10px; }
-table { width:100%; border-collapse:collapse; background:rgba(255,255,255,0.08); }
-th, td { padding:12px; text-align:center; }
-th { background:rgba(255,255,255,0.1); font-weight:bold; letter-spacing:1px; }
-thead th { position:sticky; top:0; background:rgba(0,0,0,0.6); color:#fff; z-index:2; }
-tr:hover { background: rgba(255,255,255,0.1); }
-.btn-eliminar { background:crimson; color:white; border:none; padding:6px 14px; border-radius:8px; cursor:pointer; }
-.btn-eliminar:hover { background:darkred; transform:scale(1.1); }
-
-/* ===== Animaciones ===== */
-@keyframes fadeInUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
-@keyframes moverFondo {0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
-@keyframes sidebarAnim {0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
-@keyframes moverPuntos {from{background-position:0 0}to{background-position:40px 40px}}
-@keyframes brillo {from{transform:translateY(-100%)}to{transform:translateY(100%)}}
-</style>
+ 
+  
+  </style>
 </head>
+
 <body>
-
-
-
-<!-- ===== Logo superior ===== -->
-<div class="logo-superior">
-  <img src="images/LogoMediterranean1992.png" alt="Logo Mediterranean">
+  <!-- Sidebar -->
+<div class="sidebar">
+  <a href="#" data-section="Menu" class="fas fa-building">Menu Principal</a>
+  <a href="#" data-section="mediterranean.php" class="active">Productos</a>
+  <a href="#" data-section="sucursales.html">Sucursales</a>
+  <a href="#" data-section="usuarios">Usuarios</a>
+  <a href="#" data-section="reportes">Reportes</a>
+  <a href="#" data-section="utilidades">Utilidades</a>
 </div>
 
+  <!-- Logo -->
+  <div class="logo-superior">
+    <img src="images/LogoMediterranean1992.png" alt="Logo Mediterranean">
+  </div>
+<div id="background"></div>
+<canvas id="particles"></canvas>
+  <!-- Contenido principal -->
+  <div class="main-content">
+    <h1>Gestión de Usuarios</h1>
 
+    <!-- Tarjetas estadísticas -->
+    <div style="display:flex; gap:20px; flex-wrap:wrap; margin-bottom:25px;">
+      <div style="flex:1; min-width:200px; background:rgba(255,255,255,0.1); padding:20px; border-radius:15px; text-align:center;">
+        <h2 id="totalUsuarios" style="color:#00f2fe;">0</h2><p>Total Usuarios</p>
+      </div>
+      <div style="flex:1; min-width:200px; background:rgba(0,255,0,0.1); padding:20px; border-radius:15px; text-align:center;">
+        <h2 id="usuariosActivos" style="color:#00ff88;">0</h2><p>Usuarios Activos</p>
+      </div>
+      <div style="flex:1; min-width:200px; background:rgba(255,0,0,0.1); padding:20px; border-radius:15px; text-align:center;">
+        <h2 id="usuariosInactivos" style="color:#ff4c4c;">0</h2><p>Usuarios Inactivos</p>
+      </div>
+    </div>
 
-<!-- ===== Contenido principal ===== -->
-<div class="main-content">
-  <h1>Gestión de Usuarios</h1>
-  <div class="container">
-    <form id="userForm">
-      <input type="text" id="nombre" placeholder="Nombre de usuario" required>
-      <input type="email" id="correo" placeholder="Correo electrónico" required>
-      <input type="password" id="password" placeholder="Contraseña" required>
-      <button type="submit">Agregar Usuario</button>
-    </form>
+    <!-- Gráficas -->
+    <div style="display:flex; gap:20px; flex-wrap:wrap; margin-bottom:30px;">
+      <div style="flex:1; min-width:300px; background:rgba(255,255,255,0.08); padding:20px; border-radius:15px;">
+        <h3>Usuarios Activos vs Inactivos</h3>
+        <canvas id="usuariosChart" style="max-height:300px;"></canvas>
+      </div>
+      <div style="flex:1; min-width:300px; background:rgba(255,255,255,0.08); padding:20px; border-radius:15px;">
+        <h3>Distribución de Usuarios</h3>
+        <canvas id="usuariosPieChart" style="max-height:300px;"></canvas>
+      </div>
+    </div>
 
-    <input type="text" id="searchUser" placeholder="Buscar usuario por nombre">
+    <!-- Formulario y tabla -->
+    <div class="container">
+      <form id="userForm">
+        <input type="text" id="nombre" placeholder="Nombre" required>
+        <input type="email" id="correo" placeholder="Correo Electrónico" required>
+        <input type="password" id="password" placeholder="Contraseña" required>
+        <select id="estado" required>
+          <option value="activo">Activo</option>
+          <option value="inactivo">Inactivo</option>
+        </select>
+        <input type="file" id="foto" accept="image/*" required>
+        <input type="file" id="cv" accept="application/pdf" required>
+        <button type="submit">Agregar Usuario</button>
+      </form>
 
-    <div class="table-container">
+      <input type="text" id="searchUser" placeholder="Buscar usuario..." style="width:100%;padding:12px;border:none;border-radius:10px;margin:10px 0;background:rgba(255,255,255,0.8);color:black;">
+
       <table>
         <thead>
           <tr>
-            <th>Nombre</th>
-            <th>Correo</th>
-            <th>Acciones</th>
+            <th>Foto</th><th>Nombre</th><th>Correo</th><th>Estado</th><th>CV</th><th>Acción</th>
           </tr>
         </thead>
         <tbody id="tabla-usuarios"></tbody>
       </table>
     </div>
   </div>
-</div>
 
-<script>
-
-/* ===== Gestión de usuarios con localStorage ===== */
-let usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
-
-const tbody = document.getElementById("tabla-usuarios");
-const userForm = document.getElementById("userForm");
-const searchUser = document.getElementById("searchUser");
-
-function renderUsuarios(lista = usuarios){
-  tbody.innerHTML = "";
-  lista.forEach((u, index) => {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${u.nombre}</td>
-      <td>${u.correo}</td>
-      <td><button class="btn-eliminar" data-index="${index}">Eliminar</button></td>
-    `;
-    tbody.appendChild(tr);
-  });
-
-  document.querySelectorAll(".btn-eliminar").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const idx = btn.dataset.index;
-      usuarios.splice(idx,1);
-      localStorage.setItem("usuarios", JSON.stringify(usuarios));
-      renderUsuarios();
+  
+  <script>
+    // Convertir archivo a base64
+    const fileToBase64 = file => new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
     });
+
+    let usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
+
+    const totalUsuarios = document.getElementById("totalUsuarios");
+    const usuariosActivos = document.getElementById("usuariosActivos");
+    const usuariosInactivos = document.getElementById("usuariosInactivos");
+    const tablaUsuarios = document.getElementById("tabla-usuarios");
+
+    const ctxBar = document.getElementById("usuariosChart").getContext("2d");
+    const usuariosChart = new Chart(ctxBar, {
+      type: "bar",
+      data: { labels: ["Activos", "Inactivos"], datasets: [{ label: "Usuarios", data: [0,0], backgroundColor: ["#00ff88", "#ff4c4c"] }] },
+      options: { plugins:{legend:{labels:{color:"#fff"}}}, scales:{x:{ticks:{color:"#fff"}}, y:{ticks:{color:"#fff"}}} }
+    });
+
+    const ctxPie = document.getElementById("usuariosPieChart").getContext("2d");
+    const usuariosPieChart = new Chart(ctxPie, {
+      type: "doughnut",
+      data: { labels:["Activos","Inactivos"], datasets:[{ data:[0,0], backgroundColor:["#00ff88","#ff4c4c"] }] },
+      options:{ plugins:{legend:{position:"bottom",labels:{color:"#fff"}}}}
+    });
+
+    function renderizarTabla(filtro=""){
+      tablaUsuarios.innerHTML = "";
+      usuarios.filter(u=>u.nombre.toLowerCase().includes(filtro.toLowerCase()))
+        .forEach((u,i)=>{
+          const tr=document.createElement("tr");
+          tr.innerHTML=`
+            <td><img src="${u.foto}" width="40" height="40" style="border-radius:50%;"></td>
+            <td>${u.nombre}</td>
+            <td>${u.correo}</td>
+            <td style="color:${u.estado==='activo'?'#00ff88':'#ff4c4c'}">${u.estado}</td>
+            <td><a href="${u.cv}" target="_blank" style="color:#00f2fe;">Ver PDF</a></td>
+            <td><button class="btn-eliminar" onclick="eliminarUsuario(${i})">Eliminar</button></td>`;
+          tablaUsuarios.appendChild(tr);
+      });
+    }
+
+    function actualizarEstadisticas(){
+      const activos=usuarios.filter(u=>u.estado==="activo").length;
+      const inactivos=usuarios.filter(u=>u.estado==="inactivo").length;
+      totalUsuarios.textContent=usuarios.length;
+      usuariosActivos.textContent=activos;
+      usuariosInactivos.textContent=inactivos;
+      usuariosChart.data.datasets[0].data=[activos,inactivos];
+      usuariosPieChart.data.datasets[0].data=[activos,inactivos];
+      usuariosChart.update(); usuariosPieChart.update();
+    }
+
+    function eliminarUsuario(i){
+      usuarios.splice(i,1);
+      localStorage.setItem("usuarios",JSON.stringify(usuarios));
+      renderizarTabla();
+      actualizarEstadisticas();
+    }
+
+    document.getElementById("userForm").addEventListener("submit", async e=>{
+      e.preventDefault();
+      const nombre=document.getElementById("nombre").value;
+      const correo=document.getElementById("correo").value;
+      const password=document.getElementById("password").value;
+      const estado=document.getElementById("estado").value;
+      const foto=document.getElementById("foto").files[0];
+      const cv=document.getElementById("cv").files[0];
+      if(!nombre||!correo||!password||!foto||!cv)return alert("Completa todos los campos.");
+      const fotoBase64=await fileToBase64(foto);
+      const cvBase64=await fileToBase64(cv);
+      usuarios.push({nombre,correo,password,estado,foto:fotoBase64,cv:cvBase64});
+      localStorage.setItem("usuarios",JSON.stringify(usuarios));
+      e.target.reset();
+      renderizarTabla();
+      actualizarEstadisticas();
+    });
+
+    document.getElementById("searchUser").addEventListener("input",e=>renderizarTabla(e.target.value));
+
+    renderizarTabla();
+    actualizarEstadisticas();
+
+  // ===== Fondo de partículas =====
+window.onload = function() {
+  const canvas = document.getElementById("particles");
+  const ctx = canvas.getContext("2d");
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  let particles = [];
+
+  class Particle {
+    constructor() {
+      this.x = Math.random() * canvas.width;
+      this.y = Math.random() * canvas.height;
+      this.radius = Math.random() * 2 + 1;
+      this.speedX = (Math.random() - 0.5) * 1;
+      this.speedY = (Math.random() - 0.5) * 1;
+    }
+    draw() {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(0,242,254,0.7)";
+      ctx.fill();
+    }
+    update() {
+      this.x += this.speedX;
+      this.y += this.speedY;
+      if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+      if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+      this.draw();
+    }
+  }
+
+  function initParticles() {
+    particles = [];
+    for (let i = 0; i < 120; i++) particles.push(new Particle());
+  }
+
+  function connectParticles() {
+    for (let a = 0; a < particles.length; a++) {
+      for (let b = a; b < particles.length; b++) {
+        let dx = particles[a].x - particles[b].x;
+        let dy = particles[a].y - particles[b].y;
+        let dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 120) {
+          ctx.beginPath();
+          ctx.strokeStyle = `rgba(0,242,254,${1 - dist / 120})`;
+          ctx.lineWidth = 1;
+          ctx.moveTo(particles[a].x, particles[a].y);
+          ctx.lineTo(particles[b].x, particles[b].y);
+          ctx.stroke();
+        }
+      }
+    }
+  }
+
+  function animateParticles() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => p.update());
+    connectParticles();
+    requestAnimationFrame(animateParticles);
+  }
+
+  initParticles();
+  animateParticles();
+
+  window.addEventListener("resize", () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    initParticles();
   });
-}
-
-userForm.addEventListener("submit", e => {
-  e.preventDefault();
-  const nombre = document.getElementById("nombre").value;
-  const correo = document.getElementById("correo").value;
-  const password = document.getElementById("password").value;
-  usuarios.push({nombre, correo, password});
-  localStorage.setItem("usuarios", JSON.stringify(usuarios));
-  renderUsuarios();
-  userForm.reset();
-});
-
-searchUser.addEventListener("input", e => {
-  const term = e.target.value.toLowerCase();
-  const filtrados = usuarios.filter(u => u.nombre.toLowerCase().includes(term));
-  renderUsuarios(filtrados);
-});
-
-renderUsuarios();
-</script>
+};
+  </script>
 </body>
 </html>

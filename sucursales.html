@@ -25,6 +25,24 @@ body {
 :root { --text:#fff; --card-bg:rgba(255,255,255,0.1); }
 [data-theme="light"] { --text:#222; --card-bg:#fff; }
 
+/* ===== Logo superior ===== */
+.logo-superior {
+  position: relative;
+  top: 5px;
+  left: 300px; 
+  z-index: 2000;
+}
+.logo-superior img {
+  width: 220px;
+  height: auto;
+  filter: drop-shadow(0 0 8px rgba(0,242,254,0.8));
+  transition: transform 0.3s ease;
+}
+.logo-superior img:hover {
+  transform: scale(1.05);
+}
+
+
 /* ===== Fondo ===== */
 #background {
   position: fixed;
@@ -111,7 +129,7 @@ body {
   display: grid;
   grid-template-columns: 1fr 2fr;
   gap: 20px;
-  padding: 20px;
+  padding: 10px;
 }
 .card { background: var(--card-bg); padding: 15px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
 .map-container { height: 250px; border-radius: 15px; }
@@ -124,7 +142,10 @@ body {
 <body>
   <!-- Botón de tema -->
 <button class="theme-toggle" onclick="toggleTheme()">🌙 Modo Claro</button>
-
+<!-- ===== Logo superior ===== -->
+<div class="logo-superior">
+  <img src="images/LogoMediterranean1992.png" alt="Logo Mediterranean">
+</div>
 <div class="container">
   <!-- Panel izquierdo -->
   <div>
@@ -145,6 +166,7 @@ body {
       <p>Sucursal Keneddy: <span class="stars">⭐⭐⭐☆☆</span></p>
     </div>
   </div>
+  
 
   <!-- Panel derecho -->
   <div>

@@ -19,6 +19,86 @@ body {
   color:white;
   overflow-x:hidden;
 }
+/* ===== Fondo ===== */
+#background {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: linear-gradient(135deg,#004e92,#0a1f44);
+  z-index: -2;
+}
+#particles {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  z-index: -1;
+  pointer-events: none;
+}
+
+
+/* ===== Sidebar ===== */
+.sidebar {
+  position: fixed;
+  top: 0; left: 0;
+  width: 240px; height: 100%;
+  background: linear-gradient(135deg,#050d1c,#0a1f3d,#0e2a47,#122f68);
+  background-size: 400% 400%;
+  animation: sidebarAnim 10s ease infinite;
+  padding-top: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  z-index: 1000;
+  box-shadow: 2px 0 25px rgba(0,0,0,0.8);
+  overflow: hidden;
+}
+.sidebar::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: radial-gradient(circle,rgba(0,242,254,0.4) 1px,transparent 1px);
+  background-size: 40px 40px;
+  animation: moverPuntos 6s linear infinite;
+  opacity: 0.6;
+}
+.sidebar::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: linear-gradient(transparent,rgba(0,242,254,0.1),transparent);
+  animation: brillo 4s linear infinite;
+}
+
+/* Enlaces sidebar */
+.sidebar a {
+  color: #00f2fe;
+  text-decoration: none;
+  padding: 12px 20px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  margin: 0 15px;
+  text-shadow: 0 0 8px #00f2fe, 0 0 15px #4facfe;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+  z-index: 2;
+}
+.sidebar a:hover,
+.sidebar a.active {
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  transform: translateX(6px) scale(1.05);
+  box-shadow: 0 0 15px #00f2fe, inset 0 0 10px #00f2fe;
+}
+
+/* Animaciones sidebar */
+@keyframes sidebarAnim { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+@keyframes moverPuntos { from{background-position:0 0} to{background-position:40px 40px} }
+@keyframes brillo { from{transform:translateY(-100%)} to{transform:translateY(100%)} }
 
 /* ===== Fondo Canvas ===== */
 #bgCanvas {
@@ -30,7 +110,7 @@ body {
 
 /* ===== Logo superior ===== */
 .logo-superior {
-  position: fixed;
+  position: relative;
   top: -35px;
   left: 300px; 
   z-index: 2000;
@@ -49,7 +129,7 @@ body {
 
 /* ===== Contenido principal ===== */
 .main-content {
-  margin-left: 60px;
+  margin-left: 120px;
   flex: 1;
   padding: 100px 20px 20px;
 }
@@ -163,8 +243,8 @@ h1 { margin:15px 0 25px; text-shadow:0 0 15px rgba(0,0,0,0.6); }
 </head>
 <body>
 
-<!-- ===== Fondo Canvas ===== -->
-<canvas id="bgCanvas"></canvas>
+<div id="background"></div>
+<canvas id="particles"></canvas>
 
 <!-- ===== Logo superior ===== -->
 <div class="logo-superior">
@@ -248,6 +328,15 @@ h1 { margin:15px 0 25px; text-shadow:0 0 15px rgba(0,0,0,0.6); }
     </div>
   </div>
 </div>
+<!-- Sidebar -->
+<div class="sidebar">
+  <a href="#" data-section="Menu" class="fas fa-building">Menu Principal</a>
+  <a href="#" data-section="mediterranean.php" class="active">Productos</a>
+  <a href="#" data-section="sucursales.html">Sucursales</a>
+  <a href="#" data-section="usuarios">Usuarios</a>
+  <a href="#" data-section="reportes">Reportes</a>
+  <a href="#" data-section="utilidades">Utilidades</a>
+</div>
 
 <script>
 
@@ -264,6 +353,79 @@ function generarCodigo(){
     JsBarcode("#barcode", valor, {format:"CODE128", lineColor:"#00f2fe", width:2, height:60, displayValue:true});
   }
 }
+</script>
+<script>
+
+// ===== Fondo de partículas =====
+window.onload = function() {
+  const canvas = document.getElementById("particles");
+  const ctx = canvas.getContext("2d");
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  let particles = [];
+
+  class Particle {
+    constructor() {
+      this.x = Math.random() * canvas.width;
+      this.y = Math.random() * canvas.height;
+      this.radius = Math.random() * 2 + 1;
+      this.speedX = (Math.random() - 0.5) * 1;
+      this.speedY = (Math.random() - 0.5) * 1;
+    }
+    draw() {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(0,242,254,0.7)";
+      ctx.fill();
+    }
+    update() {
+      this.x += this.speedX;
+      this.y += this.speedY;
+      if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+      if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+      this.draw();
+    }
+  }
+
+  function initParticles() {
+    particles = [];
+    for (let i = 0; i < 120; i++) particles.push(new Particle());
+  }
+
+  function connectParticles() {
+    for (let a = 0; a < particles.length; a++) {
+      for (let b = a; b < particles.length; b++) {
+        let dx = particles[a].x - particles[b].x;
+        let dy = particles[a].y - particles[b].y;
+        let dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 120) {
+          ctx.beginPath();
+          ctx.strokeStyle = `rgba(0,242,254,${1 - dist / 120})`;
+          ctx.lineWidth = 1;
+          ctx.moveTo(particles[a].x, particles[a].y);
+          ctx.lineTo(particles[b].x, particles[b].y);
+          ctx.stroke();
+        }
+      }
+    }
+  }
+
+  function animateParticles() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => p.update());
+    connectParticles();
+    requestAnimationFrame(animateParticles);
+  }
+
+  initParticles();
+  animateParticles();
+
+  window.addEventListener("resize", () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    initParticles();
+  });
+};
 </script>
 
 </body>
