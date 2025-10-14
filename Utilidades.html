@@ -100,6 +100,8 @@ body {
 @keyframes moverPuntos { from{background-position:0 0} to{background-position:40px 40px} }
 @keyframes brillo { from{transform:translateY(-100%)} to{transform:translateY(100%)} }
 
+
+
 /* ===== Fondo Canvas ===== */
 #bgCanvas {
   position: fixed;
@@ -233,6 +235,68 @@ h1 { margin:15px 0 25px; text-shadow:0 0 15px rgba(0,0,0,0.6); }
   background: #004e92;
 }
 
+.copyright-fixed {
+  position: fixed;
+  bottom: 0;
+  left: 240px; /* deja espacio del ancho del sidebar */
+  width: calc(100% - 240px); /* ocupa todo menos el sidebar */
+  text-align: center;
+  background: linear-gradient(90deg, #004e92, #00c6ff);
+  color: #ffffff;
+  font-size: 13px;
+  padding: 10px 0;
+  font-family: "Poppins", Arial, sans-serif;
+  box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.25);
+  z-index: 9999; /* por encima del sidebar */
+  border-top-left-radius: 12px;
+}
+
+.copyright-fixed a {
+  color: #caf0f8;
+  text-decoration: none;
+  font-weight: 500;
+  margin-left: 5px;
+  transition: color 0.3s, text-decoration 0.3s;
+}
+
+.copyright-fixed a:hover {
+  color: #90e0ef;
+  text-decoration: underline;
+}
+.policy-modal {
+  display: none;
+  position: fixed;
+  z-index: 99999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+  justify-content: center;
+  align-items: center;
+}
+.policy-content {
+  background: #ffffff;
+  color: #000;
+  padding: 25px;
+  border-radius: 15px;
+  width: 80%;
+  max-width: 600px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.3);
+  animation: fadeIn 0.3s ease;
+}
+.close-policy {
+  float: right;
+  font-size: 24px;
+  cursor: pointer;
+  color: #004e92;
+  font-weight: bold;
+}
+.close-policy:hover { color: #00c6ff; }
+
+
+
 /* ===== Animaciones ===== */
 @keyframes fadeInUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
 @keyframes moverFondo {0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
@@ -338,9 +402,22 @@ h1 { margin:15px 0 25px; text-shadow:0 0 15px rgba(0,0,0,0.6); }
   <a href="#" data-section="utilidades">Utilidades</a>
 </div>
 
+<footer class="copyright-fixed">
+  © 2025 Mediterranean Technologies  
+  | <a href="#" id="openPolicy">Política de Privacidad y Seguridad</a>
+</footer>
+
+<!-- Modal -->
+<div id="policyModal" class="policy-modal">
+  <div class="policy-content">
+    <span class="close-policy">&times;</span>
+    <h2>Política de Privacidad y Seguridad</h2>
+    <p>En Mediterranean Technologies, valoramos tu privacidad. Todos los datos son tratados conforme al RGPD y nuestras medidas de seguridad garantizan la integridad de la información...</p>
+    <p><a href="https://www.mediterraneantech.com/politica-completa" target="_blank">Leer política completa</a></p>
+  </div>
+</div>
+
 <script>
-
-
 /* ===== Calculadora ===== */
 function press(num){document.getElementById("pantalla").value+=num;}
 function limpiar(){document.getElementById("pantalla").value="";}
@@ -425,6 +502,18 @@ window.onload = function() {
     canvas.height = window.innerHeight;
     initParticles();
   });
+};
+</script>
+<script>
+document.getElementById("openPolicy").onclick = () => {
+  document.getElementById("policyModal").style.display = "flex";
+};
+document.querySelector(".close-policy").onclick = () => {
+  document.getElementById("policyModal").style.display = "none";
+};
+window.onclick = (e) => {
+  if (e.target == document.getElementById("policyModal"))
+    document.getElementById("policyModal").style.display = "none";
 };
 </script>
 
