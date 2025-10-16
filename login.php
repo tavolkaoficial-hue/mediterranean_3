@@ -25,10 +25,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $row = $resultado->fetch_assoc();
 
         if (password_verify($password, $row["password"])) {
-            $_SESSION["usuarios"] = $row["usuarios"];
-            header("Location: mediterranean.php");
-            exit();
-        } else {
+    $_SESSION["usuarios"] = $row["usuarios"];
+    $_SESSION["usuario_id"] = $row["id"]; // ✅ agrega esta línea
+    header("Location: mediterranean.php");
+    exit();
+}
+
+
+         else {
             echo "<script>alert('⚠ Contraseña incorrecta'); window.history.back();</script>";
         }
     } else {

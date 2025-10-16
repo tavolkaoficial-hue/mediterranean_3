@@ -351,7 +351,7 @@ if (!isset($_SESSION["usuarios"])) {
     <span class="close-policy">&times;</span>
     <h2>Política de Privacidad y Seguridad</h2>
     <p>En Mediterranean Technologies, valoramos tu privacidad. Todos los datos son tratados conforme al RGPD y nuestras medidas de seguridad garantizan la integridad de la información...</p>
-    <p><a href="https://www.mediterraneantech.com/politica-completa" target="_blank">Leer política completa</a></p>
+    <p><a href="politica-completa.html">Leer política completa</a></p>
   </div>
 </div>
 
@@ -368,9 +368,9 @@ if (!isset($_SESSION["usuarios"])) {
       <div style="display:flex; align-items:center; gap:30px; flex-wrap:wrap; justify-content:center;">
         <img id="fotoPerfil" src="images/default-avatar.png" alt="Foto de perfil" style="width:150px; height:150px; border-radius:50%; object-fit:cover; border:3px solid #00f2fe; box-shadow:0 0 15px rgba(0,242,254,0.5);">
         <div>
-          <h2 id="nombrePerfil">Cargando...</h2>
-          <p id="correoPerfil">...</p>
-          <p id="rolPerfil"><b>Rol:</b> ...</p>
+          <h2 id="nombrePerfil"></h2>
+          <p id="correoPerfil"></p>
+          <p id="rolPerfil"><b></b></p>
           <p id="estadoPerfil" class="user-status activo">Activo</p>
           <a id="cvLink" href="#" target="_blank" class="cv-link" style="color:#00f2fe;">📄 Ver Hoja de Vida</a>
         </div>
@@ -392,6 +392,7 @@ if (!isset($_SESSION["usuarios"])) {
       <form id="formPerfil" enctype="multipart/form-data">
         <input type="text" id="nombreEdit" name="nombre" placeholder="Nombre completo" required>
         <input type="email" id="correoEdit" name="correo" placeholder="Correo electrónico" required>
+        <input type="text" id="telefonoEdit" name="telefono" placeholder="Teléfono">
         <input type="text" id="rolEdit" name="rol" placeholder="Rol profesional" required>
         <textarea id="descripcionEdit" name="descripcion" placeholder="Descripción profesional" style="width:100%; height:100px; border-radius:10px; padding:10px; border:none; margin-bottom:10px;"></textarea>
         <label>Foto de perfil:</label>
@@ -413,12 +414,23 @@ if (!isset($_SESSION["usuarios"])) {
 </div>
 
 <script>
-  // Cargar perfil al abrir sección
+  // ============================
+  // 📦 Cargar perfil del usuario
+  // ============================
   async function cargarPerfil() {
-    const res = await fetch('perfil.php');
-    const data = await res.json();
+    console.log("✅ Ejecutando cargarPerfil()...");
 
-    if (data.success) {
+    try {
+      const res = await fetch("obtener_usuarios.php");
+      const data = await res.json();
+
+      console.log("📦 Datos recibidos:", data);
+
+      if (!data || data.error) {
+        console.error(data.error || "Error al obtener datos del usuario");
+        return;
+      }
+
       document.getElementById("nombrePerfil").textContent = data.nombre;
       document.getElementById("correoPerfil").textContent = data.correo;
       document.getElementById("rolPerfil").innerHTML = "<b>Rol:</b> " + data.rol;
@@ -427,9 +439,14 @@ if (!isset($_SESSION["usuarios"])) {
       document.getElementById("estadoPerfil").className = "user-status " + data.estado.toLowerCase();
       document.getElementById("fotoPerfil").src = data.foto || "images/default-avatar.png";
       if (data.cv) document.getElementById("cvLink").href = data.cv;
+    } catch (error) {
+      console.error("❌ Error al cargar perfil:", error);
     }
   }
 
+  // ============================
+  // ✏️ Edición de perfil
+  // ============================
   function editarPerfil() {
     document.getElementById("perfilView").style.display = "none";
     document.getElementById("perfilEdit").style.display = "block";
@@ -447,6 +464,9 @@ if (!isset($_SESSION["usuarios"])) {
     document.getElementById("perfilView").style.display = "block";
   }
 
+  // ============================
+  // 💾 Guardar cambios del perfil
+  // ============================
   document.getElementById("formPerfil").addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -459,11 +479,86 @@ if (!isset($_SESSION["usuarios"])) {
       cancelarEdicion();
       cargarPerfil();
     } else {
-      alert("Error al actualizar el perfil ❌");
+      alert("❌ Error al actualizar el perfil");
     }
   });
 
-  document.addEventListener("DOMContentLoaded", cargarPerfil);
+  // ========================================================
+  // 🌊 Ejecutar al cargar la página (Perfil + Fondo partículas)
+  // ========================================================
+  window.addEventListener("load", () => {
+    // Cargar perfil del usuario
+    cargarPerfil();
+
+    // ===== Fondo de partículas =====
+    const canvas = document.getElementById("particles");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    let particles = [];
+
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.radius = Math.random() * 2 + 1;
+        this.speedX = (Math.random() - 0.5);
+        this.speedY = (Math.random() - 0.5);
+      }
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(0,242,254,0.7)";
+        ctx.fill();
+      }
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+        this.draw();
+      }
+    }
+
+    function initParticles() {
+      particles = [];
+      for (let i = 0; i < 120; i++) particles.push(new Particle());
+    }
+
+    function connectParticles() {
+      for (let a = 0; a < particles.length; a++) {
+        for (let b = a; b < particles.length; b++) {
+          let dx = particles[a].x - particles[b].x;
+          let dy = particles[a].y - particles[b].y;
+          let dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 120) {
+            ctx.beginPath();
+            ctx.strokeStyle = `rgba(0,242,254,${1 - dist / 120})`;
+            ctx.lineWidth = 1;
+            ctx.moveTo(particles[a].x, particles[a].y);
+            ctx.lineTo(particles[b].x, particles[b].y);
+            ctx.stroke();
+          }
+        }
+      }
+    }
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => p.update());
+      connectParticles();
+      requestAnimationFrame(animateParticles);
+    }
+
+    initParticles();
+    animateParticles();
+
+    window.addEventListener("resize", () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      initParticles();
+    });
+  });
 </script>
 
 

@@ -1,66 +1,77 @@
 <?php
 session_start();
-header('Content-Type: application/json');
 include 'conexion.php';
 
-if (!isset($_SESSION['usuario_id'])) {
-    echo json_encode(["success" => false, "message" => "No hay sesión activa"]);
-    exit();
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+$usuario_id = $_SESSION['usuario_id'] ?? null;
+if (!$usuario_id) {
+    echo json_encode(["error" => "Usuario no autenticado"]);
+    exit;
 }
 
-$id = $_SESSION['usuario_id'];
 $nombre = $_POST['nombre'] ?? '';
+$telefono = $_POST['telefono'] ?? '';
 $correo = $_POST['correo'] ?? '';
 $rol = $_POST['rol'] ?? '';
 $descripcion = $_POST['descripcion'] ?? '';
 $estado = $_POST['estado'] ?? 'activo';
 
-$foto_path = null;
-$cv_path = null;
+$fotoRuta = null;
+$cvRuta = null;
+
+$carpetaFotos = "uploads/fotos/";
+$carpetaCV = "uploads/cv/";
+
+if (!file_exists($carpetaFotos)) mkdir($carpetaFotos, 0777, true);
+if (!file_exists($carpetaCV)) mkdir($carpetaCV, 0777, true);
 
 // Subir foto
-if (isset($_FILES['foto']) && $_FILES['foto']['error'] === 0) {
-    $foto_dir = "uploads/fotos/";
-    if (!is_dir($foto_dir)) mkdir($foto_dir, 0777, true);
-    $foto_path = $foto_dir . uniqid() . "_" . basename($_FILES["foto"]["name"]);
-    move_uploaded_file($_FILES["foto"]["tmp_name"], $foto_path);
+if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
+    $nombreFoto = time() . "_" . basename($_FILES['foto']['name']);
+    $fotoRuta = $carpetaFotos . $nombreFoto;
+    move_uploaded_file($_FILES['foto']['tmp_name'], $fotoRuta);
 }
 
 // Subir CV
-if (isset($_FILES['cv']) && $_FILES['cv']['error'] === 0) {
-    $cv_dir = "uploads/cv/";
-    if (!is_dir($cv_dir)) mkdir($cv_dir, 0777, true);
-    $cv_path = $cv_dir . uniqid() . "_" . basename($_FILES["cv"]["name"]);
-    move_uploaded_file($_FILES["cv"]["tmp_name"], $cv_path);
+if (isset($_FILES['cv']) && $_FILES['cv']['error'] === UPLOAD_ERR_OK) {
+    $nombreCV = time() . "_" . basename($_FILES['cv']['name']);
+    $cvRuta = $carpetaCV . $nombreCV;
+    move_uploaded_file($_FILES['cv']['tmp_name'], $cvRuta);
 }
 
-// Construir SQL
-$sql = "UPDATE usuarios SET nombre=?, correo=?, rol=?, descripcion=?, estado=?";
-$params = [$nombre, $correo, $rol, $descripcion, $estado];
-$types = "sssss";
+// Construcción dinámica de la consulta
+$sql = "UPDATE usuarios 
+        SET usuarios=?, telefono=?, correo=?, rol=?, descripcion=?, estado=?";
+$parametros = [$nombre, $telefono, $correo, $rol, $descripcion, $estado];
+$tipos = "ssssss";
 
-if ($foto_path) {
+if ($fotoRuta) {
     $sql .= ", foto=?";
-    $params[] = $foto_path;
-    $types .= "s";
+    $parametros[] = $fotoRuta;
+    $tipos .= "s";
 }
-if ($cv_path) {
+
+if ($cvRuta) {
     $sql .= ", cv=?";
-    $params[] = $cv_path;
-    $types .= "s";
+    $parametros[] = $cvRuta;
+    $tipos .= "s";
 }
 
 $sql .= " WHERE id=?";
-$params[] = $id;
-$types .= "i";
+$parametros[] = $usuario_id;
+$tipos .= "i";
 
 $stmt = $conn->prepare($sql);
-$stmt->bind_param($types, ...$params);
-$success = $stmt->execute();
+$stmt->bind_param($tipos, ...$parametros);
+$ok = $stmt->execute();
 
-if ($success) {
-    echo json_encode(["success" => true]);
-} else {
-    echo json_encode(["success" => false, "message" => "Error al actualizar"]);
+if (!$ok) {
+    echo json_encode(["error" => $stmt->error]);
+    exit;
 }
+
+echo json_encode(["success" => true]);
 ?>
