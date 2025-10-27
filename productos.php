@@ -2,7 +2,6 @@
 include("conexion.php");
 header("Content-Type: application/json");
 
-// Asegurarse de que la carpeta uploads exista
 $uploadDir = "uploads/";
 if (!file_exists($uploadDir)) {
     mkdir($uploadDir, 0777, true);
@@ -11,7 +10,6 @@ if (!file_exists($uploadDir)) {
 $accion = $_GET['accion'] ?? '';
 
 switch ($accion) {
-
     case "listar":
         $res = $conn->query("SELECT * FROM productos ORDER BY id DESC");
         $data = [];
@@ -20,12 +18,19 @@ switch ($accion) {
         break;
 
     case "agregar":
-        $nombre = $_POST['nombre'] ?? '';
-        $precio = $_POST['precio'] ?? 0;
-        $stock  = $_POST['stock'] ?? 0;
-        $desc   = $_POST['descripcion'] ?? '';
+        $nombre         = $_POST['nombre'] ?? '';
+        $categoria      = $_POST['categoria'] ?? '';
+        $proveedor      = $_POST['proveedor'] ?? '';
+        $precio_compra  = floatval($_POST['precio_compra'] ?? 0);
+        $precio_venta   = floatval($_POST['precio_venta'] ?? 0);
+        $ubicacion      = $_POST['ubicacion'] ?? '';
+        $stock          = intval($_POST['stock'] ?? 0);
+        $desc           = $_POST['descripcion'] ?? '';
+        $estado         = $_POST['estado'] ?? 'Activo';
+        $id_sucursal = 1;
 
-        // Manejo seguro de imagen
+
+        // Imagen
         if (isset($_FILES['img']) && $_FILES['img']['error'] === 0) {
             $imgName = time() . "_" . basename($_FILES['img']['name']);
             $ruta = $uploadDir . $imgName;
@@ -37,8 +42,14 @@ switch ($accion) {
             $ruta = "";
         }
 
-        $stmt = $conn->prepare("INSERT INTO productos (img, nombre, precio, stock, descripcion) VALUES (?, ?, ?, ?, ?)");
-        $stmt->bind_param("ssdis", $ruta, $nombre, $precio, $stock, $desc);
+        $stmt = $conn->prepare("INSERT INTO productos 
+(nombre, categoria, proveedor, precio_compra, precio_venta, stock, ubicacion, descripcion, estado, img, id_sucursal)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+");
+
+       $stmt->bind_param("sssddissssi", $nombre, $categoria, $proveedor, $precio_compra, $precio_venta, $stock, $ubicacion, $desc, $estado, $ruta, $id_sucursal);
+
+
         if ($stmt->execute()) {
             echo json_encode(["success" => true]);
         } else {

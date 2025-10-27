@@ -5,6 +5,46 @@
 <title>Mediterranean productos</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
+
+.btn-movimientos {
+  background: linear-gradient(90deg, #00c6ff, #0072ff);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  text-shadow: 0 0 8px rgba(255,255,255,0.6);
+  box-shadow: 0 0 10px rgba(0,198,255,0.4);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-movimientos::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.4), transparent);
+  transition: all 0.6s;
+}
+
+.btn-movimientos:hover::before {
+  left: 100%;
+}
+
+.btn-movimientos:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 18px #00eaff, 0 0 30px #00eaff;
+}
+
+
+
+
+
 /* ===== Reset ===== */
 *{margin:0;padding:0;box-sizing:border-box;}
 body{
@@ -126,32 +166,80 @@ body{
 }
 .close-policy:hover { color: #00c6ff; }
 
+.btn-actualizar {
+  background: #00c6ff;
+  color: white;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-right: 6px;
+}
+.btn-actualizar:hover {
+  background: #0099cc;
+  transform: scale(1.1);
+  box-shadow: 0 0 12px #00c6ff;
+}
+
+
 
 
 /* ===== Main ===== */
 .main-content{
-  margin-left:240px;
+  margin-left:90px;
   flex:1;
   display:flex;
   flex-direction:column;
   align-items:center;
   padding:10px;
 }
+tr td, tr th {
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+tr:hover {
+  background: rgba(0, 242, 254, 0.15);
+  transition: 0.3s ease;
+}
+
+.alerta-stock {
+  animation: parpadeo 1.2s infinite;
+}
+
+@keyframes parpadeo {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
 #bgCanvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;}
 .logo{margin-top:20px;animation:bounceIn 1.5s ease forwards;}
 .logo img{width:150px;height:auto;box-shadow:0 0 25px rgba(0,242,254,0.7);transition:transform 0.3s ease,box-shadow 0.3s ease;}
 .logo img:hover{transform:scale(1.05);box-shadow:0 0 40px rgba(0,242,254,1);}
 h1{margin:15px 0 15px;text-shadow:0 0 15px rgba(0,0,0,0.6);animation:slideDown 1s ease-out;}
-.container{
-  width:90%;
-  max-width:1100px;
-  background:rgba(255,255,255,0.05);
-  backdrop-filter:blur(12px);
-  padding:25px;
-  border-radius:20px;
-  box-shadow:0 8px 25px rgba(0,0,0,0.4);
-  animation:fadeInUp 1s ease;
+
+.main-content {
+  margin-left: 240px; /* deja el ancho del sidebar */
+  flex: 1;
+  padding: 20px;
+   overflow-y: auto; 
 }
+
+.container {
+  width: 100%;           /* ocupa todo el ancho sin desbordar */
+  max-width: 1250px;     /* mantiene tu límite visual */
+  margin: 0 auto;        /* centra el contenido */
+}
+
+.table-container {
+  width: 100%;
+  border-radius: 15px;
+  margin-top: 10px;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
+  overflow: visible !important; /* evita scroll interno */
+  max-height: none !important;  /* permite que crezca según el contenido */
+}
+
 form{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:10px;justify-content:space-between;}
 form input,form textarea,form button{
   padding:12px;border:none;border-radius:10px;flex:1 1 calc(25% - 12px);outline:none;transition:all 0.3s ease;
@@ -205,7 +293,7 @@ img:hover{transform:scale(1.1) rotate(3deg);}
     <span class="close-policy">&times;</span>
     <h2>Política de Privacidad y Seguridad</h2>
     <p>En Mediterranean Technologies, valoramos tu privacidad. Todos los datos son tratados conforme al RGPD y nuestras medidas de seguridad garantizan la integridad de la información...</p>
-    <p><a href="https://www.mediterraneantech.com/politica-completa" target="_blank">Leer política completa</a></p>
+    <p><a href="politica-completa.html">Leer política completa</a></p>
   </div>
 </div>
 
@@ -289,49 +377,82 @@ window.addEventListener("resize",()=>{canvas.width=window.innerWidth;canvas.heig
 /* ===== Secciones ===== */
 const contenido=document.getElementById("contenido");
 
-function cargarSeccion(seccion){
-  let html="";
-  switch(seccion){
+function cargarSeccion(seccion) {
+  let html = "";
+
+  switch (seccion) {
+
     case "mediterranean.php":
-      html=`<div class="logo"><img src="images/LogoMediterranean1992.png" alt="logo"></div>
-      <h1>Bienvenido al Sistema</h1>
-      <p style="text-align:center;">Selecciona una opción en el menú para comenzar.</p>
-      <div class="container">
-        <form id="addForm">
-          <input type="file" id="img" name="img" accept="image/*" required>
-          <input type="text" id="nombre" name="nombre" placeholder="Nombre del producto" required>
-          <input type="number" id="precio" name="precio" placeholder="Precio ($)" required>
-          <input type="number" id="stock" name="stock" placeholder="Stock" required>
-          <textarea id="descripcion" name="descripcion" placeholder="Descripción" required></textarea>
-          <button type="submit">Agregar Producto</button>
-        </form>
-        <input type="text" id="searchInput" placeholder="Buscar producto por nombre">
-        <div class="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>Imagen</th>
-                <th>Nombre</th>
-                <th>Precio</th>
-                <th>Stock</th>
-                <th>Descripción</th>
-                <th>Estado</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody id="tabla-body"></tbody>
-          </table>
-        </div>
-      </div>`;
+      html = `
+        <div class="logo"><img src="images/LogoMediterranean1992.png" alt="logo"></div>
+        <h1>Inventario de Productos</h1>
+        <div class="container">
+          <form id="addForm">
+            <input type="text" id="nombre" name="nombre" placeholder="Nombre del producto" required>
+            <input type="text" id="categoria" name="categoria" placeholder="Categoría" required>
+            <input type="text" id="proveedor" name="proveedor" placeholder="Proveedor" required>
+            <input type="number" id="precio_compra" name="precio_compra" placeholder="Precio compra ($)" required>
+            <input type="number" id="precio_venta" name="precio_venta" placeholder="Precio venta ($)" required>
+            <input type="number" id="stock" name="stock" placeholder="Stock actual" required>
+            <input type="text" id="ubicacion" name="ubicacion" placeholder="Ubicación (Ej: A1-03)" required>
+            <input type="file" id="img" name="img" accept="image/*" required>
+            <textarea id="descripcion" name="descripcion" placeholder="Descripción" required></textarea>
+            <select id="estado" name="estado" required>
+              <option value="Activo">Activo</option>
+              <option value="Inactivo">Inactivo</option>
+              <option value="Descontinuado">Descontinuado</option>
+            </select>
+            <button type="submit">Agregar Producto</button>
+          </form>
+
+          <input type="text" id="searchInput" placeholder="Buscar producto por nombre o código">
+          <div id="alertaStock" style="display:none; background:#ff4c4c; color:white; padding:10px; text-align:center; border-radius:10px; margin-bottom:10px; font-weight:bold;">
+            ⚠️ Algunos productos están por debajo del stock mínimo
+          </div>
+
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Imagen</th>
+                  <th>Nombre</th>
+                  <th>Categoría</th>
+                  <th>Proveedor</th>
+                  <th>Precio Compra</th>
+                  <th>Precio Venta</th>
+                  <th>Margen</th>
+                  <th>Stock</th>
+                  <th>Ubicación</th>
+                  <th>Descripción</th>
+                  <th>Estado</th>
+                  <th>Movimiento</th>
+                </tr>
+              </thead>
+              <tbody id="tabla-body"></tbody>
+            </table>
+          </div>
+        </div>`;
       break;
-    case "sucursales": html="<h1>Sucursales</h1><p>Administración de sucursales próximamente aquí.</p>"; break;
-    case "usuarios": html="<h1>Usuarios</h1><p>Gestión de usuarios próximamente aquí.</p>"; break;
-    case "reportes": html="<h1>Reportes</h1><p>Generación de reportes próximamente aquí.</p>"; break;
-    case "utilidades": html="<h1>Utilidades</h1><p>Herramientas y configuraciones próximamente aquí.</p>"; break;
+
+    case "movimientos.html":
+      // 🔹 Aquí cargamos el archivo externo movimiento.html
+      fetch("movimientos.html")
+        .then(res => res.text())
+        .then(data => contenido.innerHTML = data)
+        .catch(err => {
+          contenido.innerHTML = `<p style="color:red;">Error al cargar movimiento.html</p>`;
+          console.error("Error al cargar movimiento.html:", err);
+        });
+      return; // salimos para no ejecutar el resto
   }
-  contenido.innerHTML=html;
-  if(seccion==="mediterranean.php"){iniciarInventario();}
+
+  contenido.innerHTML = html;
+
+  if (seccion === "mediterranean.php") {
+    iniciarInventario();
+  }
 }
+
 
 
 /* ===== Eventos menú ===== */
@@ -345,83 +466,111 @@ document.querySelectorAll(".sidebar a").forEach(link=>{
 });
 
 /* ===== Inventario ===== */
-let productos=[];
+let productos = [];
 
-async function obtenerProductos(){
-  const res=await fetch("productos.php?accion=listar");
-  productos=await res.json();
+async function obtenerProductos() {
+  const res = await fetch("productos.php?accion=listar");
+  productos = await res.json();
   renderProductos();
 }
 
-async function agregarProducto(formData){
-  await fetch("productos.php?accion=agregar",{method:"POST",body:formData});
+async function agregarProducto(formData) {
+  await fetch("productos.php?accion=agregar", { method: "POST", body: formData });
   await obtenerProductos();
 }
 
-async function eliminarProducto(id){
-  const formData=new FormData();
-  formData.append("id",id);
-  await fetch("productos.php?accion=eliminar",{method:"POST",body:formData});
+async function eliminarProducto(id) {
+  const formData = new FormData();
+  formData.append("id", id);
+  await fetch("productos.php?accion=eliminar", { method: "POST", body: formData });
   await obtenerProductos();
 }
 
-async function actualizarStock(id,stock){
-  const formData=new FormData();
-  formData.append("id",id);
-  formData.append("stock",stock);
-  await fetch("productos.php?accion=actualizarStock",{method:"POST",body:formData});
-  await obtenerProductos();
+function iniciarInventario() {
+  const tbody = document.getElementById("tabla-body");
+
+  function renderProductos(lista = productos) {
+  const tbody = document.getElementById("tabla-body");
+  const alerta = document.getElementById("alertaStock");
+  let alertaActiva = false;
+
+  tbody.innerHTML = "";
+
+  lista.forEach(p => {
+    const margen = ((p.precio_venta - p.precio_compra) / p.precio_compra * 100).toFixed(1);
+    const bajoStock = parseInt(p.stock) < parseInt(p.stock_minimo);
+
+    if (bajoStock) alertaActiva = true;
+
+    const tr = document.createElement("tr");
+    tr.style.transition = "background 0.4s";
+    if (bajoStock) tr.style.background = "rgba(255,0,0,0.2)";
+
+    // === Contenido HTML de cada fila ===
+    tr.innerHTML = `
+      <td><img src="${p.img}" alt="${p.nombre}"></td>
+      <td>${p.nombre}</td>
+      <td>${p.categoria}</td>
+      <td>${p.proveedor}</td>
+      <td>$${p.precio_compra}</td>
+      <td>$${p.precio_venta}</td>
+      <td>${margen}%</td>
+      <td>${p.stock}</td>
+      <td>${p.ubicacion}</td>
+      <td>${p.descripcion}</td>
+      <td class="estado">
+        ${
+          p.estado === "Activo"
+            ? "<span class='disponible'>Activo</span>"
+            : p.estado === "Inactivo"
+            ? "<span style='color:#ffb703;font-weight:bold;'>Inactivo</span>"
+            : "<span style='color:#ff4c4c;font-weight:bold;'>Descontinuado</span>"
+        }
+      </td>
+      <td>
+      <button class="btn-movimientos" data-id="${p.id}">Movimientos</button>
+      </td>
+    `;
+
+    // === Eventos de los botones por fila ===
+    tr.addEventListener("click", e => {
+      // 🔹 Botón Movimientos
+      if (e.target.closest(".btn-movimientos")) {
+        const id = e.target.closest(".btn-movimientos").dataset.id;
+        localStorage.setItem("productoSeleccionado", id);
+        window.location.href = "movimientos.html";
+        
+      }
+    });
+
+    tbody.appendChild(tr);
+  });
+
+  // === Mostrar alerta si hay productos con bajo stock ===
+  alerta.style.display = alertaActiva ? "block" : "none";
 }
 
-function iniciarInventario(){
-  const tbody=document.getElementById("tabla-body");
 
-  function renderProductos(lista=productos){
-    tbody.innerHTML="";
-    lista.forEach(p=>{
-      const tr=document.createElement("tr");
-      tr.innerHTML=`
-        <td><img src="${p.img}" alt="${p.nombre}"></td>
-        <td>${p.nombre}</td>
-        <td>$${p.precio}</td>
-        <td><input type="number" class="stock-input" value="${p.stock}" min="0" data-id="${p.id}"></td>
-        <td>${p.descripcion}</td>
-        <td class="estado">${p.stock>0?"<span class='disponible'>Disponible</span>":"<span class='agotado'>Agotado</span>"}</td>
-        <td><button class="btn-eliminar" data-id="${p.id}">Eliminar</button></td>
-      `;
-      tbody.appendChild(tr);
-    });
-
-    document.querySelectorAll(".stock-input").forEach(input=>{
-      input.addEventListener("change",async e=>{
-        await actualizarStock(e.target.dataset.id,e.target.value);
-      });
-    });
-
-    document.querySelectorAll(".btn-eliminar").forEach(btn=>{
-      btn.addEventListener("click",async ()=>{
-        await eliminarProducto(btn.dataset.id);
-      });
-    });
-  }
-
-  document.getElementById("addForm").addEventListener("submit",async e=>{
+  // === Evento para agregar producto ===
+  document.getElementById("addForm").addEventListener("submit", async e => {
     e.preventDefault();
-    const formData=new FormData(e.target);
+    const formData = new FormData(e.target);
     await agregarProducto(formData);
     e.target.reset();
   });
 
-  document.getElementById("searchInput").addEventListener("input",e=>{
-    const term=e.target.value.toLowerCase();
-    const filtrados=productos.filter(p=>p.nombre.toLowerCase().includes(term));
+  // === Buscador ===
+  document.getElementById("searchInput").addEventListener("input", e => {
+    const term = e.target.value.toLowerCase();
+    const filtrados = productos.filter(
+      p => p.nombre.toLowerCase().includes(term) || p.codigo.toLowerCase().includes(term)
+    );
     renderProductos(filtrados);
   });
 
-  window.renderProductos=renderProductos;
+  window.renderProductos = renderProductos;
   obtenerProductos();
 }
-
 
 
 /* ===== Inicio ===== */
