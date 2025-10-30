@@ -1,129 +1,212 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Panel de Sucursales - Mediterranean</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sucursales - Mediterranean</title>
 
-<!-- Font Awesome -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <!-- Librerías para exportar -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-<!-- Librerías externas -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
-<style>
-/* ===== Estilos generales ===== */
-body {
-  margin: 0;
-  font-family: 'Segoe UI', sans-serif;
-  background: transparent;
-  color: var(--text);
-  overflow-x: hidden;
-}
-:root { --text:#fff; --card-bg:rgba(255,255,255,0.1); }
-[data-theme="light"] { --text:#222; --card-bg:#fff; }
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
-/* ===== Logo superior ===== */
-.logo-superior {
-  position: relative;
-  top: 5px;
-  left: 300px; 
-  z-index: 2000;
-}
-.logo-superior img {
-  width: 220px;
-  height: auto;
-  filter: drop-shadow(0 0 8px rgba(0,242,254,0.8));
-  transition: transform 0.3s ease;
-}
-.logo-superior img:hover {
-  transform: scale(1.05);
-}
+  <style>
+    /* ===== Logo superior ===== */
+    .logo-superior {
+      position: fixed;
+      top: -30px;
+      left: 260px;
+      z-index: 2000;
+    }
+    .logo-superior img {
+      width: 200px;
+      height: auto;
+      filter: drop-shadow(0 0 8px rgba(0,242,254,0.8));
+      transition: transform 0.3s ease;
+    }
+    .logo-superior img:hover { transform: scale(1.05); }
 
+    /* ==================== VARIABLES Y ESTILO BASE ==================== */
+    :root {
+      --azul-neon: #00f2fe;
+      --azul-profundo: #002c56;
+      --fondo: linear-gradient(135deg, #001f3f, #004e92);
+      --texto: #ffffff;
+      --tarjeta-bg: rgba(255,255,255,0.08);
+      --borde-glow: 0 0 12px rgba(0,242,254,0.5);
+    }
 
-/* ===== Fondo ===== */
-#background {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
-  background: linear-gradient(135deg,#004e92,#0a1f44);
-  z-index: -2;
-}
-#particles {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
-  z-index: -1;
-  pointer-events: none;
-}
+    body {
+      margin: 0;
+      font-family: "Poppins", sans-serif;
+      background: transparent;
+      color: var(--texto);
+      overflow-x: hidden;
+    }
 
-/* ===== Sidebar ===== */
-.sidebar {
-  position: fixed;
-  top: 0; left: 0;
-  width: 240px; height: 100%;
-  background: linear-gradient(135deg,#050d1c,#0a1f3d,#0e2a47,#122f68);
-  background-size: 400% 400%;
-  animation: sidebarAnim 10s ease infinite;
-  padding-top: 40px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  z-index: 1000;
-  box-shadow: 2px 0 25px rgba(0,0,0,0.8);
-  overflow: hidden;
-}
-.sidebar::before {
-  content: "";
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: radial-gradient(circle,rgba(0,242,254,0.4) 1px,transparent 1px);
-  background-size: 40px 40px;
-  animation: moverPuntos 6s linear infinite;
-  opacity: 0.6;
-}
-.sidebar::after {
-  content: "";
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: linear-gradient(transparent,rgba(0,242,254,0.1),transparent);
-  animation: brillo 4s linear infinite;
-}
+    /* ==================== FONDO Y EFECTO DE PARTÍCULAS ==================== */
+    #background, #particles {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+    }
+    #background {
+      background: var(--fondo);
+      z-index: -2;
+    }
+    #particles {
+      z-index: -1;
+      pointer-events: none;
+    }
+    /* ===== Fondo Canvas ===== */
+    #bgCanvas {
+      position: fixed;
+      top:0; left:0;
+      width:100%; height:100%;
+      z-index:-2;
+    }
 
-/* Enlaces sidebar */
-.sidebar a {
-  color: #00f2fe;
-  text-decoration: none;
-  padding: 12px 20px;
-  font-weight: bold;
-  transition: all 0.3s ease;
-  border-radius: 8px;
-  margin: 0 15px;
-  text-shadow: 0 0 8px #00f2fe, 0 0 15px #4facfe;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  position: relative;
-  z-index: 2;
-}
-.sidebar a:hover,
-.sidebar a.active {
-  background: rgba(255,255,255,0.1);
-  color: #fff;
-  transform: translateX(6px) scale(1.05);
-  box-shadow: 0 0 15px #00f2fe, inset 0 0 10px #00f2fe;
-}
+    /* ===== Sidebar ===== */
+    .sidebar {
+      position: fixed;
+      top: 0; left: 0;
+      width: 240px; height: 100%;
+      background: linear-gradient(135deg,#050d1c,#0a1f3d,#0e2a47,#122f68);
+      background-size: 400% 400%;
+      animation: sidebarAnim 10s ease infinite;
+      padding-top: 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      z-index: 1000;
+      box-shadow: 2px 0 25px rgba(0,0,0,0.8);
+      overflow: hidden;
+    }
+    .sidebar::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: radial-gradient(circle,rgba(0,242,254,0.4) 1px,transparent 1px);
+      background-size: 40px 40px;
+      animation: moverPuntos 6s linear infinite;
+      opacity: 0.6;
+    }
+    .sidebar::after {
+      content: "";
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: linear-gradient(transparent,rgba(0,242,254,0.1),transparent);
+      animation: brillo 4s linear infinite;
+    }
 
-/* Animaciones sidebar */
-@keyframes sidebarAnim { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
-@keyframes moverPuntos { from{background-position:0 0} to{background-position:40px 40px} }
-@keyframes brillo { from{transform:translateY(-100%)} to{transform:translateY(100%)} }
+    /* Enlaces sidebar */
+    .sidebar a {
+      color: #00f2fe;
+      text-decoration: none;
+      padding: 12px 20px;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      border-radius: 8px;
+      margin: 0 15px;
+      text-shadow: 0 0 8px #00f2fe, 0 0 15px #4facfe;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+      z-index: 2;
+    }
+    .sidebar a:hover,
+    .sidebar a.active {
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      transform: translateX(6px) scale(1.05);
+      box-shadow: 0 0 15px #00f2fe, inset 0 0 10px #00f2fe;
+    }
 
-.copyright-fixed {
+    /* Animaciones sidebar */
+    @keyframes sidebarAnim { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+    @keyframes moverPuntos { from{background-position:0 0} to{background-position:40px 40px} }
+    @keyframes brillo { from{transform:translateY(-100%)} to{transform:translateY(100%)} }
+
+    /* ==================== CONTENIDO PRINCIPAL ==================== */
+    .container {
+      margin-left: 260px;
+      margin-top: 110px;
+      padding: 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
+      align-items: stretch;
+    }
+
+    /* Tarjetas de sucursal */
+    .card {
+      background: var(--tarjeta-bg);
+      border: 1px solid rgba(0,242,254,0.2);
+      border-radius: 16px;
+      padding: 25px;
+      text-align: center;
+      transition: all 0.4s ease;
+      box-shadow: var(--borde-glow);
+      backdrop-filter: blur(10px);
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: "";
+      position: absolute;
+      top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background: radial-gradient(circle at center, rgba(0,242,254,0.15), transparent 60%);
+      transform: rotate(45deg);
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+    .card:hover::before { opacity: 1; }
+    .card:hover {
+      transform: translateY(-10px) scale(1.03);
+      box-shadow: 0 0 25px var(--azul-neon);
+      cursor: pointer;
+    }
+    .card h3 {
+      font-size: 1.4rem;
+      color: var(--azul-neon);
+      margin-bottom: 10px;
+    }
+    .card p {
+      font-size: 0.95rem;
+      opacity: 0.9;
+    }
+
+    /* ==================== MAPA ==================== */
+    #map {
+      margin: 0 auto 40px;
+      width: 900px;
+      height: 320px;
+      border-radius: 25px;
+      border: 1px solid rgba(0,242,254,0.3);
+      box-shadow: 0 0 25px rgba(0,242,254,0.3);
+      left: 7%;
+    }
+
+    /* ==================== FOOTER ==================== */
+    footer {
+      text-align: center;
+      padding: 15px;
+      color: #fff;
+      background: linear-gradient(90deg, #004e92, #00c6ff);
+      font-size: 0.9rem;
+      letter-spacing: 0.5px;
+    }
+    .copyright-fixed {
   position: fixed;
   bottom: 0;
   left: 240px; /* deja espacio del ancho del sidebar */
@@ -151,6 +234,7 @@ body {
   color: #90e0ef;
   text-decoration: underline;
 }
+
 .policy-modal {
   display: none;
   position: fixed;
@@ -183,51 +267,54 @@ body {
 }
 .close-policy:hover { color: #00c6ff; }
 
-
-
-/* ===== Contenido ===== */
-.container {
-  margin-left: 250px;
-  display: grid;
-  grid-template-columns: 1fr 2fr;
-  gap: 20px;
-  padding: 10px;
-}
-.card { background: var(--card-bg); padding: 15px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-.map-container { height: 250px; border-radius: 15px; }
-.notifications { max-height: 150px; overflow-y: auto; font-size: 14px; }
-.chat-box { max-height: 200px; overflow-y: auto; margin-bottom: 10px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 10px; }
-.chat-input { width: 100%; padding: 8px; border-radius: 8px; border: none; }
-.theme-toggle { cursor: pointer; background: #f4c430; border: none; padding: 6px 12px; border-radius: 8px; font-weight: bold; position: fixed; top: 15px; right: 20px; z-index: 1100; }
-</style>
+    /* ==================== ANIMACIONES EXTRA ==================== */
+    @keyframes fadeInUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes moverFondo {0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+  </style>
 </head>
+
 <body>
-  <!-- Botón de tema -->
-<button class="theme-toggle" onclick="toggleTheme()">🌙 Modo Claro</button>
-<!-- ===== Logo superior ===== -->
-<div class="logo-superior">
-  <img src="images/LogoMediterranean1992.png" alt="Logo Mediterranean">
+  <div id="background"></div>
+  <canvas id="particles"></canvas>
+
+  <!-- ===== Logo superior ===== -->
+  <div class="logo-superior">
+    <img src="images/LogoMediterranean1992.png" alt="Logo Mediterranean">
+  </div>
+
+  <!-- Sidebar -->
+<div class="sidebar">
+  <a href="#" data-section="Menu" class="fas fa-building">Menu Principal</a>
+  <a href="#" data-section="mediterranean.php" class="active">Productos</a>
+  <a href="#" data-section="sucursales.html">Sucursales</a>
+  <a href="#" data-section="usuarios">Usuarios</a>
+  <a href="#" data-section="reportes">Reportes</a>
+  <a href="#" data-section="utilidades">Utilidades</a>
 </div>
-<div class="container">
-  <!-- Panel izquierdo -->
-  <div>
-    <div class="card">
-      <h3>🔔 Notificaciones</h3>
-      <div class="notifications" id="notifications"></div>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <div class="container">
+    <div class="card" onclick="window.location.href='kennedy.html'">
+      <h3>Kennedy</h3>
+      <p>Calle 10 # 68-25, Barrio El Socorro, Bogotá</p>
     </div>
 
-    <div class="card">
-      <h3>💬 Chat interno</h3>
-      <div class="chat-box" id="chatBox"></div>
-      <input class="chat-input" id="chatInput" placeholder="Escribe un mensaje..." onkeydown="sendChat(event)">
+    <div class="card" onclick="window.location.href='centro.html'">
+      <h3>Centro</h3>
+      <p>Carrera 45 # 120-15, Usaquén, Bogotá</p>
     </div>
 
-    <div class="card">
-      <h3>⭐ Desempeño</h3>
-      <p>Sucursal Centro Bogotá: <span class="stars">⭐⭐⭐⭐☆</span></p>
-      <p>Sucursal Keneddy: <span class="stars">⭐⭐⭐☆☆</span></p>
+    <div class="card" onclick="window.location.href='norte.html'">
+      <h3>Norte</h3>
+      <p>Avenida 19 # 150-20, Cedritos, Bogotá</p>
     </div>
   </div>
+
+  <!-- ===== Fondo Canvas ===== -->
+  <canvas id="bgCanvas"></canvas>
+
+  <!-- MAPA -->
+  <div id="map"></div>
 
   <footer class="copyright-fixed">
   © 2025 Mediterranean Technologies  
@@ -242,336 +329,98 @@ body {
     <p>En Mediterranean Technologies, valoramos tu privacidad. Todos los datos son tratados conforme al RGPD y nuestras medidas de seguridad garantizan la integridad de la información...</p>
     <p><a href="politica-completa.html">Leer política completa</a></p>
   </div>
-</div>
-
+  </div>
   
 
-  <!-- Panel derecho -->
-  <div>
-    <div class="card map-container" id="map"></div>
+  <!-- ==================== SCRIPTS ==================== -->
+  <script>
+    /* ===== Fondo partículas ===== */
+    const bgCanvas = document.getElementById("bgCanvas");
+    const bgCtx = bgCanvas.getContext("2d");
+    bgCanvas.width = window.innerWidth;
+    bgCanvas.height = window.innerHeight;
+    let bgParticles = [];
 
-    <div class="card" id="loginCard">
-      <h3>🔑 Login de Personal</h3>
-      <input type="text" id="username" placeholder="Usuario">
-      <input type="password" id="password" placeholder="Contraseña">
-      <button class="login-btn" onclick="login()">Ingresar</button>
-      <p id="loginMsg"></p>
-    </div>
-
-    <div class="card" id="changePassCard" style="display:none;">
-      <h3>🔑 Cambiar Contraseña</h3>
-      <input type="password" id="oldPass" placeholder="Contraseña actual">
-      <input type="password" id="newPass" placeholder="Nueva contraseña">
-      <input type="password" id="confirmPass" placeholder="Confirmar nueva contraseña">
-      <button class="save-btn" onclick="cambiarPassword()">Guardar Cambios</button>
-      <p id="passMsg"></p>
-    </div>
-
-    <div class="card">
-      <h3>📌 Detalles de Sucursal</h3>
-      <div id="detalleSucursal">
-        <p>Haz clic en una sucursal en el mapa para ver sus datos.</p>
-      </div>
-    </div>
-
-    <div class="card">
-      <h3>📊 Ventas y Stock</h3>
-      <canvas id="dashboardChart"></canvas>
-    </div>
-
-    <div class="card">
-      <h3>📜 Historial de movimientos</h3>
-      <ul id="history"></ul>
-    </div>
-  </div>
-</div>
-
-<script>
-// ===== Usuarios =====
-let users = [
-  { username: "admin", password: "admin2025", role: "admin" },
-  { username: "supervisor", password: "super2025", role: "supervisor" },
-  { username: "cajero", password: "cajero2025", role: "viewer" }
-];
-let currentUser = null;
-
-// ===== Tema =====
-function toggleTheme() {
-  let body = document.body;
-  if (body.getAttribute("data-theme") === "light") {
-    body.removeAttribute("data-theme");
-    document.querySelector(".theme-toggle").innerText = "🌙 Modo Claro";
-  } else {
-    body.setAttribute("data-theme", "light");
-    document.querySelector(".theme-toggle").innerText = "🌙 Modo Oscuro";
-  }
-}
-
-// ===== Mapa =====
-let map = L.map('map').setView([4.6195, -74.1673], 14);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18 }).addTo(map);
-
-let sucursales = {
-  "Keneddy": {
-    coords: [4.6195, -74.1673],
-    stock: 120,
-    ventas: 90,
-    direccion: "Calle 10 # 68-25, Barrio El Socorro, Kennedy",
-    telefono: "+57 3219513533",
-    supervisor: "Carlos Pérez",
-    horario: "Lunes a Sábado 8:00am - 8:00pm",
-    personal: ["Cajeros", "Vendedores", "Seguridad", "Limpieza"]
-  },
-  "Centro": {
-    coords: [4.7110, -74.0721],
-    stock: 60,
-    ventas: 40,
-    direccion: "Carrera 45 # 120-15, Usaquén",
-    telefono: "+57 601 7894561",
-    supervisor: "María Gómez",
-    horario: "Lunes a Domingo 9:00am - 7:00pm",
-    personal: ["Cajeros", "Vendedores", "Repartidores", "Gerente"]
-  }
-};
-
-for (let suc in sucursales) {
-  let marker = L.marker(sucursales[suc].coords).addTo(map);
-  marker.on("click", () => mostrarDetalles(suc));
-}
-
-function mostrarDetalles(nombre) {
-  let data = sucursales[nombre];
-  let editable = (currentUser && (currentUser.role === "admin" || currentUser.role === "supervisor"));
-
-  let detalle = `
-    <h4>${nombre}</h4>
-    <p><b>Dirección:</b> <input type="text" id="dir" value="${data.direccion}" ${editable ? "" : "disabled"}></p>
-    <p><b>Teléfono:</b> <input type="text" id="tel" value="${data.telefono}" ${editable ? "" : "disabled"}></p>
-    <p><b>Supervisor:</b> <input type="text" id="sup" value="${data.supervisor}" ${editable ? "" : "disabled"}></p>
-    <p><b>Horario:</b> <input type="text" id="horario" value="${data.horario}" ${editable ? "" : "disabled"}></p>
-    <p><b>Personal:</b> <textarea id="pers" ${editable ? "" : "disabled"}>${data.personal.join(", ")}</textarea></p>
-    ${editable ? `<button class="save-btn" onclick="guardarDetalles('${nombre}')">Guardar Cambios</button>` : ""}
-  `;
-  document.getElementById("detalleSucursal").innerHTML = detalle;
-}
-
-function guardarDetalles(nombre) {
-  sucursales[nombre].direccion = document.getElementById("dir").value;
-  sucursales[nombre].telefono = document.getElementById("tel").value;
-  sucursales[nombre].supervisor = document.getElementById("sup").value;
-  sucursales[nombre].horario = document.getElementById("horario").value;
-  sucursales[nombre].personal = document.getElementById("pers").value.split(",").map(s => s.trim());
-  alert("✅ Detalles actualizados");
-}
-
-// ===== Dashboard =====
-let ctxChart = document.getElementById("dashboardChart").getContext("2d");
-new Chart(ctxChart, {
-  type: 'bar',
-  data: {
-    labels: Object.keys(sucursales),
-    datasets: [
-      { label: 'Stock', data: Object.values(sucursales).map(s => s.stock), backgroundColor: '#f4c430' },
-      { label: 'Ventas', data: Object.values(sucursales).map(s => s.ventas), backgroundColor: '#00eaff' }
-    ]
-  },
-  options: {
-    responsive: true,
-    plugins: { legend: { labels: { color: 'var(--text)' } } },
-    scales: {
-      x: { ticks: { color: 'var(--text)' } },
-      y: { ticks: { color: 'var(--text)' } }
+    class Particle {
+      constructor() {
+        this.x = Math.random() * bgCanvas.width;
+        this.y = Math.random() * bgCanvas.height;
+        this.radius = Math.random() * 2 + 1;
+        this.speedX = (Math.random() - 0.5);
+        this.speedY = (Math.random() - 0.5);
+      }
+      draw() {
+        bgCtx.beginPath();
+        bgCtx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        bgCtx.fillStyle = "rgba(255,255,255,0.7)";
+        bgCtx.fill();
+      }
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.x < 0 || this.x > bgCanvas.width) this.speedX *= -1;
+        if (this.y < 0 || this.y > bgCanvas.height) this.speedY *= -1;
+        this.draw();
+      }
     }
-  }
-});
 
-// ===== Notificaciones =====
-let notifications = document.getElementById("notifications");
-function addNotification(msg) {
-  let p = document.createElement("p");
-  p.innerText = msg;
-  notifications.prepend(p);
-}
-addNotification("⚠️ Stock bajo en Producto B - Sucursal Norte");
-addNotification("✅ Ventas diarias en Centro superaron el objetivo");
-addNotification("✅ ADSO, Análisis y Desarrollo de Software - Pedro Guevara");
-
-// ===== Chat =====
-let chatBox = document.getElementById("chatBox");
-function sendChat(e) {
-  if (e.key === "Enter") {
-    let input = document.getElementById("chatInput");
-    if (input.value.trim() !== "") {
-      let msg = document.createElement("div");
-      msg.innerText = "👤 Gerente: " + input.value;
-      chatBox.appendChild(msg);
-      chatBox.scrollTop = chatBox.scrollHeight;
-      input.value = "";
+    function initParticles() {
+      bgParticles = [];
+      for (let i = 0; i < 120; i++) bgParticles.push(new Particle());
     }
-  }
-}
 
-// ===== Historial =====
-let history = document.getElementById("history");
-let movimientos = [
-  "Entrada de 20 unidades de Producto A en Centro",
-  "Salida de 5 unidades de Producto C en Norte",
-  "Entrada de 15 unidades de Producto B en Centro"
-];
-movimientos.forEach(m => {
-  let li = document.createElement("li");
-  li.innerText = m;
-  history.appendChild(li);
-});
-
-// ===== Login =====
-function login() {
-  let user = document.getElementById("username").value;
-  let pass = document.getElementById("password").value;
-  let found = users.find(u => u.username === user && u.password === pass);
-  let msg = document.getElementById("loginMsg");
-
-  if (found) {
-    currentUser = found;
-    msg.innerText = "Bienvenido " + found.username + " (" + found.role + ")";
-    document.getElementById("loginCard").style.display = "none";
-    document.getElementById("changePassCard").style.display = (found.role === "admin" || found.role === "supervisor") ? "block" : "none";
-  } else {
-    msg.innerText = "❌ Usuario o contraseña incorrectos";
-  }
-}
-
-// ===== Cambiar Contraseña =====
-function cambiarPassword() {
-  const oldPass = document.getElementById("oldPass").value;
-  const newPass = document.getElementById("newPass").value;
-  const confirmPass = document.getElementById("confirmPass").value;
-  const msg = document.getElementById("passMsg");
-
-  if (oldPass !== currentUser.password) {
-    msg.innerText = "❌ La contraseña actual es incorrecta.";
-    return;
-  }
-  if (newPass.length < 4) {
-    msg.innerText = "❌ La nueva contraseña debe tener al menos 4 caracteres.";
-    return;
-  }
-  if (newPass !== confirmPass) {
-    msg.innerText = "❌ Las nuevas contraseñas no coinciden.";
-    return;
-  }
-  currentUser.password = newPass;
-  msg.innerText = "✅ Contraseña cambiada correctamente.";
-  document.getElementById("oldPass").value = "";
-  document.getElementById("newPass").value = "";
-  document.getElementById("confirmPass").value = "";
-}
-</script>
-
-
-<div id="background"></div>
-<canvas id="particles"></canvas>
-
-<!-- Sidebar -->
-<div class="sidebar">
-  <a href="#" data-section="Menu" class="fas fa-building">Menu Principal</a>
-  <a href="#" data-section="mediterranean.php" class="active">Productos</a>
-  <a href="#" data-section="sucursales.html">Sucursales</a>
-  <a href="#" data-section="usuarios">Usuarios</a>
-  <a href="#" data-section="reportes">Reportes</a>
-  <a href="#" data-section="utilidades">Utilidades</a>
-</div>
-
-<button class="theme-toggle" onclick="toggleTheme()">🌙 Modo Claro</button>
-
-
-
-<script>
-// ===== Modo claro / oscuro =====
-function toggleTheme(){
-  let body=document.body;
-  if(body.getAttribute("data-theme")==="light"){
-    body.removeAttribute("data-theme");
-    document.querySelector(".theme-toggle").innerText="🌙 Modo Claro";
-  } else {
-    body.setAttribute("data-theme","light");
-    document.querySelector(".theme-toggle").innerText="🌙 Modo Oscuro";
-  }
-}
-
-
-// ===== Fondo de partículas =====
-window.onload = function() {
-  const canvas = document.getElementById("particles");
-  const ctx = canvas.getContext("2d");
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  let particles = [];
-
-  class Particle {
-    constructor() {
-      this.x = Math.random() * canvas.width;
-      this.y = Math.random() * canvas.height;
-      this.radius = Math.random() * 2 + 1;
-      this.speedX = (Math.random() - 0.5) * 1;
-      this.speedY = (Math.random() - 0.5) * 1;
-    }
-    draw() {
-      ctx.beginPath();
-      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(0,242,254,0.7)";
-      ctx.fill();
-    }
-    update() {
-      this.x += this.speedX;
-      this.y += this.speedY;
-      if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
-      if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
-      this.draw();
-    }
-  }
-
-  function initParticles() {
-    particles = [];
-    for (let i = 0; i < 120; i++) particles.push(new Particle());
-  }
-
-  function connectParticles() {
-    for (let a = 0; a < particles.length; a++) {
-      for (let b = a; b < particles.length; b++) {
-        let dx = particles[a].x - particles[b].x;
-        let dy = particles[a].y - particles[b].y;
-        let dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < 120) {
-          ctx.beginPath();
-          ctx.strokeStyle = `rgba(0,242,254,${1 - dist / 120})`;
-          ctx.lineWidth = 1;
-          ctx.moveTo(particles[a].x, particles[a].y);
-          ctx.lineTo(particles[b].x, particles[b].y);
-          ctx.stroke();
+    function connectParticles() {
+      for (let a = 0; a < bgParticles.length; a++) {
+        for (let b = a; b < bgParticles.length; b++) {
+          let dx = bgParticles[a].x - bgParticles[b].x;
+          let dy = bgParticles[a].y - bgParticles[b].y;
+          let dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 120) {
+            bgCtx.beginPath();
+            bgCtx.strokeStyle = `rgba(0,242,254,${1 - dist / 120})`;
+            bgCtx.lineWidth = 1;
+            bgCtx.moveTo(bgParticles[a].x, bgParticles[a].y);
+            bgCtx.lineTo(bgParticles[b].x, bgParticles[b].y);
+            bgCtx.stroke();
+            bgCtx.closePath();
+          }
         }
       }
     }
-  }
 
-  function animateParticles() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    particles.forEach(p => p.update());
-    connectParticles();
-    requestAnimationFrame(animateParticles);
-  }
+    function animateParticles() {
+      bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+      bgParticles.forEach(p => p.update());
+      connectParticles();
+      requestAnimationFrame(animateParticles);
+    }
 
-  initParticles();
-  animateParticles();
-
-  window.addEventListener("resize", () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
     initParticles();
-  });
-};
-</script>
-<script>
+    animateParticles();
+
+    window.addEventListener("resize", () => {
+      bgCanvas.width = window.innerWidth;
+      bgCanvas.height = window.innerHeight;
+      initParticles();
+    });
+
+    // ===== Mapa Leaflet =====
+    let map = L.map('map').setView([4.65, -74.1], 12);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+    let sucursales = {
+      Kennedy: [4.6195, -74.1673],
+      Centro: [4.7110, -74.0721],
+      Norte: [4.7272, -74.0412]
+    };
+
+    for (let s in sucursales) {
+      L.marker(sucursales[s]).addTo(map)
+        .bindPopup(`<b>${s}</b><br>Sucursal Mediterranean`);
+    }
+
+   </script>
+   <script>
 document.getElementById("openPolicy").onclick = () => {
   document.getElementById("policyModal").style.display = "flex";
 };
@@ -583,6 +432,5 @@ window.onclick = (e) => {
     document.getElementById("policyModal").style.display = "none";
 };
 </script>
-
 </body>
 </html>

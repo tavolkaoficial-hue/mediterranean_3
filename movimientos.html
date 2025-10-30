@@ -190,6 +190,13 @@
         <option value="Salida">Salida</option>
       </select>
 
+      <label for="sucursal">Sucursal</label>
+      <select name="sucursal" id="sucursal" required>
+        <option value="Kennedy">Kennedy</option>
+        <option value="Centro">Centro</option>
+        <option value="Norte">Norte</option>
+      </select>
+
       <label for="cantidad">Cantidad</label>
       <input type="number" name="cantidad" id="cantidad" required min="1" placeholder="Ej: 10">
 
@@ -212,6 +219,7 @@
           <th>Tipo</th>
           <th>Cantidad</th>
           <th>Comentario</th>
+          <th>Sucursal</th>
         </tr>
       </thead>
       <tbody></tbody>
@@ -338,14 +346,16 @@
         return;
       }
       data.movimientos.forEach(m => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${m.fecha}</td>
-          <td class="${m.tipo === 'Entrada' ? 'entrada' : 'salida'}">${m.tipo}</td>
-          <td>${m.cantidad}</td>
-          <td>${m.comentario || '-'}</td>`;
-        tbody.appendChild(tr);
-      });
+  const tr = document.createElement("tr");
+  tr.innerHTML = `
+    <td>${m.fecha}</td>
+    <td class="${m.tipo === 'Entrada' ? 'entrada' : 'salida'}">${m.tipo}</td>
+    <td>${m.cantidad}</td>
+    <td>${m.comentario || '-'}</td>
+    <td>${m.sucursal || '-'}</td>`;
+  tbody.appendChild(tr);
+});
+
     } catch (err) {
       tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#999;">Error al cargar movimientos.</td></tr>';
     }

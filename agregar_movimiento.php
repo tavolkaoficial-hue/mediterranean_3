@@ -21,13 +21,14 @@ $producto_id = intval($_POST['productos'] ?? 0);
 $tipo = $_POST['tipo'] ?? '';
 $cantidad = intval($_POST['cantidad'] ?? 0);
 $comentario = $_POST['comentario'] ?? null;
+$sucursal = $_POST['sucursal'] ?? ''; // 👈 NUEVO
 
-if ($producto_id <= 0 || $cantidad <= 0 || !in_array($tipo, ['Entrada', 'Salida'])) {
+if ($producto_id <= 0 || $cantidad <= 0 || !in_array($tipo, ['Entrada', 'Salida']) || empty($sucursal)) {
     echo json_encode(["status" => "error", "message" => "Datos inválidos"]);
     exit;
 }
 
-// SELECT stock usando prepare
+// Seleccionamos stock actual
 $sel = $conn->prepare("SELECT stock FROM productos WHERE id = ?");
 $sel->bind_param("i", $producto_id);
 $sel->execute();
@@ -39,19 +40,19 @@ if ($resSel->num_rows === 0) {
 $row = $resSel->fetch_assoc();
 $stock_actual = intval($row['stock']);
 
-// comprobar stock para salida
+// Verificar stock
 if ($tipo === 'Salida' && $stock_actual < $cantidad) {
     echo json_encode(["status" => "error", "message" => "Stock insuficiente"]);
     exit;
 }
 
-// insertar movimiento
-$stmt = $conn->prepare("INSERT INTO movimientos (productos, tipo, cantidad, comentario, fecha) VALUES (?, ?, ?, ?, NOW())");
+// Guardar movimiento (agregamos sucursal)
+$stmt = $conn->prepare("INSERT INTO movimientos (productos, tipo, cantidad, comentario, sucursal, fecha) VALUES (?, ?, ?, ?, ?, NOW())");
 if ($stmt === false) {
     echo json_encode(["status" => "error", "message" => "Error en la preparación de la consulta"]);
     exit;
 }
-$stmt->bind_param("isis", $producto_id, $tipo, $cantidad, $comentario);
+$stmt->bind_param("isiss", $producto_id, $tipo, $cantidad, $comentario, $sucursal);
 
 if ($stmt->execute()) {
     $nuevo_stock = ($tipo === 'Entrada') ? $stock_actual + $cantidad : $stock_actual - $cantidad;
