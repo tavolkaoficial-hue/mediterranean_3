@@ -1,48 +1,543 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sucursal Kennedy - Mediterranean</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Mediterranean | Sucursal Centro</title>
+
+<!-- Estilos base -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
 <style>
-body{margin:0;font-family:'Segoe UI',sans-serif;color:#fff;background:transparent;}
-#background,#particles{position:fixed;top:0;left:0;width:100%;height:100%;}
-#background{background:linear-gradient(135deg,#004e92,#0a1f44);z-index:-2;}
-#particles{z-index:-1;}
-.sidebar{position:fixed;left:0;top:0;width:240px;height:100%;background:linear-gradient(135deg,#050d1c,#0a1f3d,#0e2a47,#122f68);padding-top:40px;}
-.sidebar a{color:#00f2fe;text-decoration:none;padding:12px 20px;display:block;}
-.sidebar a:hover{background:rgba(255,255,255,0.1);}
-.container{margin-left:260px;padding:20px;}
-.card{background:rgba(255,255,255,0.1);padding:20px;border-radius:12px;margin-bottom:20px;}
-#map{height:300px;border-radius:15px;}
+:root {
+  --azul-oscuro: #01263a;
+  --azul-medio: #035b7f;
+  --turquesa: #10b90a;
+  --arena: #f5f8fa;
+  --blanco: #ffffff;
+  --glass: rgba(255,255,255,0.08);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+body {
+  background: linear-gradient(135deg, var(--azul-oscuro), #014f73);
+  color: var(--blanco);
+  min-height: 100vh;
+  display: flex;
+}
+
+/* ===== Sidebar ===== */
+.sidebar {
+  position: fixed;
+  top: 0; left: 0;
+  width: 240px; height: 100%;
+  background: linear-gradient(135deg,#050d1c,#0a1f3d,#0e2a47,#122f68);
+  background-size: 400% 400%;
+  animation: sidebarAnim 10s ease infinite;
+  padding-top: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  z-index: 1000;
+  box-shadow: 2px 0 25px rgba(0,0,0,0.8);
+  overflow: hidden;
+}
+.sidebar::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: radial-gradient(circle,rgba(0,242,254,0.4) 1px,transparent 1px);
+  background-size: 40px 40px;
+  animation: moverPuntos 6s linear infinite;
+  opacity: 0.6;
+}
+.sidebar a {
+  color: #00f2fe;
+  text-decoration: none;
+  padding: 12px 20px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  margin: 0 15px;
+  text-shadow: 0 0 8px #00f2fe, 0 0 15px #4facfe;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+  z-index: 2;
+}
+.sidebar a:hover,
+.sidebar a.active {
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  transform: translateX(6px) scale(1.05);
+  box-shadow: 0 0 15px #00f2fe, inset 0 0 10px #00f2fe;
+}
+@keyframes sidebarAnim { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+@keyframes moverPuntos { from{background-position:0 0} to{background-position:40px 40px} }
+
+.sidebar img {
+  width: 120px;
+  height: auto;
+  margin: 0 auto 15px auto;
+  display: block;
+  filter: drop-shadow(0 0 6px rgba(0,242,254,0.4));
+}
+
+/* ===== Fondo ===== */
+#background {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: linear-gradient(135deg,#004e92,#0a1f44);
+  z-index: -2;
+}
+#particles {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  z-index: -1;
+  pointer-events: none;
+}
+/* ===== Fondo Canvas ===== */
+#bgCanvas {
+  position: fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  z-index:-2;
+}
+
+/* ===== Main ===== */
+.main {
+  flex: 1;
+  padding: 30px 40px;
+  overflow-y: auto;
+  margin-left: 240px;
+}
+.header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
+.branch-card {
+  display: flex; align-items: center; gap: 20px;
+  background: var(--glass); border-radius: 20px;
+  padding: 18px 24px; box-shadow: 0 8px 20px rgba(0,0,0,0.25); backdrop-filter: blur(6px);
+}
+.branch-card i { font-size: 34px; color: var(--turquesa); }
+.branch-info h1 { font-size: 1.4rem; color: var(--turquesa); }
+.branch-info p { margin-top: 3px; font-size: 0.95rem; }
+
+.controls { display: flex; align-items: center; gap: 10px; }
+.search {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  padding: 8px 12px; border-radius: 10px; color: var(--blanco);
+  min-width: 220px;
+}
+.btn {
+  background: linear-gradient(90deg, var(--turquesa), #00f2fe);
+  color: #002536;
+  border: none; padding: 8px 14px;
+  border-radius: 10px; cursor: pointer; font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0,242,254,0.25);
+  transition: 0.3s; display: flex; align-items: center; gap: 6px;
+}
+.btn i { font-size: 1rem; }
+.btn:hover { transform: translateY(-2px); opacity: 0.9; }
+
+#btnExportExcel { background: linear-gradient(90deg, #00b64f, #66ff99); color: #002536; }
+#btnExportPDF { background: linear-gradient(90deg, #ff3b3b, #ff7070); color: #fff; }
+
+.panel h3 i { color: var(--turquesa); margin-right: 8px; text-shadow: 0 0 10px rgba(0,242,254,0.5); }
+
+.grid { display: grid; grid-template-columns: 1fr 400px; gap: 20px; margin-top: 24px; }
+.panel {
+  background: var(--glass); border-radius: 16px; padding: 18px;
+  border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 8px 20px rgba(0,0,0,0.3); transition: 0.3s;
+}
+.panel:hover { transform: translateY(-3px); }
+.panel h3 { margin-bottom: 10px; color: var(--turquesa); }
+
+.table-wrap { max-height: 260px; overflow-y: auto; }
+table { width: 100%; border-collapse: collapse; }
+th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+th { color: var(--turquesa); background: rgba(255,255,255,0.04); font-weight: 600; }
+tr:hover { background: rgba(255,255,255,0.05); }
+
+.chart-card { height: 320px; display: flex; flex-direction: column; justify-content: center; }
+#map {
+  height: 280px; border-radius: 14px; border: 2px solid var(--turquesa);
+  margin-top: 10px; box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+}
+.footer { text-align: center; margin-top: 30px; font-size: 0.85rem; opacity: 0.8; }
+
+@media(max-width: 1000px) {
+  body { flex-direction: column; }
+  .sidebar { width: 100%; height: auto; flex-direction: row; }
+  .main { margin-left: 0; padding: 20px; }
+  .grid { grid-template-columns: 1fr; }
+}
+.copyright-fixed {
+  position: fixed;
+  bottom: 0;
+  left: 240px; /* deja espacio del ancho del sidebar */
+  width: calc(100% - 240px); /* ocupa todo menos el sidebar */
+  text-align: center;
+  background: linear-gradient(90deg, #004e92, #00c6ff);
+  color: #ffffff;
+  font-size: 13px;
+  padding: 10px 0;
+  font-family: "Poppins", Arial, sans-serif;
+  box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.25);
+  z-index: 9999; /* por encima del sidebar */
+  border-top-left-radius: 12px;
+}
+
+.copyright-fixed a {
+  color: #caf0f8;
+  text-decoration: none;
+  font-weight: 500;
+  margin-left: 5px;
+  transition: color 0.3s, text-decoration 0.3s;
+}
+
+.copyright-fixed a:hover {
+  color: #90e0ef;
+  text-decoration: underline;
+}
+.policy-modal {
+  display: none;
+  position: fixed;
+  z-index: 99999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+  justify-content: center;
+  align-items: center;
+}
+.policy-content {
+  background: #ffffff;
+  color: #000;
+  padding: 25px;
+  border-radius: 15px;
+  width: 80%;
+  max-width: 600px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.3);
+  animation: fadeIn 0.3s ease;
+}
+.close-policy {
+  float: right;
+  font-size: 24px;
+  cursor: pointer;
+  color: #004e92;
+  font-weight: bold;
+}
+.close-policy:hover { color: #00c6ff; }
 </style>
 </head>
 <body>
-
 <div id="background"></div>
 <canvas id="particles"></canvas>
 
-<div class="sidebar">
-  <a href="sucursales.html">← Volver a Sucursales</a>
-</div>
+<!-- Sidebar -->
+<nav class="sidebar">
+  <img src="images/LogoMediterranean1992.png" alt="Logo Mediterranean">
+  <a href="#" class="fas fa-building">Menu Principal</a>
+  <a href="#" class="active">Productos</a>
+  <a href="sucursales.html">Sucursales</a>
+  <a href="#">Usuarios</a>
+  <a href="#">Reportes</a>
+  <a href="#">Utilidades</a>
+  <a href="sucursales.html"><i class="fa-solid fa-arrow-left"></i> Volver</a>  
+</nav>
 
-<div class="container">
-  <div class="card">
-    <h2>Sucursal Kennedy</h2>
-    <p><b>Dirección:</b> Calle 10 # 68-25, Barrio El Socorro</p>
-    <p><b>Teléfono:</b> +57 3219513533</p>
-    <p><b>Supervisor:</b> Carlos Pérez</p>
-    <p><b>Horario:</b> Lunes a Sábado 8:00am - 8:00pm</p>
+<!-- Main -->
+<main class="main">
+  <div class="header">
+    <div class="branch-card">
+      <i class="fa-solid fa-store"></i>
+      <div class="branch-info">
+        <h1>Sucursal Centro</h1>
+        <p><strong>Dirección:</strong> Calle 13 # 18-24, Bogotá Centro</p>
+        <p><strong>Tel:</strong> +57 310 456 8792</p>
+      </div>
+    </div>
+
+    <div class="controls">
+      <input id="searchInput" class="search" placeholder="Buscar producto..." />
+      <button id="btnExportExcel" class="btn"><i class="fa-solid fa-file-excel"></i> Excel</button>
+      <button id="btnExportPDF" class="btn"><i class="fa-solid fa-file-pdf"></i> PDF</button>
+    </div>
   </div>
-  <div id="map"></div>
+
+  <div class="grid">
+    <div>
+      <div class="panel">
+        <h3><i class="fa-solid fa-boxes-stacked"></i> Stock actual</h3>
+        <div class="table-wrap">
+          <table id="stockTable">
+            <thead><tr><th>Producto</th><th>Categoría</th><th>Cantidad</th><th>Última</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3><i class="fa-solid fa-circle-arrow-up"></i> Entradas recientes</h3>
+        <div class="table-wrap">
+          <table id="entradasTable">
+            <thead><tr><th>Producto</th><th>Cantidad</th><th>Fecha</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3><i class="fa-solid fa-circle-arrow-down"></i> Salidas recientes</h3>
+        <div class="table-wrap">
+          <table id="salidasTable">
+            <thead><tr><th>Producto</th><th>Cantidad</th><th>Fecha</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="panel chart-card">
+        <h3 style="text-align:center"><i class="fa-solid fa-chart-column"></i> Inventario — Stock / Entradas / Salidas</h3>
+        <canvas id="inventoryChart"></canvas>
+      </div>
+      <div class="panel">
+        <h3><i class="fa-solid fa-map-location-dot"></i> Ubicación</h3>
+        <div id="map"></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+const map = L.map('map').setView([4.6097, -74.0817], 15);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+L.marker([4.6097, -74.0817]).addTo(map).bindPopup('<b>Sucursal Centro</b>').openPopup();
+
+async function cargarDatosCentro(){
+  try{
+    const resp = await fetch('listar_movimiento.php?sucursal=Centro');
+    const data = await resp.json();
+    if(data.status!=="success") throw new Error("Error al cargar movimientos");
+    const movimientos = data.movimientos || [];
+    const entradas = movimientos.filter(m=>m.tipo==="Entrada");
+    const salidas = movimientos.filter(m=>m.tipo==="Salida");
+
+    const stockMap = new Map();
+    movimientos.forEach(m=>{
+      const nombre = m.producto;
+      const cantidad = parseInt(m.cantidad);
+      if(!stockMap.has(nombre)) stockMap.set(nombre,0);
+      stockMap.set(nombre, stockMap.get(nombre)+(m.tipo==="Entrada"?cantidad:-cantidad));
+    });
+
+    renderTabla(entradas,salidas,stockMap);
+    renderGrafico(stockMap,entradas,salidas);
+  }catch(e){console.error(e);}
+}
+
+function renderTabla(entradas,salidas,stockMap){
+  const stockBody=document.querySelector("#stockTable tbody");
+  const entBody=document.querySelector("#entradasTable tbody");
+  const salBody=document.querySelector("#salidasTable tbody");
+  stockBody.innerHTML=entBody.innerHTML=salBody.innerHTML="";
+
+  stockMap.forEach((cant,prod)=>{
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td>${prod}</td><td>General</td><td>${cant}</td><td>${new Date().toLocaleDateString()}</td>`;
+    stockBody.appendChild(tr);
+  });
+
+  entradas.slice(0,5).forEach(e=>{
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td>${e.producto}</td><td>${e.cantidad}</td><td>${e.fecha}</td>`;
+    entBody.appendChild(tr);
+  });
+
+  salidas.slice(0,5).forEach(s=>{
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td>${s.producto}</td><td>${s.cantidad}</td><td>${s.fecha}</td>`;
+    salBody.appendChild(tr);
+  });
+}
+
+let chart;
+function renderGrafico(stockMap, entradas, salidas) {
+  const ctx = document.getElementById("inventoryChart").getContext("2d");
+  if (chart) chart.destroy();
+
+  const labels = Array.from(stockMap.keys());
+  const stockData = Array.from(stockMap.values());
+  const entradaData = entradas.map(e => e.cantidad);
+  const salidaData = salidas.map(s => -Math.abs(s.cantidad));
+
+  chart = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels,
+      datasets: [
+        { label: "Stock", data: stockData, backgroundColor: "#00c4d6", borderRadius: 6 },
+        { label: "Entradas", data: entradaData, backgroundColor: "#00b64f", borderRadius: 6 },
+        { label: "Salidas", data: salidaData, backgroundColor: "#ff3b3b", borderRadius: 6 }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { position: "top", labels: { color: "#fff" } } },
+      scales: {
+        x: { ticks: { color: "#fff" }, grid: { color: "rgba(255,255,255,0.1)" } },
+        y: { ticks: { color: "#fff" }, grid: { color: "rgba(255,255,255,0.1)" } }
+      }
+    }
+  });
+}
+
+document.getElementById("searchInput").addEventListener("input", e=>{
+  const term = e.target.value.toLowerCase();
+  document.querySelectorAll("#stockTable tbody tr").forEach(tr=>{
+    tr.style.display = tr.innerText.toLowerCase().includes(term) ? "" : "none";
+  });
+});
+
+document.getElementById("btnExportExcel").addEventListener("click",()=>{
+  const wb = XLSX.utils.table_to_book(document.getElementById('stockTable'));
+  XLSX.writeFile(wb,"Stock_Centro.xlsx");
+});
+
+document.getElementById('btnExportPDF').addEventListener('click', async ()=>{
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  const img = new Image();
+  img.src = "images/LogoMediterranean1992.png";
+  img.onload = ()=>{
+    doc.addImage(img,"PNG",14,10,25,25);
+    doc.setFontSize(16);
+    doc.text("Mediterranean - Sucursal Centro", 40, 20);
+    doc.setFontSize(12);
+    doc.text("Reporte de Inventario", 40, 30);
+    doc.autoTable({ html: "#stockTable", startY: 40, headStyles: { fillColor: [0, 196, 214] } });
+    doc.save("Reporte_Centro.pdf");
+  };
+});
+
+cargarDatosCentro();
+</script>
+
+<footer class="copyright-fixed">
+  © 2025 Mediterranean Technologies  
+  | <a href="#" id="openPolicy">Política de Privacidad y Seguridad</a>
+</footer>
+
+<!-- Modal -->
+<div id="policyModal" class="policy-modal">
+  <div class="policy-content">
+    <span class="close-policy">&times;</span>
+    <h2>Política de Privacidad y Seguridad</h2>
+    <p>En Mediterranean Technologies, valoramos tu privacidad. Todos los datos son tratados conforme al RGPD y nuestras medidas de seguridad garantizan la integridad de la información...</p>
+    <p><a href="politica-completa.html">Leer política completa</a></p>
+  </div>
 </div>
 
 <script>
-let map = L.map('map').setView([4.6195, -74.1673], 15);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-L.marker([4.6195, -74.1673]).addTo(map).bindPopup("Sucursal Kennedy").openPopup();
+
+// ===== Fondo de partículas =====
+window.onload = function() {
+  const canvas = document.getElementById("particles");
+  const ctx = canvas.getContext("2d");
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  let particles = [];
+
+  class Particle {
+    constructor() {
+      this.x = Math.random() * canvas.width;
+      this.y = Math.random() * canvas.height;
+      this.radius = Math.random() * 2 + 1;
+      this.speedX = (Math.random() - 0.5) * 1;
+      this.speedY = (Math.random() - 0.5) * 1;
+    }
+    draw() {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(0,242,254,0.7)";
+      ctx.fill();
+    }
+    update() {
+      this.x += this.speedX;
+      this.y += this.speedY;
+      if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+      if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+      this.draw();
+    }
+  }
+
+  function initParticles() {
+    particles = [];
+    for (let i = 0; i < 120; i++) particles.push(new Particle());
+  }
+
+  function connectParticles() {
+    for (let a = 0; a < particles.length; a++) {
+      for (let b = a; b < particles.length; b++) {
+        let dx = particles[a].x - particles[b].x;
+        let dy = particles[a].y - particles[b].y;
+        let dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 120) {
+          ctx.beginPath();
+          ctx.strokeStyle = `rgba(0,242,254,${1 - dist / 120})`;
+          ctx.lineWidth = 1;
+          ctx.moveTo(particles[a].x, particles[a].y);
+          ctx.lineTo(particles[b].x, particles[b].y);
+          ctx.stroke();
+        }
+      }
+    }
+  }
+
+  function animateParticles() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => p.update());
+    connectParticles();
+    requestAnimationFrame(animateParticles);
+  }
+
+  initParticles();
+  animateParticles();
+
+  window.addEventListener("resize", () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    initParticles();
+  });
+};
 </script>
+
+<script>
+document.getElementById("openPolicy").onclick = () => {
+  document.getElementById("policyModal").style.display = "flex";
+};
+document.querySelector(".close-policy").onclick = () => {
+  document.getElementById("policyModal").style.display = "none";
+};
+window.onclick = (e) => {
+  if (e.target == document.getElementById("policyModal"))
+    document.getElementById("policyModal").style.display = "none";
+};
+</script>
+
 </body>
 </html>
