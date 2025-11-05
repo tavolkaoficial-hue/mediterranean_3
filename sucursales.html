@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sucursales - Mediterranean</title>
+  
 
   <!-- Librerías para exportar -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -15,23 +16,17 @@
   <!-- Leaflet -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  
 
   <style>
-    /* ===== Logo superior ===== */
-    .logo-superior {
-      position: fixed;
-      top: -30px;
-      left: 260px;
-      z-index: 2000;
-    }
-    .logo-superior img {
-      width: 200px;
-      height: auto;
-      filter: drop-shadow(0 0 8px rgba(0,242,254,0.8));
-      transition: transform 0.3s ease;
-    }
-    .logo-superior img:hover { transform: scale(1.05); }
-
+    .sidebar img {
+    width: 140px; /* ajusta según lo que quieras */
+    height: auto;  /* mantiene proporción */
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(14,165,233,0.5);
+    margin: 0 auto; /* opcional: centrar horizontalmente */
+    display: block;
+}
     /* ==================== VARIABLES Y ESTILO BASE ==================== */
     :root {
       --azul-neon: #00f2fe;
@@ -137,6 +132,7 @@
     @keyframes brillo { from{transform:translateY(-100%)} to{transform:translateY(100%)} }
 
     /* ==================== CONTENIDO PRINCIPAL ==================== */
+    
     .container {
       margin-left: 260px;
       margin-top: 110px;
@@ -276,20 +272,21 @@
 <body>
   <div id="background"></div>
   <canvas id="particles"></canvas>
-
-  <!-- ===== Logo superior ===== -->
-  <div class="logo-superior">
-    <img src="images/LogoMediterranean1992.png" alt="Logo Mediterranean">
+  <div class="container">
+  <div class="mb-6">
+    <h1 class="text-3xl font-bold tracking-wide text-cyan-300">Gestión de Usuarios</h1>
   </div>
 
   <!-- Sidebar -->
-<div class="sidebar">
-  <a href="#" data-section="Menu" class="fas fa-building">Menu Principal</a>
-  <a href="#" data-section="mediterranean.php" class="active">Productos</a>
-  <a href="#" data-section="sucursales.html">Sucursales</a>
-  <a href="#" data-section="usuarios">Usuarios</a>
-  <a href="#" data-section="reportes">Reportes</a>
-  <a href="#" data-section="utilidades">Utilidades</a>
+ <div class="sidebar">
+  <img src="images/LogoMediterranean1992.png" alt="Logo Mediterranean">
+
+  <a href="mediterranean.php"><i class="fas fa-home"></i> Menu Principal</a>
+  <a href="productos.html"><i class="fas fa-boxes"></i> Productos</a>
+  <a href="sucursales.html"><i class="fas fa-store"></i> Sucursales</a>
+  <a href="usuarios.html"><i class="fas fa-users"></i> Usuarios</a>
+  <a href="reportes.html"><i class="fas fa-chart-bar"></i> Reportes</a>
+  <a href="utilidades.html"><i class="fas fa-cogs"></i> Utilidades</a>
 </div>
 
   <!-- CONTENIDO PRINCIPAL -->

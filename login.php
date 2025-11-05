@@ -1,22 +1,14 @@
 <?php
 ob_start();
 session_start();
-
-$host = "localhost";
-$user = "root";
-$pass = "";
-$dbname = "mediterranean";
-
-$conn = new mysqli($host, $user, $pass, $dbname);
-if ($conn->connect_error) {
-    die("Error de conexión: " . $conn->connect_error);
-}
+include 'conexion.php'; // ✅ usa tu archivo central de conexión
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $username = trim($_POST["username"]);
     $password = trim($_POST["password"]);
 
-    $stmt = $conn->prepare("SELECT id, usuarios, password FROM usuarios WHERE usuarios = ?");
+    // ✅ Incluimos 'rol' en la consulta
+    $stmt = $conn->prepare("SELECT id, usuarios, password, rol FROM usuarios WHERE usuarios = ?");
     $stmt->bind_param("s", $username);
     $stmt->execute();
     $resultado = $stmt->get_result();
@@ -25,14 +17,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $row = $resultado->fetch_assoc();
 
         if (password_verify($password, $row["password"])) {
-    $_SESSION["usuarios"] = $row["usuarios"];
-    $_SESSION["usuario_id"] = $row["id"]; // ✅ agrega esta línea
-    header("Location: mediterranean.php");
-    exit();
-}
+            // ✅ Guardamos los datos en sesión
+            $_SESSION["usuarios"] = $row["usuarios"];
+            $_SESSION["usuario_id"] = $row["id"];
+            $_SESSION["rol"] = $row["rol"];
 
-
-         else {
+            header("Location: mediterranean.php");
+            exit();
+        } else {
             echo "<script>alert('⚠ Contraseña incorrecta'); window.history.back();</script>";
         }
     } else {

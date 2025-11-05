@@ -1,25 +1,95 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Mediterranean Usuarios</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    /* ===== Reset ===== */
-    * { margin:0; padding:0; box-sizing:border-box; }
-    body {
-      font-family: Arial, sans-serif;
-      display:flex;
-      min-height:100vh;
-      background: linear-gradient(135deg,#0d1117,#004e92,#00c6ff);
-      background-size:300% 300%;
-      animation:moverFondo 12s ease infinite;
-      color:white;
-      overflow-x:hidden;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Usuarios Premium - Mediterranean</title>
 
-    /* ===== Fondo ===== */
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+  #chartStatus, #chartRoles {
+  width: 100% !important; /* ocupa todo el contenedor */
+  max-width: 400px;        /* no muy grande */
+  height: auto !important; /* mantiene proporción */
+}
+
+body, html {
+  overflow-x: hidden; /* Evita cualquier scroll horizontal */
+}
+
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+main.flex-1 {
+    margin-left: 240px;   /* mismo ancho que el sidebar */
+    flex: 1;
+    overflow-y: auto;     /* solo el contenido se desplaza */
+    padding: 20px;
+    min-height: 100vh;
+}
+
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, #020b1f, #001f3f);
+    color: #e8f0f8;
+    margin: 0;
+    padding: 0;
+}
+
+.selected-row {
+    background-color: rgba(39, 234, 14, 0.795) !important;
+}
+
+.glass {
+    background: rgba(0,0,0,0.25);
+    backdrop-filter: blur(15px);
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.neon-card {
+    box-shadow: 0 0 15px rgba(14,165,233,0.3);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+.neon-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 0 25px rgba(14,165,233,0.6);
+}
+
+.btn-futuristic {
+    background: linear-gradient(90deg,#0ea5e9,#2563eb);
+    color: #fff;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+.btn-futuristic:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 20px #0ea5e9;
+}
+
+.table-hover tbody tr:hover {
+    background: rgba(14,165,233,0.1);
+    transition: background 0.3s;
+}
+
+.sidebar img {
+    width: 140px; /* ajusta según lo que quieras */
+    height: auto;  /* mantiene proporción */
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(14,165,233,0.5);
+    margin: 0 auto; /* opcional: centrar horizontalmente */
+    display: block;
+}
+
+
+/* ===== Fondo ===== */
 #background {
   position: fixed;
   top: 0; left: 0;
@@ -35,33 +105,38 @@
   pointer-events: none;
 }
 
-
-/* ===== Sidebar ===== */
 .sidebar {
-  position: fixed;
-  top: 0; left: 0;
-  width: 240px; height: 100%;
-  background: linear-gradient(135deg,#050d1c,#0a1f3d,#0e2a47,#122f68);
-  background-size: 400% 400%;
-  animation: sidebarAnim 10s ease infinite;
-  padding-top: 40px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  z-index: 1000;
-  box-shadow: 2px 0 25px rgba(0,0,0,0.8);
-  overflow: hidden;
+    position: fixed;      /* Fijo en la pantalla */
+    top: 0;
+    left: 0;
+    height: 100vh;        /* Ocupa toda la altura */
+    width: 240px;
+    background: linear-gradient(135deg,#050d1c,#0a1f3d,#0e2a47,#122f68);
+    background-size: 400% 400%;
+    animation: sidebarAnim 10s ease infinite;
+    padding-top: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    z-index: 1000;
+    box-shadow: 2px 0 25px rgba(0,0,0,0.8);
+    overflow: hidden;      /* Quita scroll interno */
 }
+
 .sidebar::before {
   content: "";
   position: absolute;
   top: 0; left: 0;
   width: 100%; height: 100%;
-  background: radial-gradient(circle,rgba(0,242,254,0.4) 1px,transparent 1px);
+  background: radial-gradient(rgba(0,242,254,0.05) 2px, transparent 2px);
   background-size: 40px 40px;
-  animation: moverPuntos 6s linear infinite;
-  opacity: 0.6;
+  animation: moverPuntos 10s linear infinite;
 }
+.sidebar {
+  height: 100vh; /* ocupar toda la pantalla */
+  overflow: hidden; /* quita scroll interno */
+}
+
 .sidebar::after {
   content: "";
   position: absolute;
@@ -70,8 +145,6 @@
   background: linear-gradient(transparent,rgba(0,242,254,0.1),transparent);
   animation: brillo 4s linear infinite;
 }
-
-/* Enlaces sidebar */
 .sidebar a {
   color: #00f2fe;
   text-decoration: none;
@@ -95,138 +168,34 @@
   box-shadow: 0 0 15px #00f2fe, inset 0 0 10px #00f2fe;
 }
 
-/* Animaciones sidebar */
+/* ===== Animaciones ===== */
 @keyframes sidebarAnim { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
 @keyframes moverPuntos { from{background-position:0 0} to{background-position:40px 40px} }
 @keyframes brillo { from{transform:translateY(-100%)} to{transform:translateY(100%)} }
 
-/* ===== Fondo Canvas ===== */
-#bgCanvas {
-  position: fixed;
-  top:0; left:0;
-  width:100%; height:100%;
-  z-index:-2;
+
+
+/* ===== Layout principal ===== */
+.flex.min-h-screen {
+    display: flex;
+    min-height: 100vh;
+    gap: 20px;
 }
 
-    /* ===== Sidebar ===== */
-    .sidebar {
-      position: fixed; top:0; left:0;
-      width: 240px; height: 100%;
-      background: linear-gradient(135deg,#050d1c,#0a1f3d,#0e2a47,#122f68);
-      background-size: 400% 400%;
-      animation: sidebarAnim 10s ease infinite;
-      padding-top: 40px;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      box-shadow: 2px 0 25px rgba(0,0,0,0.8);
-      z-index: 100;
-    }
-    .sidebar a {
-      color: #00f2fe;
-      text-decoration: none;
-      padding: 12px 20px;
-      font-weight: bold;
-      border-radius: 8px;
-      margin: 0 15px;
-      transition: all 0.3s ease;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .sidebar a:hover,
-    .sidebar a.active {
-      background: rgba(255,255,255,0.1);
-      transform: translateX(6px);
-      color: #fff;
-    }
-
-    /* ===== Logo superior ===== */
-.logo-superior {
-  position: relative;
-  top: -35px;
-  left: 300px; 
-  z-index: 2000;
-}
-.logo-superior img {
-  width: 180px;
-  height: auto;
-  filter: drop-shadow(0 0 8px rgba(0,242,254,0.8));
-  transition: transform 0.3s ease;
-}
-.logo-superior img:hover {
-  transform: scale(1.05);
+main.flex-1 {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
 }
 
-    /* ===== Contenido principal ===== */
-    .main-content {
-      margin-left: 100px;
-      flex: 1;
-      padding: 100px 20px;
-    }
-
-    h1 {
-      margin-bottom: 20px;
-      text-shadow: 0 0 10px rgba(0,0,0,0.5);
-    }
-
-    .container {
-      background: rgba(255,255,255,0.05);
-      padding: 25px;
-      border-radius: 20px;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.4);
-      max-width: 1000px;
-    }
-
-    form {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-bottom: 10px;
-    }
-    form input, form select, form button {
-      padding: 10px;
-      border: none;
-      border-radius: 8px;
-    }
-    form input, form select {
-      flex: 1 1 calc(25% - 12px);
-      background: rgba(255,255,255,0.8);
-      color: black;
-    }
-    form button {
-      flex: 1 1 100%;
-      background: linear-gradient(90deg,#00f2fe,#4facfe);
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 15px;
-      background: rgba(255,255,255,0.1);
-    }
-    th, td {
-      padding: 12px;
-      text-align: center;
-    }
-    th {
-      background: rgba(0,0,0,0.5);
-    }
-    tr:hover {
-      background: rgba(255,255,255,0.1);
-    }
-    .btn-eliminar {
-      background: #ff4c4c;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      padding: 6px 12px;
-      cursor: pointer;
-    }
-    .copyright-fixed {
+main.flex-1::-webkit-scrollbar {
+  width: 8px;
+}
+main.flex-1::-webkit-scrollbar-thumb {
+  background: rgba(14,165,233,0.4);
+  border-radius: 4px;
+}
+.copyright-fixed {
   position: fixed;
   bottom: 0;
   left: 240px; /* deja espacio del ancho del sidebar */
@@ -254,6 +223,7 @@
   color: #90e0ef;
   text-decoration: underline;
 }
+
 .policy-modal {
   display: none;
   position: fixed;
@@ -277,6 +247,17 @@
   box-shadow: 0 0 20px rgba(0,0,0,0.3);
   animation: fadeIn 0.3s ease;
 }
+.policy-content a {
+  color: #0ea5e9; /* azul claro */
+  text-decoration: underline;
+  font-weight: 600;
+  transition: color 0.3s;
+}
+
+.policy-content a:hover {
+  color: #2563eb; /* azul más oscuro al pasar el mouse */
+}
+
 .close-policy {
   float: right;
   font-size: 24px;
@@ -285,81 +266,39 @@
   font-weight: bold;
 }
 .close-policy:hover { color: #00c6ff; }
- 
-  </style>
+
+</style>
 </head>
-
 <body>
-  <!-- Sidebar -->
-<div class="sidebar">
-  <a href="#" data-section="Menu" class="fas fa-building">Menu Principal</a>
-  <a href="#" data-section="mediterranean.php" class="active">Productos</a>
-  <a href="#" data-section="sucursales.html">Sucursales</a>
-  <a href="#" data-section="usuarios">Usuarios</a>
-  <a href="#" data-section="reportes">Reportes</a>
-  <a href="#" data-section="utilidades">Utilidades</a>
-</div>
 
-  <!-- Logo -->
-  <div class="logo-superior">
-    <img src="images/LogoMediterranean1992.png" alt="Logo Mediterranean">
-  </div>
 <div id="background"></div>
 <canvas id="particles"></canvas>
-  <!-- Contenido principal -->
-  <div class="main-content">
-    <h1>Gestión de Usuarios</h1>
 
-    <!-- Tarjetas estadísticas -->
-    <div style="display:flex; gap:20px; flex-wrap:wrap; margin-bottom:25px;">
-      <div style="flex:1; min-width:200px; background:rgba(255,255,255,0.1); padding:20px; border-radius:15px; text-align:center;">
-        <h2 id="totalUsuarios" style="color:#00f2fe;">0</h2><p>Total Usuarios</p>
-      </div>
-      <div style="flex:1; min-width:200px; background:rgba(0,255,0,0.1); padding:20px; border-radius:15px; text-align:center;">
-        <h2 id="usuariosActivos" style="color:#00ff88;">0</h2><p>Usuarios Activos</p>
-      </div>
-      <div style="flex:1; min-width:200px; background:rgba(255,0,0,0.1); padding:20px; border-radius:15px; text-align:center;">
-        <h2 id="usuariosInactivos" style="color:#ff4c4c;">0</h2><p>Usuarios Inactivos</p>
-      </div>
-    </div>
+<div class="flex min-h-screen">
 
-    <!-- Gráficas -->
-    <div style="display:flex; gap:20px; flex-wrap:wrap; margin-bottom:30px;">
-      <div style="flex:1; min-width:300px; background:rgba(255,255,255,0.08); padding:20px; border-radius:15px;">
-        <h3>Usuarios Activos vs Inactivos</h3>
-        <canvas id="usuariosChart" style="max-height:300px;"></canvas>
-      </div>
-      <div style="flex:1; min-width:300px; background:rgba(255,255,255,0.08); padding:20px; border-radius:15px;">
-        <h3>Distribución de Usuarios</h3>
-        <canvas id="usuariosPieChart" style="max-height:300px;"></canvas>
-      </div>
-    </div>
+  <!-- Sidebar -->
+ <div class="sidebar">
+  <img src="images/LogoMediterranean1992.png" alt="Logo Mediterranean">
 
-    <!-- Formulario y tabla -->
-    <div class="container">
-      <form id="userForm">
-        <input type="text" id="nombre" placeholder="Nombre" required>
-        <input type="email" id="correo" placeholder="Correo Electrónico" required>
-        <input type="password" id="password" placeholder="Contraseña" required>
-        <select id="estado" required>
-          <option value="activo">Activo</option>
-          <option value="inactivo">Inactivo</option>
-        </select>
-        <input type="file" id="foto" accept="image/*" required>
-        <input type="file" id="cv" accept="application/pdf" required>
-        <button type="submit">Agregar Usuario</button>
-      </form>
+  <a href="mediterranean.php"><i class="fas fa-home"></i> Menu Principal</a>
+  <a href="productos.html"><i class="fas fa-boxes"></i> Productos</a>
+  <a href="sucursales.html"><i class="fas fa-store"></i> Sucursales</a>
+  <a href="usuarios.html"><i class="fas fa-users"></i> Usuarios</a>
+  <a href="reportes.html"><i class="fas fa-chart-bar"></i> Reportes</a>
+  <a href="utilidades.html"><i class="fas fa-cogs"></i> Utilidades</a>
+</div>
 
-      <input type="text" id="searchUser" placeholder="Buscar usuario..." style="width:100%;padding:12px;border:none;border-radius:10px;margin:10px 0;background:rgba(255,255,255,0.8);color:black;">
+<main class="flex-1 p-6 overflow-y-auto space-y-6">
 
-      <table>
-        <thead>
-          <tr>
-            <th>Foto</th><th>Nombre</th><th>Correo</th><th>Estado</th><th>CV</th><th>Acción</th>
-          </tr>
-        </thead>
-        <tbody id="tabla-usuarios"></tbody>
-      </table>
+  <!-- Top Controls -->
+  <div class="flex justify-between items-center mb-4">
+    <h1 class="text-3xl font-bold tracking-wide text-cyan-300">Gestión de Usuarios</h1>
+    <div class="flex gap-2">
+      <input id="searchUser" placeholder="Buscar usuario..." class="rounded px-3 py-2 bg-white/10 text-white placeholder-white/50 focus:ring-2 focus:ring-cyan-400"/>
+      <button id="btnAddUser" class="btn-futuristic px-4 py-2 rounded flex items-center gap-2 text-sm"><i class="fas fa-user-plus"></i>Nuevo</button>
+      <button id="btnEditUser" class="btn-futuristic px-3 py-1 rounded flex items-center gap-1 text-sm bg-yellow-500 hover:bg-yellow-400">
+        <i class="fas fa-user-edit"></i>Editar
+      </button>
     </div>
   </div>
 
@@ -376,99 +315,278 @@
     <p>En Mediterranean Technologies, valoramos tu privacidad. Todos los datos son tratados conforme al RGPD y nuestras medidas de seguridad garantizan la integridad de la información...</p>
     <p><a href="politica-completa.html">Leer política completa</a></p>
   </div>
+  </div>
+  
+
+  <!-- Estadísticas Premium -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <div class="glass stats-card p-4 flex items-center gap-3">
+      <div class="text-cyan-400 text-3xl"><i class="fas fa-users"></i></div>
+      <div>
+        <div class="text-xs opacity-70">Total Usuarios</div>
+        <div id="totalUsuarios" class="text-xl font-bold text-cyan-300">0</div>
+      </div>
+    </div>
+    <div class="glass stats-card p-4 flex items-center gap-3">
+      <div class="text-green-400 text-3xl"><i class="fas fa-user-check"></i></div>
+      <div>
+        <div class="text-xs opacity-70">Activos</div>
+        <div id="usuariosActivos" class="text-xl font-bold text-green-400">0</div>
+      </div>
+    </div>
+    <div class="glass stats-card p-4 flex items-center gap-3">
+      <div class="text-red-400 text-3xl"><i class="fas fa-user-times"></i></div>
+      <div>
+        <div class="text-xs opacity-70">Inactivos</div>
+        <div id="usuariosInactivos" class="text-xl font-bold text-red-400">0</div>
+      </div>
+    </div>
+    <div class="glass stats-card p-4 flex items-center gap-3">
+      <div class="text-yellow-400 text-3xl"><i class="fas fa-user-shield"></i></div>
+      <div>
+        <div class="text-xs opacity-70">Roles</div>
+        <div id="totalRoles" class="text-xl font-bold text-yellow-400">0</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gráficas Premium -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="glass neon-card p-4 flex flex-col items-center justify-center">
+      <h3 class="text-cyan-300 font-semibold mb-2">Activos vs Inactivos</h3>
+      <canvas id="chartStatus" height="200"></canvas>
+    </div>
+    <div class="glass neon-card p-4 flex flex-col items-center justify-center">
+      <h3 class="text-cyan-300 font-semibold mb-2">Distribución por Roles</h3>
+      <canvas id="chartRoles" height="200"></canvas>
+    </div>
+  </div>
+
+  <!-- Tabla Usuarios Premium -->
+  <div class="glass rounded-lg shadow-lg p-4">
+    <h3 class="text-cyan-300 font-semibold mb-2">Lista de Usuarios</h3>
+    <table class="w-full text-sm table-hover text-left">
+      <thead class="border-b border-white/10 text-cyan-300 uppercase text-xs">
+        <tr>
+          <th>#</th>
+          <th>Usuario</th>
+          <th>Correo</th>
+          <th>Rol</th>
+          <th>Estado</th>
+          <th class="text-center">Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="tablaUsuarios" class="divide-y divide-white/10"></tbody>
+    </table>
+  </div>
+
+  
+</main>
+</div>
+
+<!-- Modal Usuario -->
+<div id="modalUsuario" class="fixed inset-0 hidden items-center justify-center bg-black/70 backdrop-blur-sm z-50">
+  <div class="bg-gray-900 text-white p-6 rounded-xl w-full max-w-lg shadow-2xl border border-cyan-500/40">
+    <div class="flex justify-between items-center mb-4">
+      <h2 id="modalTitle" class="text-2xl font-semibold text-cyan-300">Agregar usuario</h2>
+      <button id="closeModal" class="text-gray-400 hover:text-white"><i class="fas fa-times"></i></button>
+    </div>
+    <form id="userForm" class="grid gap-4">
+      <input id="usuarios" type="text" placeholder="Nombre de usuario" class="p-2 bg-white/10 rounded border border-white/20" required>
+      <input id="correo" type="email" placeholder="Correo electrónico" class="p-2 bg-white/10 rounded border border-white/20" required>
+      <input id="password" type="password" placeholder="Contraseña" class="p-2 bg-white/10 rounded border border-white/20">
+      <div class="grid grid-cols-2 gap-2">
+        <select id="rol" class="p-2 bg-white/10 rounded border border-white/20">
+          <option>Administrador</option>
+          <option>Invitado</option>
+        </select>
+        <select id="estado" class="p-2 bg-white/10 rounded border border-white/20">
+          <option value="activo">Activo</option>
+          <option value="inactivo">Inactivo</option>
+        </select>
+      </div>
+      <input id="foto" type="file" accept="image/*" class="p-2 bg-white/10 rounded border border-white/20">
+
+      <div class="flex justify-end gap-2 mt-3">
+        <button type="button" id="cancelModal" class="px-3 py-1 rounded border border-white/20 hover:bg-white/10">Cancelar</button>
+        <button type="submit" id="saveBtn" class="btn-futuristic px-3 py-1 rounded text-sm">Guardar</button>
+      </div>
+    </form>
+  </div>
 </div>
 
 
 
-  
-  <script>
-    // Convertir archivo a base64
-    const fileToBase64 = file => new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
+<script>
+// ===== JS Funcional =====
+const BASE_API = '.';
+let usuariosData = [];
+let selectedUserId = null;
+const tablaUsuarios = document.getElementById('tablaUsuarios');
+const modal = document.getElementById('modalUsuario');
+const form = document.getElementById('userForm');
+let editingId = null;
 
-    let usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
-
-    const totalUsuarios = document.getElementById("totalUsuarios");
-    const usuariosActivos = document.getElementById("usuariosActivos");
-    const usuariosInactivos = document.getElementById("usuariosInactivos");
-    const tablaUsuarios = document.getElementById("tabla-usuarios");
-
-    const ctxBar = document.getElementById("usuariosChart").getContext("2d");
-    const usuariosChart = new Chart(ctxBar, {
-      type: "bar",
-      data: { labels: ["Activos", "Inactivos"], datasets: [{ label: "Usuarios", data: [0,0], backgroundColor: ["#00ff88", "#ff4c4c"] }] },
-      options: { plugins:{legend:{labels:{color:"#fff"}}}, scales:{x:{ticks:{color:"#fff"}}, y:{ticks:{color:"#fff"}}} }
-    });
-
-    const ctxPie = document.getElementById("usuariosPieChart").getContext("2d");
-    const usuariosPieChart = new Chart(ctxPie, {
-      type: "doughnut",
-      data: { labels:["Activos","Inactivos"], datasets:[{ data:[0,0], backgroundColor:["#00ff88","#ff4c4c"] }] },
-      options:{ plugins:{legend:{position:"bottom",labels:{color:"#fff"}}}}
-    });
-
-    function renderizarTabla(filtro=""){
-      tablaUsuarios.innerHTML = "";
-      usuarios.filter(u=>u.nombre.toLowerCase().includes(filtro.toLowerCase()))
-        .forEach((u,i)=>{
-          const tr=document.createElement("tr");
-          tr.innerHTML=`
-            <td><img src="${u.foto}" width="40" height="40" style="border-radius:50%;"></td>
-            <td>${u.nombre}</td>
-            <td>${u.correo}</td>
-            <td style="color:${u.estado==='activo'?'#00ff88':'#ff4c4c'}">${u.estado}</td>
-            <td><a href="${u.cv}" target="_blank" style="color:#00f2fe;">Ver PDF</a></td>
-            <td><button class="btn-eliminar" onclick="eliminarUsuario(${i})">Eliminar</button></td>`;
-          tablaUsuarios.appendChild(tr);
-      });
-    }
-
-    function actualizarEstadisticas(){
-      const activos=usuarios.filter(u=>u.estado==="activo").length;
-      const inactivos=usuarios.filter(u=>u.estado==="inactivo").length;
-      totalUsuarios.textContent=usuarios.length;
-      usuariosActivos.textContent=activos;
-      usuariosInactivos.textContent=inactivos;
-      usuariosChart.data.datasets[0].data=[activos,inactivos];
-      usuariosPieChart.data.datasets[0].data=[activos,inactivos];
-      usuariosChart.update(); usuariosPieChart.update();
-    }
-
-    function eliminarUsuario(i){
-      usuarios.splice(i,1);
-      localStorage.setItem("usuarios",JSON.stringify(usuarios));
-      renderizarTabla();
-      actualizarEstadisticas();
-    }
-
-    document.getElementById("userForm").addEventListener("submit", async e=>{
-      e.preventDefault();
-      const nombre=document.getElementById("nombre").value;
-      const correo=document.getElementById("correo").value;
-      const password=document.getElementById("password").value;
-      const estado=document.getElementById("estado").value;
-      const foto=document.getElementById("foto").files[0];
-      const cv=document.getElementById("cv").files[0];
-      if(!nombre||!correo||!password||!foto||!cv)return alert("Completa todos los campos.");
-      const fotoBase64=await fileToBase64(foto);
-      const cvBase64=await fileToBase64(cv);
-      usuarios.push({nombre,correo,password,estado,foto:fotoBase64,cv:cvBase64});
-      localStorage.setItem("usuarios",JSON.stringify(usuarios));
-      e.target.reset();
-      renderizarTabla();
-      actualizarEstadisticas();
-    });
-
-    document.getElementById("searchUser").addEventListener("input",e=>renderizarTabla(e.target.value));
-
+async function fetchUsuarios() {
+  try {
+    const res = await fetch(`${BASE_API}/obtener_todos_usuarios.php`);
+    const data = await res.json();
+    usuariosData = data.success ? data.users : [];
+    updateStats();
     renderizarTabla();
-    actualizarEstadisticas();
+    renderCharts();
+  } catch { usuariosData = []; updateStats(); renderizarTabla(); renderCharts(); }
+}
 
-  // ===== Fondo de partículas =====
+function renderizarTabla(filter='') {
+  tablaUsuarios.innerHTML='';
+  usuariosData
+    .filter(u => u.usuarios.toLowerCase().includes(filter.toLowerCase()) || u.correo.toLowerCase().includes(filter.toLowerCase()))
+    .forEach((u,i)=>{
+      const estadoHTML = u.estado==='activo' 
+        ? '<span class="text-green-400 font-semibold">Activo</span>' 
+        : '<span class="text-red-400 font-semibold">Inactivo</span>';
+      const tr = document.createElement('tr');
+      tr.dataset.id = u.id;
+      tr.innerHTML=`
+        <td class="py-2">${i+1}</td>
+        <td class="py-2 flex items-center gap-2"><img src="${u.foto||'https://via.placeholder.com/40'}" class="w-10 h-10 rounded-full border border-white/20">${u.usuarios}</td>
+        <td class="py-2">${u.correo}</td>
+        <td class="py-2">${u.rol}</td>
+                <td class="py-2">${estadoHTML}</td>
+        <td class="py-2 text-center space-x-2">
+          <button class="text-amber-400 hover:text-amber-300 btn-toggle" data-id="${u.id}"><i class="fas fa-toggle-on"></i></button>
+          <button class="text-red-400 hover:text-red-300 btn-delete" data-id="${u.id}"><i class="fas fa-trash"></i></button>
+        </td>`;
+      
+      tr.addEventListener('click', ()=>{
+        document.querySelectorAll('#tablaUsuarios tr').forEach(r => r.classList.remove('selected-row'));
+        tr.classList.add('selected-row');
+        selectedUserId = u.id;
+      });
+
+      tablaUsuarios.appendChild(tr);
+    });
+}
+
+function updateStats(){
+  const total=usuariosData.length;
+  const activos=usuariosData.filter(u=>u.estado==='activo').length;
+  const inactivos=total-activos;
+  document.getElementById('totalUsuarios').textContent=total;
+  document.getElementById('usuariosActivos').textContent=activos;
+  document.getElementById('usuariosInactivos').textContent=inactivos;
+  const roles = [...new Set(usuariosData.map(u=>u.rol))].length;
+  document.getElementById('totalRoles').textContent = roles;
+}
+
+let statusChart=null;
+let rolesChart=null;
+function renderCharts(){
+  const activos=usuariosData.filter(u=>u.estado==='activo').length;
+  const inactivos=usuariosData.length-activos;
+  const rolesCount={Administrador:0, Invitado:0};
+  usuariosData.forEach(u=>rolesCount[u.rol] = (rolesCount[u.rol]||0)+1);
+
+  if(statusChart) statusChart.destroy();
+  const ctx1=document.getElementById('chartStatus').getContext('2d');
+  statusChart=new Chart(ctx1,{
+    type:'doughnut',
+    data:{
+      labels:['Activos','Inactivos'],
+      datasets:[{data:[activos,inactivos], backgroundColor:['#22c55e','#f87171'], borderWidth:0}]
+    },
+    options:{plugins:{legend:{position:'bottom',labels:{color:'#fff'}}}}
+  });
+
+  if(rolesChart) rolesChart.destroy();
+  const ctx2=document.getElementById('chartRoles').getContext('2d');
+  rolesChart=new Chart(ctx2,{
+    type:'doughnut',
+    data:{
+      labels:Object.keys(rolesCount),
+      datasets:[{data:Object.values(rolesCount), backgroundColor:['#0ea5e9','#facc15','#f472b6'], borderWidth:0}]
+    },
+    options:{plugins:{legend:{position:'bottom',labels:{color:'#fff'}}}}
+  });
+}
+
+tablaUsuarios.addEventListener('click', e=>{
+  const id=e.target.closest('button')?.dataset.id;
+  if(!id) return;
+  if(e.target.closest('.btn-toggle')) toggleEstado(+id);
+  if(e.target.closest('.btn-delete')) deleteUsuario(+id);
+});
+
+async function toggleEstado(id){
+  await fetch(`${BASE_API}/toggle_status.php`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({id})});
+  await loadAll();
+}
+
+async function deleteUsuario(id){
+  if(!confirm('¿Eliminar usuario?')) return;
+  await fetch(`${BASE_API}/delete_user.php`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({id})});
+  await loadAll();
+}
+
+document.getElementById('btnAddUser').addEventListener('click', ()=>{
+  editingId=null;
+  form.reset();
+  document.getElementById('modalTitle').textContent='Agregar usuario';
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+});
+
+['closeModal','cancelModal'].forEach(id=>document.getElementById(id).addEventListener('click', ()=> modal.classList.add('hidden')));
+
+form.addEventListener('submit', async e=>{
+  e.preventDefault();
+  const data={
+    usuarios: form.usuarios.value.trim(),
+    correo: form.correo.value.trim(),
+    password: form.password.value,
+    rol: form.rol.value,
+    estado: form.estado.value
+  };
+  if(form.foto.files[0]) data.foto=await fileToBase64(form.foto.files[0]);
+  const endpoint=editingId?'update_user.php':'add_user.php';
+  const body=new FormData();
+  for(const k in data) body.append(k,data[k]);
+  if(editingId) body.append('id',editingId);
+  await fetch(`${BASE_API}/${endpoint}`, {method:'POST', body});
+  modal.classList.add('hidden');
+  await loadAll();
+});
+
+function fileToBase64(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(file);});}
+
+document.getElementById('searchUser').addEventListener('input', e=>renderizarTabla(e.target.value));
+
+async function loadAll(){await fetchUsuarios(); renderizarTabla(); renderCharts();}
+
+loadAll();
+
+document.getElementById('btnEditUser').addEventListener('click', ()=>{
+    if(!selectedUserId){
+        alert('Selecciona un usuario de la tabla para editar');
+        return;
+    }
+    const user = usuariosData.find(u => u.id == selectedUserId);
+    if(!user) return;
+    editingId = user.id;
+    form.usuarios.value = user.usuarios;
+    form.correo.value = user.correo;
+    form.password.value = '';
+    form.rol.value = user.rol;
+    form.estado.value = user.estado;
+    document.getElementById('modalTitle').textContent='Editar usuario';
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+});
+
+
+
+// Partículas fondo
 window.onload = function() {
   const canvas = document.getElementById("particles");
   const ctx = canvas.getContext("2d");
@@ -538,8 +656,8 @@ window.onload = function() {
     initParticles();
   });
 };
-  </script>
-  <script>
+</script>
+<script>
 document.getElementById("openPolicy").onclick = () => {
   document.getElementById("policyModal").style.display = "flex";
 };
@@ -551,6 +669,6 @@ window.onclick = (e) => {
     document.getElementById("policyModal").style.display = "none";
 };
 </script>
-
 </body>
 </html>
+

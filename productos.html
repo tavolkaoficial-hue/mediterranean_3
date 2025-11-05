@@ -298,15 +298,15 @@ img:hover{transform:scale(1.1) rotate(3deg);}
 </div>
 
 
-<!-- Sidebar -->
 <div class="sidebar">
-  <a href="#" data-section="Menu" class="fas fa-building">Menu Principal</a>
-  <a href="#" data-section="mediterranean.php" class="active">Productos</a>
-  <a href="#" data-section="sucursales.html">Sucursales</a>
-  <a href="#" data-section="usuarios">Usuarios</a>
-  <a href="#" data-section="reportes">Reportes</a>
-  <a href="#" data-section="utilidades">Utilidades</a>
+  <a href="mediterranean.php"><i class="fas fa-home"></i> Menu Principal</a>
+  <a href="productos.html"><i class="fas fa-boxes"></i> Productos</a>
+  <a href="sucursales.html"><i class="fas fa-store"></i> Sucursales</a>
+  <a href="usuarios.html"><i class="fas fa-users"></i> Usuarios</a>
+  <a href="reportes.html"><i class="fas fa-chart-bar"></i> Reportes</a>
+  <a href="utilidades.html"><i class="fas fa-cogs"></i> Utilidades</a>
 </div>
+
 
 <div class="main-content">
   <div id="contenido"></div>
@@ -452,18 +452,6 @@ function cargarSeccion(seccion) {
     iniciarInventario();
   }
 }
-
-
-
-/* ===== Eventos menú ===== */
-document.querySelectorAll(".sidebar a").forEach(link=>{
-  link.addEventListener("click",e=>{
-    e.preventDefault();
-    document.querySelectorAll(".sidebar a").forEach(a=>a.classList.remove("active"));
-    link.classList.add("active");
-    cargarSeccion(link.dataset.section);
-  });
-});
 
 /* ===== Inventario ===== */
 let productos = [];
