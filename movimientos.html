@@ -5,230 +5,488 @@
   <title>Movimientos de Producto</title>
 
   <style>
-    /* === ESTILOS PRINCIPALES === */
-    body {
-      font-family: "Orbitron", "Poppins", sans-serif;
-      background: radial-gradient(circle at 20% 20%, #001f3f, #000814);
-      color: #00f2fe;
-      margin: 0;
-      padding: 20px;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      overflow-x: hidden;
+    
+    :root{
+      --med-blue: #00eaff;
+      --med-blue-2: #00b4ff;
+      --med-deep: #001026;
+      --accent: #f77d19;
+      --glass: rgba(255,255,255,0.04);
+      --glass-2: rgba(0, 228, 255, 0.06);
+      --muted: #cfeff6;
     }
 
-    /* === CANVAS DEL FONDO DE PARTÍCULAS === */
+    /* === BODY / FONDO === */
+    body{
+      font-family: "Orbitron", "Poppins", sans-serif;
+      margin:0;
+      padding:20px;
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      overflow-x:hidden;
+      color:var(--med-blue);
+      /* fondo mediterranean: degradado con brillo central */
+      background: radial-gradient(circle at 20% 18%, rgba(0,234,255,0.08) 0%, rgba(0,180,220,0.06) 8%, var(--med-deep) 45%, #000814 100%);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    /* Canvas fondo (dejamos transparente para que el canvas JS pinte) */
     #particles {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1; /* para que quede detrás del contenido */
-      background: radial-gradient(circle at 20% 20%, #001f3f, #000814);
+      top:0;
+      left:0;
+      width:100%;
+      height:100%;
+      z-index:-1;
+      background: transparent;
     }
 
-    h2 {
-      text-align: center;
-      margin-bottom: 25px;
-      font-size: 2em;
-      text-shadow: 0 0 20px #00f2fe;
-      letter-spacing: 2px;
-    }
+    h2{ text-align:center; margin-bottom:25px; font-size:2em; text-shadow:0 0 18px rgba(0,234,255,0.08); letter-spacing:2px; color:var(--muted); }
 
-    .contenedor {
-      background: rgba(0, 10, 30, 0.8);
-      border: 1px solid rgba(0, 242, 254, 0.3);
-      box-shadow: 0 0 25px rgba(0, 242, 254, 0.4);
-      border-radius: 20px;
-      padding: 30px;
-      max-width: 700px;
-      width: 100%;
-      backdrop-filter: blur(10px);
+    /* === CONTENEDOR PRINCIPAL === */
+    .contenedor{
+      background: linear-gradient(180deg, rgba(1, 66, 130, 0.85), rgba(0,8,20,0.72));
+      border: 1px solid rgba(0,234,255,0.12);
+      box-shadow: 0 12px 40px rgba(0,180,220,0.06), inset 0 1px 0 rgba(255,255,255,0.02);
+      border-radius:18px;
+      padding:28px;
+      max-width:880px;
+      width:100%;
+      backdrop-filter: blur(8px) saturate(1.05);
       animation: fadeIn 0.6s ease;
-      z-index: 1;
+      z-index:1;
+      transition: transform .16s ease;
+    }
+    .contenedor:hover{ transform: translateY(-4px); }
+
+    @keyframes fadeIn{
+      from{ opacity:0; transform: translateY(-12px); }
+      to{ opacity:1; transform: translateY(0); }
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-15px); }
-      to { opacity: 1; transform: translateY(0); }
+    /* === FORM Y CAMPOS === */
+    form{ display:flex; flex-direction:column; gap:14px; }
+    label{
+      font-weight:700;
+      text-transform:uppercase;
+      font-size:0.88rem;
+      letter-spacing:1px;
+      color: var(--med-blue);
+    }
+    input, select, textarea{
+      padding:12px;
+      border-radius:10px;
+      border:1px solid var(--glass-2);
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.02));
+      color: #ff8400;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.28) inset;
+      transition: all .22s ease;
+      font-family: inherit;
+    }
+    input::placeholder, textarea::placeholder{ color: rgba(255,255,255,0.45); }
+
+    input:focus, select:focus, textarea:focus{
+      outline: none;
+      box-shadow: 0 0 18px rgba(0,234,255,0.12);
+      border-color: var(--med-blue);
+      transform: scale(1.01);
     }
 
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
+    /* === BOTONES NEÓN (mantenidos) === */
+    button{
+      border:none;
+      border-radius:10px;
+      padding:12px 14px;
+      font-weight:700;
+      text-transform:uppercase;
+      cursor:pointer;
+      transition: all .18s ease;
+      letter-spacing:1px;
+      font-family: inherit;
     }
 
-    label {
-      font-weight: bold;
-      text-transform: uppercase;
-      font-size: 0.9em;
-      letter-spacing: 1px;
-      color: #7ef9ff;
+    /* Registrar movimiento (neón) */
+    button[type="submit"]{
+      background: linear-gradient(90deg, var(--med-blue), var(--med-blue-2));
+      color:#001219;
+      box-shadow: 0 6px 28px rgba(0,234,255,0.14), 0 0 8px rgba(0,234,255,0.12) inset;
+    }
+    button[type="submit"]:hover{
+      transform: translateY(-3px) scale(1.01);
+      box-shadow: 0 10px 40px rgba(0,234,255,0.18);
     }
 
-    input, select, textarea {
-      padding: 12px;
-      border-radius: 10px;
-      border: 1px solid rgba(0, 242, 254, 0.4);
-      background: rgba(255, 255, 255, 0.08);
-      color: #f77d19;
-      transition: all 0.3s ease;
+    .btn-volver{
+      background: rgba(0,234,255,0.06);
+      color: var(--med-blue);
+      border:1px solid rgba(0,234,255,0.08);
+    }
+    .btn-volver:hover{ transform: translateY(-2px); }
+
+    /* boton generar reporte */
+    #btnReporte{
+      background: linear-gradient(90deg, #4facfe, var(--med-blue));
+      border:none;
+      padding:10px 18px;
+      border-radius:10px;
+      font-weight:700;
+      color:#001218;
+      box-shadow: 0 8px 32px rgba(0,234,255,0.12);
+      cursor:pointer;
+    }
+    #btnReporte:hover{
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 16px 46px rgba(0,234,255,0.18);
     }
 
-    input:focus, select:focus, textarea:focus {
-      box-shadow: 0 0 10px #00f2fe;
-      transform: scale(1.02);
-      border-color: #00f2fe;
+    /* mensaje */
+    .mensaje{
+      text-align:center;
+      margin-top:10px;
+      font-weight:700;
+      color: #bff6ff;
+      text-shadow: 0 0 6px rgba(0,234,255,0.06);
     }
 
-    button {
-      border: none;
-      border-radius: 10px;
-      padding: 12px;
-      font-weight: bold;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      letter-spacing: 1px;
-    }
-
-    button[type="submit"] {
-      background: linear-gradient(90deg, #00f2fe, #4facfe);
-      color: #000;
-      box-shadow: 0 0 10px #00f2fe;
-    }
-
-    .btn-volver {
-      background: rgba(0, 242, 254, 0.15);
-      color: #00f2fe;
-      border: 1px solid #00f2fe;
-    }
-
-    .mensaje {
-      text-align: center;
-      margin-top: 10px;
-      font-weight: bold;
-      color: #00f2fe;
-      text-shadow: 0 0 8px #00f2fe;
-    }
-
-    .tabla-movimientos {
-      margin-top: 30px;
+    /* === TABLA MOVIMIENTOS (estética mediterránea más cálida) === */
+    .tabla-movimientos{
+      margin-top:28px;
       border-collapse: collapse;
-      width: 100%;
-      color: #fff;
+      width:100%;
+      color:#fff;
+      background: transparent;
+      border-radius:8px;
+      overflow:hidden;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.28);
     }
 
-    .tabla-movimientos th, .tabla-movimientos td {
-      padding: 12px;
-      text-align: left;
+    .tabla-movimientos th, .tabla-movimientos td{
+      padding:12px 10px;
+      text-align:left;
+      vertical-align: middle;
     }
 
-    .tabla-movimientos th {
-      background: rgba(0, 242, 254, 0.1);
-      border-bottom: 1px solid #00f2fe;
+    .tabla-movimientos thead tr{
+      background: linear-gradient(90deg, rgba(0,234,255,0.06), rgba(0,180,220,0.03));
+    }
+
+    .tabla-movimientos th{
+      color: #dffaff;
+      font-size:0.88rem;
       text-transform: uppercase;
-      font-size: 0.9em;
+      border-bottom: 1px solid rgba(0,234,255,0.08);
     }
 
-    .entrada { color: #00ff9d; font-weight: bold; }
-    .salida { color: #ff4c4c; font-weight: bold; }
+    .tabla-movimientos tbody tr{
+      transition: background .12s ease, transform .12s ease;
+    }
+    .tabla-movimientos tbody tr:hover{
+      background: linear-gradient(90deg, rgba(0,234,255,0.03), rgba(0,180,220,0.02));
+      transform: translateX(4px);
+    }
 
-   /* ===== Logo lateral ===== */
-.logo-superior {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 0px; /* separa del container */
-}
+    .entrada{ color:#8ef7c9; font-weight:700; }
+    .salida { color:#ff8f8f; font-weight:700; }
 
-.logo-superior img {
-  width: 250px;
-  height: auto;
-  filter: drop-shadow(0 0 8px rgba(0,242,254,0.8));
-  transition: transform 0.3s ease;
-}
+    /* === LOGO === */
+    .logo-superior{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      margin-bottom:8px;
+    }
+    .logo-superior img{
+      width:240px;
+      filter: drop-shadow(0 12px 30px rgba(0,234,255,0.06));
+      transition: transform .24s ease;
+    }
+    .logo-superior img:hover{ transform: scale(1.06) rotate(-1deg); }
 
-.logo-superior img:hover {
-  transform: scale(1.05);
-}
+    /* === MODAL === */
+    #modalReporte{
+      position:fixed;
+      top:0; left:0;
+      width:100%; height:100%;
+      display:none;
+      justify-content:center;
+      align-items:center;
+      background: rgba(0,0,0,0.6);
+      z-index:9999;
+    }
 
-/* ===== Contenedor principal alineado ===== */
-.section-con-logo {
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  gap: 20px;
-  flex-wrap: wrap; /* se adapta en pantallas pequeñas */
-}
+    #modalFoco{
+      position:absolute;
+      inset:0;
+      backdrop-filter: blur(4px) saturate(1.15);
+      opacity:0.55;
+      pointer-events:none;
+    }
 
+    #modalContenido{
+      position:relative;
+      width:420px;
+      background: linear-gradient(180deg, rgba(2,6,23,0.96), rgba(0,12,25,0.92));
+      border-radius:14px;
+      padding:22px;
+      border:1px solid rgba(0,234,255,0.12);
+      box-shadow: 0 12px 48px rgba(0,180,220,0.06);
+      transform: translateY(8px);
+    }
+
+    .modal-header{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px; }
+    .modal-header h3{ margin:0; color: #bff6ff; font-size:1.05rem; letter-spacing:1px; }
+    .modal-close{
+      background:transparent;
+      color:var(--med-blue);
+      border:1px solid rgba(0,234,255,0.08);
+      padding:6px 8px;
+      border-radius:8px;
+      cursor:pointer;
+    }
+
+    .modal-field{ margin-bottom:12px; }
+    .futurista-input, .futurista-select{
+      width:100%;
+      padding:10px 12px;
+      border-radius:10px;
+      border:1px solid rgba(0,234,255,0.06);
+      background: linear-gradient(180deg, rgba(188, 188, 191, 0.999), rgba(255, 255, 255, 0.785));
+      color: #000000;
+      outline:none;
+      box-shadow: 0 6px 20px rgba(38, 32, 143, 0.521) inset;
+    }
+    .futurista-input:focus, .futurista-select:focus{
+      box-shadow: 0 0 18px rgba(0,234,255,0.12);
+      border-color:var(--med-blue);
+    }
+
+    .modal-actions{ display:flex; justify-content:center; gap:10px; margin-top:10px; }
+
+    .btn-primary{
+      background: linear-gradient(90deg, var(--med-blue), var(--med-blue-2));
+      color:#001218;
+      padding:10px 14px;
+      border-radius:10px;
+      border:none;
+      font-weight:700;
+      cursor:pointer;
+      box-shadow: 0 8px 30px rgba(0,234,255,0.08);
+    }
+    .btn-primary:hover{ transform: translateY(-3px); box-shadow: 0 16px 44px rgba(0,234,255,0.12); }
+
+    .btn-ghost{
+      background: transparent;
+      color:#bff6ff;
+      border:1px solid rgba(0,234,255,0.06);
+      padding:10px 14px;
+      border-radius:10px;
+      cursor:pointer;
+    }
+
+    /* === PREVIEW PANEL === */
+    #previewPanel{
+      position:fixed;
+      top:60px;
+      right:-720px;
+      width:700px;
+      max-width:calc(100% - 40px);
+      height:calc(100% - 120px);
+      background: linear-gradient(180deg, rgba(28, 42, 104, 0.96), rgba(0,10,30,0.92));
+      border-left:1px solid rgba(0,234,255,0.06);
+      box-shadow:-12px 0 40px rgba(0,0,0,0.6);
+      border-radius:12px 0 0 12px;
+      padding:18px;
+      z-index:10000;
+      transition:right .42s cubic-bezier(.2,.9,.3,1);
+      overflow:auto;
+      backdrop-filter: blur(6px);
+    }
+    #previewPanel.open{ right:20px; }
+
+    #previewHeader{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px; }
+    #previewHeader h4{ margin:0; color:#bff6ff; font-size:1.05rem; }
+    #previewTable{ width:100%; border-collapse: collapse; margin-top:10px; }
+    #previewTable th, #previewTable td{ padding:8px; border-bottom:1px solid rgba(0,234,255,0.04); color:#dffaff; font-size:0.95rem; text-align:left; }
+    #previewTable th{ text-transform:uppercase; font-size:0.8rem; color:#aef4ff; }
+
+    .preview-actions{ display:flex; gap:10px; margin-top:12px; justify-content:flex-end; align-items:center; }
+
+    .small-muted{ color:#9fd7e3; font-size:0.85rem; }
+
+    /* Responsive tweaks */
+    @media(max-width:900px){
+      #modalContenido{ width:92%; }
+      #previewPanel{ width:92%; right:-100%; }
+      #previewPanel.open{ right:4%; top:70px; height: calc(100% - 140px); }
+      .contenedor{ padding:18px; }
+    }
 
   </style>
 </head>
 
 <body>
   <div class="section-con-logo">
-  <div class="logo-superior">
-    <img src="images/LogoMediterranean1992.png" alt="logo">
+    <div class="logo-superior">
+      <img src="images/LogoMediterranean1992.png" alt="logo">
+    </div>
+
+    <canvas id="particles"></canvas>
+
+    <div class="contenedor">
+      <form id="formMovimiento">
+        <input type="hidden" id="productos" name="productos">
+
+        <label for="tipo">Tipo de movimiento</label>
+        <select name="tipo" id="tipo" required>
+          <option value="">Seleccione...</option>
+          <option value="Entrada">Entrada</option>
+          <option value="Salida">Salida</option>
+        </select>
+
+        <label for="sucursal">Sucursal</label>
+        <select name="sucursal" id="sucursal" required>
+          <option value="Kennedy">Kennedy</option>
+          <option value="Centro">Centro</option>
+          <option value="Norte">Norte</option>
+        </select>
+
+        <label for="cantidad">Cantidad</label>
+        <input type="number" name="cantidad" id="cantidad" required min="1" placeholder="Ej: 10">
+
+        <label for="comentario">Comentario</label>
+        <textarea name="comentario" id="comentario" rows="3" placeholder="Ej: Compra a proveedor o ajuste de stock"></textarea>
+
+        <button type="submit">💾 Registrar Movimiento</button>
+        <button type="button" class="btn-volver" id="btnVolver">⬅ Volver</button>
+
+        <div class="mensaje" id="mensajeMovimiento"></div>
+      </form>
+
+      <hr style="margin:30px 0; border:0; border-top:1px solid rgba(0,234,255,0.08);">
+
+      <h3 style="text-align:center; color:#bff6ff;">📜 Últimos movimientos</h3>
+
+      <!-- BOTÓN PARA ABRIR EL MODAL -->
+      <div style="text-align:center; margin-bottom:20px;">
+        <button id="btnReporte" style="
+          background: linear-gradient(90deg, #4facfe, #00f2fe);
+          border: none; padding: 10px 18px;
+          border-radius: 10px;
+          font-weight: bold;
+          cursor: pointer;
+          box-shadow: 0 0 10px #00f2fe;
+          color: #000;
+          text-transform: uppercase;
+        ">📄 Generar Reporte</button>
+      </div>
+
+      <table class="tabla-movimientos" id="tablaMovimientos">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Tipo</th>
+            <th>Cantidad</th>
+            <th>Comentario</th>
+            <th>Sucursal</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
   </div>
 
-  <!-- Fondo animado -->
-  <canvas id="particles"></canvas>
+  <!-- ================================ -->
+  <!--       MODAL FUTURISTA AVANZADO   -->
+  <!-- ================================ -->
+  <div id="modalReporte" aria-hidden="true">
+    <div id="modalFoco" aria-hidden="true"></div>
 
-  <div class="contenedor">
-    <form id="formMovimiento">
-      <input type="hidden" id="productos" name="productos">
+    <div id="modalContenido" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-header">
+        <h3 id="modalTitle">📄 Generar reporte avanzado</h3>
+        <button class="modal-close" id="btnCerrarReporte" title="Cerrar">✕</button>
+      </div>
 
-      <label for="tipo">Tipo de movimiento</label>
-      <select name="tipo" id="tipo" required>
-        <option value="">Seleccione...</option>
-        <option value="Entrada">Entrada</option>
-        <option value="Salida">Salida</option>
-      </select>
+      <!-- Campos: Rango de fechas, filtros -->
+      <div class="modal-field">
+        <label class="small-muted">Desde</label>
+        <input type="date" id="fechaDesde" class="futurista-input" />
+      </div>
 
-      <label for="sucursal">Sucursal</label>
-      <select name="sucursal" id="sucursal" required>
-        <option value="Kennedy">Kennedy</option>
-        <option value="Centro">Centro</option>
-        <option value="Norte">Norte</option>
-      </select>
+      <div class="modal-field">
+        <label class="small-muted">Hasta</label>
+        <input type="date" id="fechaHasta" class="futurista-input" />
+      </div>
 
-      <label for="cantidad">Cantidad</label>
-      <input type="number" name="cantidad" id="cantidad" required min="1" placeholder="Ej: 10">
+      <div class="modal-field">
+        <label class="small-muted">Sucursal</label>
+        <select id="filtroSucursal" class="futurista-select">
+          <option value="">Todas</option>
+          <option value="Kennedy">Kennedy</option>
+          <option value="Centro">Centro</option>
+          <option value="Norte">Norte</option>
+        </select>
+      </div>
 
-      <label for="comentario">Comentario</label>
-      <textarea name="comentario" id="comentario" rows="3" placeholder="Ej: Compra a proveedor o ajuste de stock"></textarea>
+      <div class="modal-field">
+        <label class="small-muted">Tipo</label>
+        <select id="filtroTipo" class="futurista-select">
+          <option value="">Todos</option>
+          <option value="Entrada">Entrada</option>
+          <option value="Salida">Salida</option>
+        </select>
+      </div>
 
-      <button type="submit">💾 Registrar Movimiento</button>
-      <button type="button" class="btn-volver" id="btnVolver">⬅ Volver</button>
+      
+      <div class="modal-actions">
+        <button id="btnPrevisualizar" class="btn-primary">🔎 Consultar </button>
+        
+      </div>
 
-      <div class="mensaje" id="mensajeMovimiento"></div>
-    </form>
-
-    <hr style="margin:30px 0; border:0; border-top:1px solid rgba(0,242,254,0.2);">
-
-    <h3 style="text-align:center; color:#7ef9ff;">📜 Últimos movimientos</h3>
-    <table class="tabla-movimientos" id="tablaMovimientos">
-      <thead>
-        <tr>
-          <th>Fecha</th>
-          <th>Tipo</th>
-          <th>Cantidad</th>
-          <th>Comentario</th>
-          <th>Sucursal</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+      <div style="margin-top:10px; text-align:center;">
+        <div class="small-muted">Datos protegidos en base de Datos Mediterranean.</div>
+      </div>
+    </div>
   </div>
 
-  <!-- === SCRIPT PRINCIPAL === -->
+  <!-- ================================ -->
+  <!--   PANEL DE VISTA PREVIA (FLOTANTE) -->
+  <!-- ================================ -->
+  <div id="previewPanel" aria-hidden="true">
+    <div id="previewHeader">
+      <h4>Consulta de Reporte</h4>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <button id="closePreview" class="btn-ghost" style="padding:8px 10px;">Cerrar</button>
+      </div>
+    </div>
+
+    <div id="previewMeta" class="small-muted" style="margin-bottom:10px;">
+      Mostrando resultados...
+    </div>
+
+    <div style="overflow:auto;">
+      <table id="previewTable">
+        <thead>
+          <tr>
+            <th>Fecha</th><th>Tipo</th><th>Cantidad</th><th>Comentario</th><th>Sucursal</th>
+          </tr>
+        </thead>
+        <tbody id="previewBody">
+          <!-- llenado dinámico -->
+        </tbody>
+      </table>
+    </div>
+
+    <div class="preview-actions">
+      <button id="closePreviewFooter" class="btn-ghost">Volver</button>
+    </div>
+  </div>
+
   <script>
-  // Fondo animado de partículas
+  // Fondo de partículas (igual que antes)
   window.onload = function() {
     const canvas = document.getElementById("particles");
     const ctx = canvas.getContext("2d");
@@ -244,71 +502,36 @@
         this.speedX = (Math.random() - 0.5) * 1;
         this.speedY = (Math.random() - 0.5) * 1;
       }
-      draw() {
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(0,242,254,0.7)";
-        ctx.fill();
-      }
+      draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2); ctx.fillStyle = "rgba(0,242,254,0.7)"; ctx.fill(); }
       update() {
-        this.x += this.speedX;
-        this.y += this.speedY;
+        this.x += this.speedX; this.y += this.speedY;
         if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
         if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
         this.draw();
       }
     }
 
-    function initParticles() {
-      particles = [];
-      for (let i = 0; i < 120; i++) particles.push(new Particle());
-    }
-
-    function connectParticles() {
-      for (let a = 0; a < particles.length; a++) {
-        for (let b = a; b < particles.length; b++) {
-          let dx = particles[a].x - particles[b].x;
-          let dy = particles[a].y - particles[b].y;
-          let dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 120) {
-            ctx.beginPath();
-            ctx.strokeStyle = `rgba(0,242,254,${1 - dist / 120})`;
-            ctx.lineWidth = 1;
-            ctx.moveTo(particles[a].x, particles[a].y);
-            ctx.lineTo(particles[b].x, particles[b].y);
-            ctx.stroke();
-          }
-        }
-      }
-    }
-
-    function animateParticles() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      particles.forEach(p => p.update());
-      connectParticles();
-      requestAnimationFrame(animateParticles);
-    }
+    function initParticles() { particles = []; for (let i = 0; i < 120; i++) particles.push(new Particle()); }
+    function animateParticles() { ctx.clearRect(0,0,canvas.width,canvas.height); particles.forEach(p=>p.update()); requestAnimationFrame(animateParticles); }
 
     initParticles();
     animateParticles();
-
-    window.addEventListener("resize", () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      initParticles();
-    });
+    window.addEventListener("resize", () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; initParticles(); });
   };
 
-  // === LÓGICA DE MOVIMIENTOS ===
+  // === LÓGICA DE MOVIMIENTOS (original) ===
   document.addEventListener("DOMContentLoaded", async () => {
-    const productoId = localStorage.getItem("productoSeleccionado");
     const inputId = document.getElementById("productos");
-    if (productoId) {
-      inputId.value = productoId;
-      cargarMovimientos(productoId);
-    } else {
-      alert("⚠️ No se ha seleccionado ningún producto. Selecciona uno primero.");
+    let productoId = localStorage.getItem("productoSeleccionado");
+
+    if (!productoId) {
+      alert("⚠️ No se ha seleccionado ningún producto. Se usará un ID de prueba: 20");
+      productoId = 20;
+      localStorage.setItem("productoSeleccionado", productoId);
     }
+
+    inputId.value = productoId;
+    cargarMovimientos(productoId);
   });
 
   document.getElementById("formMovimiento").addEventListener("submit", async e => {
@@ -319,8 +542,7 @@
 
     try {
       const resp = await fetch("agregar_movimiento.php", { method: "POST", body: datos });
-      let res;
-      try { res = await resp.json(); } catch { mensaje.innerHTML = `<span style="color:#ff4c4c;">Respuesta inesperada.</span>`; return; }
+      const res = await resp.json();
 
       if (res.status === "success") {
         mensaje.innerHTML = `<span style="color:#00ff9d;">${res.message}</span>`;
@@ -330,40 +552,263 @@
         mensaje.innerHTML = `<span style="color:#ff4c4c;">${res.message}</span>`;
       }
     } catch (error) {
-      mensaje.innerHTML = `<span style="color:#ff4c4c;">Error de red.</span>`;
+      console.error(error);
+      mensaje.innerHTML = `<span style="color:#ff4c4c;">Error de red o respuesta inválida</span>`;
     }
   });
 
   async function cargarMovimientos(productoId) {
     const tbody = document.querySelector("#tablaMovimientos tbody");
-    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#999;">Cargando...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:#999;">Cargando...</td></tr>';
     try {
       const resp = await fetch(`listar_movimiento.php?productos=${encodeURIComponent(productoId)}`);
       const data = await resp.json();
       tbody.innerHTML = "";
       if (!data.movimientos || data.movimientos.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#999;">Sin movimientos</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#999;">Sin movimientos</td></tr>`;
         return;
       }
       data.movimientos.forEach(m => {
-  const tr = document.createElement("tr");
-  tr.innerHTML = `
-    <td>${m.fecha}</td>
-    <td class="${m.tipo === 'Entrada' ? 'entrada' : 'salida'}">${m.tipo}</td>
-    <td>${m.cantidad}</td>
-    <td>${m.comentario || '-'}</td>
-    <td>${m.sucursal || '-'}</td>`;
-  tbody.appendChild(tr);
-});
-
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${m.fecha}</td>
+          <td class="${m.tipo === 'Entrada' ? 'entrada' : 'salida'}">${m.tipo}</td>
+          <td>${m.cantidad}</td>
+          <td>${m.comentario || '-'}</td>
+          <td>${m.sucursal || '-'}</td>`;
+        tbody.appendChild(tr);
+      });
     } catch (err) {
-      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#999;">Error al cargar movimientos.</td></tr>';
+      console.error(err);
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:#999;">Error al cargar movimientos.</td></tr>';
     }
   }
 
   document.getElementById("btnVolver").addEventListener("click", () => {
     window.location.href = "productos.html";
   });
+
+  // =========================
+  // FUNCIONES DEL NUEVO MODAL
+  // =========================
+
+  const modal = document.getElementById("modalReporte");
+  const preview = document.getElementById("previewPanel");
+
+  // abrir modal
+  document.getElementById("btnReporte").addEventListener("click", () => {
+    // set default fechas (hoy/hoy)
+    const hoy = new Date().toISOString().slice(0,10);
+    document.getElementById("fechaHasta").value = hoy;
+    // por defecto desde hace 7 días
+    const siete = new Date(Date.now() - 7*24*60*60*1000).toISOString().slice(0,10);
+    document.getElementById("fechaDesde").value = siete;
+
+    modal.style.display = "flex";
+  });
+
+  // cerrar modal
+  document.getElementById("btnCerrarReporte").addEventListener("click", () => {
+    modal.style.display = "none";
+  });
+
+  // cerrar modal clic fuera (ya mismo)
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) modal.style.display = "none";
+  });
+
+  // abrir preview: obtiene datos filtrados y muestra en panel
+  document.getElementById("btnPrevisualizar").addEventListener("click", async () => {
+    const desde = document.getElementById("fechaDesde").value;
+    const hasta = document.getElementById("fechaHasta").value;
+    const sucursal = document.getElementById("filtroSucursal").value;
+    const tipo = document.getElementById("filtroTipo").value;
+    const productoId = localStorage.getItem("productoSeleccionado");
+
+    if (!desde || !hasta) {
+      alert("Seleccione rango de fechas (desde / hasta).");
+      return;
+    }
+    if (desde > hasta) {
+      alert("La fecha 'Desde' no puede ser mayor que 'Hasta'.");
+      return;
+    }
+
+    // indica carga y abre panel
+    document.getElementById("previewMeta").textContent = `Cargando registros entre ${desde} y ${hasta}...`;
+    preview.classList.add("open");
+
+    try {
+      // reutilizamos el endpoint listar_movimiento.php para obtener datos filtrados
+      const url = `listar_movimiento.php?productos=${encodeURIComponent(productoId)}&desde=${encodeURIComponent(desde)}&hasta=${encodeURIComponent(hasta)}&sucursal=${encodeURIComponent(sucursal)}&tipo=${encodeURIComponent(tipo)}`;
+      const resp = await fetch(url);
+      const data = await resp.json();
+
+      const body = document.getElementById("previewBody");
+      body.innerHTML = "";
+
+      if (!data.movimientos || data.movimientos.length === 0) {
+        body.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#9fd7e3;">Sin registros para este rango.</td></tr>`;
+        document.getElementById("previewMeta").textContent = `0 registros entre ${desde} y ${hasta}.`;
+        return;
+      }
+
+      data.movimientos.forEach(m => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${m.fecha}</td>
+          <td class="${m.tipo === 'Entrada' ? 'entrada' : 'salida'}">${m.tipo}</td>
+          <td>${m.cantidad}</td>
+          <td>${m.comentario || '-'}</td>
+          <td>${m.sucursal || '-'}</td>
+        `;
+        body.appendChild(tr);
+      });
+
+      document.getElementById("previewMeta").textContent = `${data.movimientos.length} registros entre ${desde} y ${hasta}.`;
+    } catch (err) {
+      console.error(err);
+      document.getElementById("previewBody").innerHTML = `<tr><td colspan="5" style="text-align:center; color:#ff8b8b;">Error al cargar vista previa.</td></tr>`;
+      document.getElementById("previewMeta").textContent = `Error al cargar registros.`;
+    }
+  });
+
+  // cerrar preview
+  document.getElementById("closePreview").addEventListener("click", () => {
+    preview.classList.remove("open");
+  });
+  document.getElementById("closePreviewFooter").addEventListener("click", () => {
+    preview.classList.remove("open");
+  });
+
+  // descargar desde modal (descarga automática sin pestaña nueva)
+  document.getElementById("btnGenerarReporte").addEventListener("click", async () => {
+    const desde = document.getElementById("fechaDesde").value;
+    const hasta = document.getElementById("fechaHasta").value;
+    const sucursal = document.getElementById("filtroSucursal").value;
+    const tipoFiltro = document.getElementById("filtroTipo").value;
+    const formato = document.getElementById("filtroFormato").value;
+    const productoId = localStorage.getItem("productoSeleccionado");
+
+    if (!desde || !hasta) {
+      alert("Seleccione rango de fechas (desde / hasta).");
+      return;
+    }
+    if (desde > hasta) {
+      alert("La fecha 'Desde' no puede ser mayor que 'Hasta'.");
+      return;
+    }
+
+    // close modal
+    modal.style.display = "none";
+
+    // construimos datos a enviar (usar POST para seguridad, aunque acepta GET igualmente)
+    const form = new FormData();
+    form.append("producto", productoId);
+    form.append("desde", desde);
+    form.append("hasta", hasta);
+    form.append("sucursal", sucursal);
+    form.append("tipo", tipoFiltro);
+
+    try {
+      // elegir endpoint segun formato
+      const endpoint = formato === "excel" ? "" : "exportar_pdf.php";
+
+      // fetch el blob (POST)
+      const resp = await fetch(endpoint, {
+        method: "POST",
+        body: form
+      });
+
+      if (!resp.ok) throw new Error("Respuesta del servidor no OK");
+
+      const blob = await resp.blob();
+
+      // obtener nombre sugerido
+      const ext = formato === "excel" ? "xlsx" : "pdf";
+      const filename = `reporte_${productoId}_${desde}_a_${hasta}.${ext}`;
+
+      // descarga automática (sin abrir pestaña)
+      const urlBlob = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.style.display = "none";
+      a.href = urlBlob;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(urlBlob);
+      a.remove();
+
+      // mostrar preview panel con la info (opcional): cargamos preview automáticamente
+      // (llamamos a la misma función que el botón previsualizar pero sin repetir código)
+      // aquí simplemente abrimos el preview y rellenamos con la misma petición GET para vista previa
+      // (no obligatorio, pero útil)
+      document.getElementById("previewMeta").textContent = `Descargado ${filename}`;
+      // opcional: abrir preview con mismos filtros
+      // preview.classList.add("open");
+
+    } catch (err) {
+      console.error(err);
+      alert("Error al generar el archivo. Revisa la consola.");
+    }
+  });
+
+  // descargar desde preview (usa los mismos filtros que actualmente están en previewMeta)
+  document.getElementById("downloadFromPreview").addEventListener("click", async () => {
+    // extraer metadata (para simplificar, tomamos los inputs del modal actuales)
+    const desde = document.getElementById("fechaDesde").value;
+    const hasta = document.getElementById("fechaHasta").value;
+    const sucursal = document.getElementById("filtroSucursal").value;
+    const tipoFiltro = document.getElementById("filtroTipo").value;
+    // formato elegido en modal
+    const formato = document.getElementById("filtroFormato").value;
+    const productoId = localStorage.getItem("productoSeleccionado");
+
+    if (!desde || !hasta) {
+      alert("Seleccione rango de fechas (desde / hasta).");
+      return;
+    }
+    if (desde > hasta) {
+      alert("La fecha 'Desde' no puede ser mayor que 'Hasta'.");
+      return;
+    }
+
+    try {
+      const form = new FormData();
+      form.append("producto", productoId);
+      form.append("desde", desde);
+      form.append("hasta", hasta);
+      form.append("sucursal", sucursal);
+      form.append("tipo", tipoFiltro);
+
+      const endpoint = formato === "excel" ? "" : "exportar_pdf.php";
+
+      const resp = await fetch(endpoint, { method: "POST", body: form });
+
+      if (!resp.ok) throw new Error("Respuesta del servidor no OK");
+
+      const blob = await resp.blob();
+      const ext = formato === "excel" ? "xlsx" : "pdf";
+      const filename = `reporte_${productoId}_${desde}_a_${hasta}.${ext}`;
+
+      const urlBlob = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.style.display = "none";
+      a.href = urlBlob;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(urlBlob);
+      a.remove();
+
+      // notificación visual (temporal)
+      document.getElementById("previewMeta").textContent = `Descargado ${filename}`;
+    } catch (err) {
+      console.error(err);
+      alert("Error al descargar desde la vista previa.");
+    }
+  });
+
   </script>
 </body>
 </html>

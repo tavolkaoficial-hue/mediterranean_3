@@ -2,10 +2,10 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Mediterranean productos</title>
+<title>Mediterranean Productos</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
-
+/* ===== Estilos del botón de movimientos ===== */
 .btn-movimientos {
   background: linear-gradient(90deg, #00c6ff, #0072ff);
   color: white;
@@ -20,7 +20,6 @@
   position: relative;
   overflow: hidden;
 }
-
 .btn-movimientos::before {
   content: "";
   position: absolute;
@@ -31,21 +30,15 @@
   background: linear-gradient(120deg, transparent, rgba(255,255,255,0.4), transparent);
   transition: all 0.6s;
 }
-
 .btn-movimientos:hover::before {
   left: 100%;
 }
-
 .btn-movimientos:hover {
   transform: scale(1.08);
   box-shadow: 0 0 18px #00eaff, 0 0 30px #00eaff;
 }
 
-
-
-
-
-/* ===== Reset ===== */
+/* ===== Reset y body ===== */
 *{margin:0;padding:0;box-sizing:border-box;}
 body{
   font-family:Arial,sans-serif;
@@ -105,11 +98,12 @@ body{
   box-shadow:0 0 15px #00f2fe,inset 0 0 10px #00f2fe;
 }
 
+/* ===== Footer fijo ===== */
 .copyright-fixed {
   position: fixed;
   bottom: 0;
-  left: 240px; /* deja espacio del ancho del sidebar */
-  width: calc(100% - 240px); /* ocupa todo menos el sidebar */
+  left: 240px;
+  width: calc(100% - 240px);
   text-align: center;
   background: linear-gradient(90deg, #004e92, #00c6ff);
   color: #ffffff;
@@ -117,10 +111,9 @@ body{
   padding: 10px 0;
   font-family: "Poppins", Arial, sans-serif;
   box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.25);
-  z-index: 9999; /* por encima del sidebar */
+  z-index: 9999;
   border-top-left-radius: 12px;
 }
-
 .copyright-fixed a {
   color: #caf0f8;
   text-decoration: none;
@@ -128,12 +121,12 @@ body{
   margin-left: 5px;
   transition: color 0.3s, text-decoration 0.3s;
 }
-
-.copyright-fixed a:hover {
+copyright-fixed a:hover {
   color: #90e0ef;
   text-decoration: underline;
 }
 
+/* ===== Modal Política ===== */
 .policy-modal {
   display: none;
   position: fixed;
@@ -166,6 +159,7 @@ body{
 }
 .close-policy:hover { color: #00c6ff; }
 
+/* ===== Botones actualizar/eliminar ===== */
 .btn-actualizar {
   background: #00c6ff;
   color: white;
@@ -181,36 +175,25 @@ body{
   transform: scale(1.1);
   box-shadow: 0 0 12px #00c6ff;
 }
-
-
-
+.btn-eliminar{
+  background:crimson;color:white;border:none;padding:6px 14px;border-radius:8px;cursor:pointer;transition:all 0.3s ease;
+}
+.btn-eliminar:hover{background:darkred;transform:scale(1.1);box-shadow:0 0 12px red;}
 
 /* ===== Main ===== */
 .main-content{
-  margin-left:90px;
+  margin-left:240px;
   flex:1;
   display:flex;
   flex-direction:column;
   align-items:center;
   padding:10px;
+  overflow-y:auto;
 }
-tr td, tr th {
-  border-bottom: 1px solid rgba(255,255,255,0.1);
-}
-
-tr:hover {
-  background: rgba(0, 242, 254, 0.15);
-  transition: 0.3s ease;
-}
-
-.alerta-stock {
-  animation: parpadeo 1.2s infinite;
-}
-
-@keyframes parpadeo {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.6; }
-}
+tr td, tr th { border-bottom: 1px solid rgba(255,255,255,0.1);}
+tr:hover { background: rgba(0, 242, 254, 0.15); transition: 0.3s ease; }
+.alerta-stock { animation: parpadeo 1.2s infinite; }
+@keyframes parpadeo {0%,100%{opacity:1;}50%{opacity:0.6;}}
 
 #bgCanvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;}
 .logo{margin-top:20px;animation:bounceIn 1.5s ease forwards;}
@@ -218,54 +201,25 @@ tr:hover {
 .logo img:hover{transform:scale(1.05);box-shadow:0 0 40px rgba(0,242,254,1);}
 h1{margin:15px 0 15px;text-shadow:0 0 15px rgba(0,0,0,0.6);animation:slideDown 1s ease-out;}
 
-.main-content {
-  margin-left: 240px; /* deja el ancho del sidebar */
-  flex: 1;
-  padding: 20px;
-   overflow-y: auto; 
-}
-
-.container {
-  width: 100%;           /* ocupa todo el ancho sin desbordar */
-  max-width: 1250px;     /* mantiene tu límite visual */
-  margin: 0 auto;        /* centra el contenido */
-}
-
-.table-container {
-  width: 100%;
-  border-radius: 15px;
-  margin-top: 10px;
-  box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
-  overflow: visible !important; /* evita scroll interno */
-  max-height: none !important;  /* permite que crezca según el contenido */
-}
-
+.container { width: 100%; max-width: 1250px; margin: 0 auto; }
+.table-container { width: 100%; border-radius: 15px; margin-top: 10px; box-shadow: inset 0 0 10px rgba(0,0,0,0.3); overflow: visible !important; max-height: none !important; }
 form{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:10px;justify-content:space-between;}
-form input,form textarea,form button{
-  padding:12px;border:none;border-radius:10px;flex:1 1 calc(25% - 12px);outline:none;transition:all 0.3s ease;
-}
+form input,form textarea,form button{padding:12px;border:none;border-radius:10px;flex:1 1 calc(25% - 12px);outline:none;transition:all 0.3s ease;}
 form textarea{flex:1 1 100%;resize:none;}
 form input,form textarea{background:rgba(255,255,255,0.8);color:black;}
 form input:focus,form textarea:focus{transform:scale(1.05);box-shadow:0 0 10px #00f2fe;}
-form button{
-  background:linear-gradient(90deg,#00f2fe,#4facfe);
-  color:white;font-weight:bold;cursor:pointer;flex:1 1 100%;
-}
+form button{background:linear-gradient(90deg,#00f2fe,#4facfe);color:white;font-weight:bold;cursor:pointer;flex:1 1 100%;}
 form button:hover{transform:scale(1.05);box-shadow:0 0 15px #00f2fe;}
-.table-container{max-height:400px;overflow-y:auto;width:100%;border-radius:15px;margin-top:10px;box-shadow:inset 0 0 10px rgba(0,0,0,0.3);}
 table{width:100%;border-collapse:collapse;background:rgba(255,255,255,0.08);}
 th,td{padding:12px;text-align:center;}
 thead th{position:sticky;top:0;background:rgba(0,0,0,0.6);color:#fff;z-index:2;}
-tr:hover{background:rgba(255,255,255,0.1);}
 img{width:80px;border-radius:12px;transition:transform 0.3s ease;}
 img:hover{transform:scale(1.1) rotate(3deg);}
-.btn-eliminar{background:crimson;color:white;border:none;padding:6px 14px;border-radius:8px;cursor:pointer;transition:all 0.3s ease;}
-.btn-eliminar:hover{background:darkred;transform:scale(1.1);box-shadow:0 0 12px red;}
 .disponible{color:#00ff7f;font-weight:bold;text-shadow:0 0 8px #00ff7f;animation:pulse 1.5s infinite;}
 .agotado{color:#ff4c4c;font-weight:bold;text-shadow:0 0 8px #ff4c4c;animation:blink 1s infinite;}
 #searchInput{padding:10px;width:100%;border-radius:8px;border:none;margin-bottom:10px;color:black;}
 
-/* ===== Animaciones ===== */
+/* Animaciones */
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 @keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 @keyframes slideDown{from{opacity:0;transform:translateY(-30px)}to{opacity:1;transform:translateY(0)}}
@@ -287,29 +241,88 @@ img:hover{transform:scale(1.1) rotate(3deg);}
   | <a href="#" id="openPolicy">Política de Privacidad y Seguridad</a>
 </footer>
 
-<!-- Modal -->
+<!-- Modal Política -->
 <div id="policyModal" class="policy-modal">
   <div class="policy-content">
     <span class="close-policy">&times;</span>
     <h2>Política de Privacidad y Seguridad</h2>
-    <p>En Mediterranean Technologies, valoramos tu privacidad. Todos los datos son tratados conforme al RGPD y nuestras medidas de seguridad garantizan la integridad de la información...</p>
+    <p>En Mediterranean Technologies, valoramos tu privacidad...</p>
     <p><a href="politica-completa.html">Leer política completa</a></p>
   </div>
 </div>
 
-
 <div class="sidebar">
   <a href="mediterranean.php"><i class="fas fa-home"></i> Menu Principal</a>
-  <a href="productos.html"><i class="fas fa-boxes"></i> Productos</a>
+  <a href="productos.html" class="active"><i class="fas fa-boxes"></i> Productos</a>
   <a href="sucursales.html"><i class="fas fa-store"></i> Sucursales</a>
   <a href="usuarios.html"><i class="fas fa-users"></i> Usuarios</a>
   <a href="reportes.html"><i class="fas fa-chart-bar"></i> Reportes</a>
   <a href="utilidades.html"><i class="fas fa-cogs"></i> Utilidades</a>
 </div>
 
-
 <div class="main-content">
-  <div id="contenido"></div>
+  <div class="logo"><img src="images/LogoMediterranean1992.png" alt="logo"></div>
+  <h1>Inventario de Productos</h1>
+
+  <div class="container">
+    <!-- Formulario agregar producto -->
+    <form id="addForm">
+      <input type="text" name="nombre" placeholder="Nombre del producto" required>
+      <input type="text" name="categoria" placeholder="Categoría" required>
+      <input type="text" name="proveedor" placeholder="Proveedor" required>
+      <input type="number" name="precio_compra" placeholder="Precio compra ($)" required>
+      <input type="number" name="precio_venta" placeholder="Precio venta ($)" required>
+      <input type="number" name="stock" placeholder="Stock actual" required>
+
+      <!-- Selección de sucursal -->
+      <label for="sucursal">Sucursal:</label>
+      <select id="sucursal" name="sucursal" required>
+      <option value="">Cargando sucursales...</option>
+      </select>
+
+
+
+      <input type="file" name="img" accept="image/*" required>
+      <textarea name="descripcion" placeholder="Descripción" required></textarea>
+      <select name="estado" required>
+        <option value="Activo">Activo</option>
+        <option value="Inactivo">Inactivo</option>
+        <option value="Descontinuado">Descontinuado</option>
+      </select>
+      <button type="submit">Agregar Producto</button>
+    </form>
+
+    <!-- Buscador -->
+    <input type="text" id="searchInput" placeholder="Buscar producto por nombre">
+
+    <!-- Alerta stock -->
+    <div id="alertaStock" style="display:none; background:#ff4c4c; color:white; padding:10px; text-align:center; border-radius:10px; margin-bottom:10px; font-weight:bold;">
+      ⚠️ Algunos productos están por debajo del stock mínimo
+    </div>
+
+    <!-- Tabla productos -->
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Imagen</th>
+            <th>Nombre</th>
+            <th>Categoría</th>
+            <th>Proveedor</th>
+            <th>Precio Compra</th>
+            <th>Precio Venta</th>
+            <th>Margen</th>
+            <th>Stock</th>
+            <th>Sucursal</th>
+            <th>Descripción</th>
+            <th>Estado</th>
+            <th>Movimiento</th>
+          </tr>
+        </thead>
+        <tbody id="tabla-body"></tbody>
+      </table>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -319,7 +332,6 @@ const ctx=canvas.getContext("2d");
 canvas.width=window.innerWidth;
 canvas.height=window.innerHeight;
 let particles=[];
-
 class Particle{
   constructor(){
     this.x=Math.random()*canvas.width;
@@ -328,174 +340,34 @@ class Particle{
     this.speedX=(Math.random()-0.5)*1;
     this.speedY=(Math.random()-0.5)*1;
   }
-  draw(){
-    ctx.beginPath();
-    ctx.arc(this.x,this.y,this.radius,0,Math.PI*2);
-    ctx.fillStyle="rgba(255,255,255,0.7)";
-    ctx.fill();
-  }
-  update(){
-    this.x+=this.speedX;
-    this.y+=this.speedY;
-    if(this.x<0||this.x>canvas.width)this.speedX*=-1;
-    if(this.y<0||this.y>canvas.height)this.speedY*=-1;
-    this.draw();
-  }
+  draw(){ctx.beginPath();ctx.arc(this.x,this.y,this.radius,0,Math.PI*2);ctx.fillStyle="rgba(255,255,255,0.7)";ctx.fill();}
+  update(){this.x+=this.speedX;this.y+=this.speedY;if(this.x<0||this.x>canvas.width)this.speedX*=-1;if(this.y<0||this.y>canvas.height)this.speedY*=-1;this.draw();}
 }
-
-function initParticles(){
-  particles=[];
-  for(let i=0;i<120;i++){particles.push(new Particle());}
-}
-function connectParticles(){
-  for(let a=0;a<particles.length;a++){
-    for(let b=a;b<particles.length;b++){
-      let dx=particles[a].x-particles[b].x;
-      let dy=particles[a].y-particles[b].y;
-      let dist=Math.sqrt(dx*dx+dy*dy);
-      if(dist<120){
-        ctx.beginPath();
-        ctx.strokeStyle=`rgba(0,242,254,${1-dist/120})`;
-        ctx.lineWidth=1;
-        ctx.moveTo(particles[a].x,particles[a].y);
-        ctx.lineTo(particles[b].x,particles[b].y);
-        ctx.stroke();
-      }
-    }
-  }
-}
-function animateParticles(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  particles.forEach(p=>p.update());
-  connectParticles();
-  requestAnimationFrame(animateParticles);
-}
+function initParticles(){particles=[];for(let i=0;i<120;i++){particles.push(new Particle());}}
+function connectParticles(){for(let a=0;a<particles.length;a++){for(let b=a;b<particles.length;b++){let dx=particles[a].x-particles[b].x;let dy=particles[a].y-particles[b].y;let dist=Math.sqrt(dx*dx+dy*dy);if(dist<120){ctx.beginPath();ctx.strokeStyle=`rgba(0,242,254,${1-dist/120})`;ctx.lineWidth=1;ctx.moveTo(particles[a].x,particles[a].y);ctx.lineTo(particles[b].x,particles[b].y);ctx.stroke();}}}}
+function animateParticles(){ctx.clearRect(0,0,canvas.width,canvas.height);particles.forEach(p=>p.update());connectParticles();requestAnimationFrame(animateParticles);}
 initParticles();
 animateParticles();
 window.addEventListener("resize",()=>{canvas.width=window.innerWidth;canvas.height=window.innerHeight;initParticles();});
 
-/* ===== Secciones ===== */
-const contenido=document.getElementById("contenido");
-
-function cargarSeccion(seccion) {
-  let html = "";
-
-  switch (seccion) {
-
-    case "mediterranean.php":
-      html = `
-        <div class="logo"><img src="images/LogoMediterranean1992.png" alt="logo"></div>
-        <h1>Inventario de Productos</h1>
-        <div class="container">
-          <form id="addForm">
-            <input type="text" id="nombre" name="nombre" placeholder="Nombre del producto" required>
-            <input type="text" id="categoria" name="categoria" placeholder="Categoría" required>
-            <input type="text" id="proveedor" name="proveedor" placeholder="Proveedor" required>
-            <input type="number" id="precio_compra" name="precio_compra" placeholder="Precio compra ($)" required>
-            <input type="number" id="precio_venta" name="precio_venta" placeholder="Precio venta ($)" required>
-            <input type="number" id="stock" name="stock" placeholder="Stock actual" required>
-            <input type="text" id="ubicacion" name="ubicacion" placeholder="Ubicación (Ej: A1-03)" required>
-            <input type="file" id="img" name="img" accept="image/*" required>
-            <textarea id="descripcion" name="descripcion" placeholder="Descripción" required></textarea>
-            <select id="estado" name="estado" required>
-              <option value="Activo">Activo</option>
-              <option value="Inactivo">Inactivo</option>
-              <option value="Descontinuado">Descontinuado</option>
-            </select>
-            <button type="submit">Agregar Producto</button>
-          </form>
-
-          <input type="text" id="searchInput" placeholder="Buscar producto por nombre o código">
-          <div id="alertaStock" style="display:none; background:#ff4c4c; color:white; padding:10px; text-align:center; border-radius:10px; margin-bottom:10px; font-weight:bold;">
-            ⚠️ Algunos productos están por debajo del stock mínimo
-          </div>
-
-          <div class="table-container">
-            <table>
-              <thead>
-                <tr>
-                  <th>Imagen</th>
-                  <th>Nombre</th>
-                  <th>Categoría</th>
-                  <th>Proveedor</th>
-                  <th>Precio Compra</th>
-                  <th>Precio Venta</th>
-                  <th>Margen</th>
-                  <th>Stock</th>
-                  <th>Ubicación</th>
-                  <th>Descripción</th>
-                  <th>Estado</th>
-                  <th>Movimiento</th>
-                </tr>
-              </thead>
-              <tbody id="tabla-body"></tbody>
-            </table>
-          </div>
-        </div>`;
-      break;
-
-    case "movimientos.html":
-      // 🔹 Aquí cargamos el archivo externo movimiento.html
-      fetch("movimientos.html")
-        .then(res => res.text())
-        .then(data => contenido.innerHTML = data)
-        .catch(err => {
-          contenido.innerHTML = `<p style="color:red;">Error al cargar movimiento.html</p>`;
-          console.error("Error al cargar movimiento.html:", err);
-        });
-      return; // salimos para no ejecutar el resto
-  }
-
-  contenido.innerHTML = html;
-
-  if (seccion === "mediterranean.php") {
-    iniciarInventario();
-  }
-}
-
-/* ===== Inventario ===== */
+/* ===== Productos ===== */
 let productos = [];
+async function obtenerProductos(){const res = await fetch("productos.php?accion=listar"); productos = await res.json(); renderProductos();}
+async function agregarProducto(formData){await fetch("productos.php?accion=agregar",{method:"POST",body:formData}); await obtenerProductos();}
+async function eliminarProducto(id){const formData = new FormData(); formData.append("id",id); await fetch("productos.php?accion=eliminar",{method:"POST",body:formData}); await obtenerProductos();}
 
-async function obtenerProductos() {
-  const res = await fetch("productos.php?accion=listar");
-  productos = await res.json();
-  renderProductos();
-}
-
-async function agregarProducto(formData) {
-  await fetch("productos.php?accion=agregar", { method: "POST", body: formData });
-  await obtenerProductos();
-}
-
-async function eliminarProducto(id) {
-  const formData = new FormData();
-  formData.append("id", id);
-  await fetch("productos.php?accion=eliminar", { method: "POST", body: formData });
-  await obtenerProductos();
-}
-
-function iniciarInventario() {
-  const tbody = document.getElementById("tabla-body");
-
-  function renderProductos(lista = productos) {
-  const tbody = document.getElementById("tabla-body");
-  const alerta = document.getElementById("alertaStock");
-  let alertaActiva = false;
-
-  tbody.innerHTML = "";
-
-  lista.forEach(p => {
-    const margen = ((p.precio_venta - p.precio_compra) / p.precio_compra * 100).toFixed(1);
-    const bajoStock = parseInt(p.stock) < parseInt(p.stock_minimo);
-
-    if (bajoStock) alertaActiva = true;
-
-    const tr = document.createElement("tr");
-    tr.style.transition = "background 0.4s";
-    if (bajoStock) tr.style.background = "rgba(255,0,0,0.2)";
-
-    // === Contenido HTML de cada fila ===
-    tr.innerHTML = `
+function renderProductos(lista=productos){
+  const tbody=document.getElementById("tabla-body");
+  const alerta=document.getElementById("alertaStock");
+  let alertaActiva=false;
+  tbody.innerHTML="";
+  lista.forEach(p=>{
+    const margen=((p.precio_venta-p.precio_compra)/p.precio_compra*100).toFixed(1);
+    const bajoStock=parseInt(p.stock)<10;
+    if(bajoStock) alertaActiva=true;
+    const tr=document.createElement("tr");
+    if(bajoStock) tr.style.background="rgba(255,0,0,0.2)";
+    tr.innerHTML=`
       <td><img src="${p.img}" alt="${p.nombre}"></td>
       <td>${p.nombre}</td>
       <td>${p.categoria}</td>
@@ -504,77 +376,53 @@ function iniciarInventario() {
       <td>$${p.precio_venta}</td>
       <td>${margen}%</td>
       <td>${p.stock}</td>
-      <td>${p.ubicacion}</td>
+      <td>${p.sucursal}</td>
       <td>${p.descripcion}</td>
-      <td class="estado">
-        ${
-          p.estado === "Activo"
-            ? "<span class='disponible'>Activo</span>"
-            : p.estado === "Inactivo"
-            ? "<span style='color:#ffb703;font-weight:bold;'>Inactivo</span>"
-            : "<span style='color:#ff4c4c;font-weight:bold;'>Descontinuado</span>"
-        }
-      </td>
-      <td>
-      <button class="btn-movimientos" data-id="${p.id}">Movimientos</button>
-      </td>
+      <td>${p.estado}</td>
+      <td><button class="btn-movimientos" data-id="${p.id}">Movimientos</button></td>
     `;
-
-    // === Eventos de los botones por fila ===
-    tr.addEventListener("click", e => {
-      // 🔹 Botón Movimientos
-      if (e.target.closest(".btn-movimientos")) {
-        const id = e.target.closest(".btn-movimientos").dataset.id;
-        localStorage.setItem("productoSeleccionado", id);
-        window.location.href = "movimientos.html";
-        
-      }
-    });
-
+    tr.querySelector(".btn-movimientos").addEventListener("click",()=>{localStorage.setItem("productoSeleccionado",p.id);window.location.href="movimientos.html";});
     tbody.appendChild(tr);
   });
+  alerta.style.display=alertaActiva?"block":"none";
+}
 
-  // === Mostrar alerta si hay productos con bajo stock ===
-  alerta.style.display = alertaActiva ? "block" : "none";
+/* ===== Cargar sucursales desde base de datos ===== */
+async function cargarSucursales() {
+  try {
+    const res = await fetch("obtener_sucursales.php");
+    const data = await res.json();
+    const select = document.getElementById("sucursal");
+    select.innerHTML = '<option value="">Seleccione una sucursal</option>';
+    if (data.success) {
+      data.sucursales.forEach(nombre => {
+        const opt = document.createElement("option");
+        opt.value = nombre;
+        opt.textContent = nombre;
+        select.appendChild(opt);
+      });
+    } else {
+      select.innerHTML = '<option value="">Error cargando sucursales</option>';
+    }
+  } catch (e) {
+    console.error("Error cargando sucursales:", e);
+  }
 }
 
 
-  // === Evento para agregar producto ===
-  document.getElementById("addForm").addEventListener("submit", async e => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    await agregarProducto(formData);
-    e.target.reset();
-  });
-
-  // === Buscador ===
-  document.getElementById("searchInput").addEventListener("input", e => {
-    const term = e.target.value.toLowerCase();
-    const filtrados = productos.filter(
-      p => p.nombre.toLowerCase().includes(term) || p.codigo.toLowerCase().includes(term)
-    );
-    renderProductos(filtrados);
-  });
-
-  window.renderProductos = renderProductos;
-  obtenerProductos();
-}
+cargarSucursales();
 
 
-/* ===== Inicio ===== */
-cargarSeccion("mediterranean.php");
-</script>
-<script>
-document.getElementById("openPolicy").onclick = () => {
-  document.getElementById("policyModal").style.display = "flex";
-};
-document.querySelector(".close-policy").onclick = () => {
-  document.getElementById("policyModal").style.display = "none";
-};
-window.onclick = (e) => {
-  if (e.target == document.getElementById("policyModal"))
-    document.getElementById("policyModal").style.display = "none";
-};
+document.getElementById("addForm").addEventListener("submit", async e=>{e.preventDefault();const formData=new FormData(e.target);await agregarProducto(formData);e.target.reset();});
+document.getElementById("searchInput").addEventListener("input", e=>{const term=e.target.value.toLowerCase();renderProductos(productos.filter(p=>p.nombre.toLowerCase().includes(term)));});
+obtenerProductos();
+
+
+
+/* ===== Modal Política ===== */
+document.getElementById("openPolicy").onclick=()=>{document.getElementById("policyModal").style.display="flex";};
+document.querySelector(".close-policy").onclick=()=>{document.getElementById("policyModal").style.display="none";};
+window.onclick=e=>{if(e.target==document.getElementById("policyModal")) document.getElementById("policyModal").style.display="none";}
 </script>
 
 </body>

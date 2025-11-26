@@ -2,274 +2,229 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard Premium - Mediterranean</title>
-
-<!-- Tailwind CSS -->
-<script src="https://cdn.tailwindcss.com"></script>
-<!-- Font Awesome -->
+<title>Dashboard Ejecutivo Premium - Mediterranean</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<!-- Librerías para exportar -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
 <style>
-body, html { font-family: 'Inter', sans-serif; background:#0a1f3d; color:#e8f0f8; overflow-x:hidden; }
-.sidebar { width:240px; position:fixed; top:0; left:0; height:100vh; background:linear-gradient(135deg,#050d1c,#0a1f3d); display:flex; flex-direction:column; gap:20px; padding-top:40px; box-shadow:2px 0 25px rgba(0,0,0,0.8); }
-.sidebar a { color:#00f2fe; font-weight:bold; padding:12px 20px; margin:0 15px; border-radius:8px; display:flex; gap:10px; transition:all 0.3s; text-shadow:0 0 8px #00f2fe; }
+/* === Estilos generales === */
+body { margin:0; font-family: Arial,sans-serif; background:#0d1117; color:#fff; }
+.sidebar { position: fixed; top:0; left:0; width:240px; height:100%; background:#0a1f3d; padding-top:40px; display:flex; flex-direction:column; gap:20px; box-shadow:2px 0 25px rgba(0,0,0,0.8); }
+.sidebar a { color:#00f2fe; text-decoration:none; padding:12px 20px; font-weight:bold; border-radius:8px; display:flex; align-items:center; gap:10px; transition:all 0.3s; }
 .sidebar a:hover, .sidebar a.active { background: rgba(255,255,255,0.1); transform:translateX(6px) scale(1.05); }
-
-.main-content { margin-left:260px; padding:80px 20px 20px; }
-.container { background: rgba(0,0,0,0.3); backdrop-filter:blur(12px); padding:25px; border-radius:20px; box-shadow:0 8px 25px rgba(0,0,0,0.4); }
-
-.table-container { max-height:400px; overflow-y:auto; border-radius:15px; margin-top:20px; }
-table { width:100%; border-collapse:collapse; }
+.main-content { margin-left:260px; padding: 20px 40px; }
+h1 { margin-bottom:20px; }
+.kpi-cards { display:flex; gap:20px; flex-wrap:wrap; margin-bottom:30px; }
+.kpi-card { flex:1; min-width:220px; background: rgba(0,242,254,0.1); padding:20px; border-radius:12px; text-align:center; box-shadow:0 4px 15px rgba(0,0,0,0.4); transition:all 0.3s; }
+.kpi-card.low-stock { background: rgba(255,50,50,0.2); color:#ffcccc; }
+.kpi-card:hover { transform:scale(1.05); }
+.tabs { display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap; }
+.tabs button { background:#00f2fe; color:#000; border:none; padding:10px 15px; font-weight:bold; border-radius:8px; cursor:pointer; }
+.tabs button:hover { background:#4facfe; color:#fff; transform:scale(1.05); }
+.tab-content { display:none; }
+.tab-content.active { display:block; }
+.filters { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:15px; }
+.filters select, .filters input { padding:8px 12px; border-radius:8px; border:none; outline:none; }
+table { width:100%; border-collapse:collapse; margin-top:10px; background: rgba(255,255,255,0.05); border-radius:10px; }
 th, td { padding:12px; text-align:center; }
-th { background:rgba(14,165,233,0.8); color:white; position:sticky; top:0; }
+th { background: rgba(0,0,0,0.7); color:#00f2fe; position:sticky; top:0; }
 tbody tr:nth-child(even) { background: rgba(255,255,255,0.05); }
-tbody tr:hover { background: rgba(0,242,254,0.2); }
-
-input, select, textarea { padding:10px 12px; border-radius:10px; border:none; outline:none; background:rgba(255,255,255,0.1); color:white; }
-.btn { padding:8px 16px; border-radius:8px; font-weight:bold; cursor:pointer; transition:all 0.3s; }
-.btn-export { background:linear-gradient(90deg,#0ea5e9,#2563eb); color:white; }
-.btn-export:hover { transform:scale(1.05); box-shadow:0 0 15px #0ea5e9; }
-.btn-edit { background:#facc15; color:#000; }
-.btn-delete { background:#ef4444; color:white; }
-
-.stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:20px; margin-bottom:20px; }
-.stat-card { background:rgba(14,165,233,0.1); padding:20px; border-radius:16px; text-align:center; box-shadow:0 0 15px rgba(14,165,233,0.3); transition:all 0.3s; }
-.stat-card:hover { transform:translateY(-4px); box-shadow:0 0 25px rgba(14,165,233,0.6); }
-
-/* Modal */
-.modal { display:none; position:fixed; z-index:10000; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.6); backdrop-filter:blur(4px); justify-content:center; align-items:center; }
-.modal-content { background:#1e293b; color:white; padding:25px; border-radius:15px; width:90%; max-width:600px; position:relative; }
-.close-modal { position:absolute; top:15px; right:20px; font-size:24px; cursor:pointer; color:#0ea5e9; }
-.close-modal:hover { color:#fff; }
-
-/* Toast notifications */
-.toast { position:fixed; bottom:20px; right:20px; background:rgba(14,165,233,0.9); padding:12px 20px; border-radius:10px; color:white; opacity:0; transition:all 0.5s; z-index:9999; }
-.toast.show { opacity:1; transform:translateY(-10px); }
+tbody tr:hover { background: rgba(0,242,254,0.15); }
+.actions { margin: 15px 0; display:flex; gap:15px; flex-wrap:wrap; }
+.actions button { background:linear-gradient(90deg,#00f2fe,#4facfe); border:none; padding:10px 15px; border-radius:8px; color:white; cursor:pointer; font-weight:bold; }
+.actions button:hover { transform:scale(1.05); }
+.chart-container { background: rgba(255,255,255,0.05); padding:20px; border-radius:12px; margin-bottom:20px; }
+.alert { color:#ff5555; font-weight:bold; margin-bottom:10px; }
 </style>
 </head>
 <body>
 
 <div class="sidebar">
   <a href="#"><i class="fas fa-home"></i> Menu Principal</a>
-  <a href="#"><i class="fas fa-boxes"></i> Productos</a>
-  <a href="#"><i class="fas fa-store"></i> Sucursales</a>
-  <a href="#"><i class="fas fa-users"></i> Usuarios</a>
   <a href="#" class="active"><i class="fas fa-chart-bar"></i> Reportes</a>
-  <a href="#"><i class="fas fa-cogs"></i> Utilidades</a>
 </div>
 
 <div class="main-content">
-  <h1 class="text-3xl font-bold text-cyan-300 mb-6">Dashboard Premium de Reportes</h1>
+  <h1>Dashboard Ejecutivo Premium</h1>
 
-  <!-- Estadísticas rápidas -->
-  <div class="stats-grid">
-    <div class="stat-card"><h2>Total Reportes</h2><p id="totalReportes" class="text-2xl font-bold">0</p></div>
-    <div class="stat-card"><h2>Pendientes</h2><p id="pendientes" class="text-2xl font-bold">0</p></div>
-    <div class="stat-card"><h2>Aprobados</h2><p id="aprobados" class="text-2xl font-bold">0</p></div>
-    <div class="stat-card"><h2>Cerrados</h2><p id="cerrados" class="text-2xl font-bold">0</p></div>
+  <div class="kpi-cards">
+    <div class="kpi-card" id="kpi-stock">Stock total: 0</div>
+    <div class="kpi-card" id="kpi-faltantes">Productos faltantes: 0</div>
+    <div class="kpi-card" id="kpi-movimientos">Movimientos recientes: 0</div>
+    <div class="kpi-card" id="kpi-usuarios">Usuarios activos: 0</div>
   </div>
 
-  <!-- Filtros -->
-  <div class="flex flex-wrap gap-4 mb-4">
-    <input type="text" id="searchReporte" placeholder="Buscar reporte..." class="flex-1">
-    <select id="filterSucursal"><option value="">Filtrar por Sucursal</option></select>
-    <select id="filterUsuario"><option value="">Filtrar por Usuario</option></select>
-    <select id="filterTipo">
-      <option value="">Filtrar por Tipo</option>
-      <option value="Inventario">Inventario</option>
-      <option value="Ventas">Ventas</option>
-      <option value="Movimientos">Movimientos</option>
-    </select>
-    <button class="btn btn-export" onclick="exportarExcel()"><i class="fas fa-file-excel"></i> Excel</button>
-    <button class="btn btn-export" onclick="exportarPDF()"><i class="fas fa-file-pdf"></i> PDF</button>
-    <button class="btn btn-export" onclick="abrirModal()">Crear Reporte</button>
+  <div class="tabs">
+    <button onclick="showTab('stock')">Stock por Sucursal</button>
+    <button onclick="showTab('movimientos')">Movimientos</button>
+    <button onclick="showTab('usuarios')">Usuarios</button>
+    <button onclick="showTab('ventas')">Resumen Ventas</button>
   </div>
 
-  <!-- Tabla de reportes -->
-  <div class="table-container">
-    <table id="tablaReportes">
-      <thead>
-        <tr>
-          <th>ID</th><th>Tipo</th><th>Fecha</th><th>Sucursal</th><th>Responsable</th><th>Estado</th><th>Detalle</th><th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody id="tbodyReportes"></tbody>
-    </table>
+  <div id="tab-stock" class="tab-content active">
+    <div class="filters">
+      <select id="filterSucursal"></select>
+      <select id="filterProducto"></select>
+      <input type="date" id="filterFechaInicio">
+      <input type="date" id="filterFechaFin">
+      <button onclick="aplicarFiltros('stock')">Filtrar</button>
+    </div>
+    <div class="alert" id="alert-stock"></div>
+    <div class="actions">
+      <button onclick="exportarExcel('stock')"><i class="fas fa-file-excel"></i> Exportar Excel</button>
+      <button onclick="exportarPDF('stock')"><i class="fas fa-file-pdf"></i> Exportar PDF</button>
+    </div>
+    <div class="chart-container"><canvas id="chartStock" height="150"></canvas></div>
+    <table id="tableStock"></table>
   </div>
 
-  <!-- Gráficas -->
-  <div class="mt-10">
-    <canvas id="chartEstado" class="mb-6"></canvas>
-    <canvas id="chartMovimientos"></canvas>
+  <div id="tab-movimientos" class="tab-content">
+    <div class="filters">
+      <select id="filterMovSucursal"></select>
+      <select id="filterMovProducto"></select>
+      <input type="date" id="filterMovInicio">
+      <input type="date" id="filterMovFin">
+      <button onclick="aplicarFiltros('movimientos')">Filtrar</button>
+    </div>
+    <div class="actions">
+      <button onclick="exportarExcel('movimientos')"><i class="fas fa-file-excel"></i> Exportar Excel</button>
+      <button onclick="exportarPDF('movimientos')"><i class="fas fa-file-pdf"></i> Exportar PDF</button>
+    </div>
+    <table id="tableMovimientos"></table>
   </div>
-</div>
 
-<!-- Modal -->
-<div id="modal" class="modal">
-  <div class="modal-content">
-    <span class="close-modal" onclick="cerrarModal()">&times;</span>
-    <h2 class="text-xl font-bold mb-4">Crear/Editar Reporte</h2>
-    <form id="formReporte" class="flex flex-col gap-3">
-      <input type="hidden" id="reporteId">
-      <select id="tipoReporte" required>
-        <option value="">Seleccione tipo</option>
-        <option value="Inventario General">Inventario General</option>
-        <option value="Movimientos de Inventario">Movimientos de Inventario</option>
-        <option value="Reporte de Ventas">Reporte de Ventas</option>
-      </select>
-      <input type="date" id="fechaReporte" required>
-      <select id="sucursalReporte" required></select>
-      <select id="usuarioReporte" required></select>
-      <select id="estadoReporte" required>
-        <option value="Pendiente">Pendiente</option>
-        <option value="Aprobado">Aprobado</option>
-        <option value="Cerrado">Cerrado</option>
-      </select>
-      <textarea id="detalleReporte" placeholder="Detalle..." rows="3"></textarea>
-      <button type="submit" class="btn btn-export">Guardar Reporte</button>
-    </form>
+  <div id="tab-usuarios" class="tab-content">
+    <div class="filters">
+      <input type="text" id="filterUsuarioNombre" placeholder="Buscar usuario...">
+      <button onclick="aplicarFiltros('usuarios')">Filtrar</button>
+    </div>
+    <div class="actions">
+      <button onclick="exportarExcel('usuarios')"><i class="fas fa-file-excel"></i> Exportar Excel</button>
+      <button onclick="exportarPDF('usuarios')"><i class="fas fa-file-pdf"></i> Exportar PDF</button>
+    </div>
+    <table id="tableUsuarios"></table>
+  </div>
+
+  <div id="tab-ventas" class="tab-content">
+    <div class="chart-container"><canvas id="chartVentas" height="200"></canvas></div>
+    <div class="chart-container"><canvas id="chartMovimientosTipo" height="200"></canvas></div>
   </div>
 </div>
-
-<!-- Toast -->
-<div id="toast" class="toast"></div>
 
 <script>
-// Datos simulados
-let sucursales = ['Sucursal A','Sucursal B','Sucursal C'];
-let usuarios = ['Juan Pérez','Ana Gómez','Luis Torres'];
-let reportes = [
-  {id:1,tipo:'Inventario General',fecha:'2025-11-01',sucursal:'Sucursal A',responsable:'Juan Pérez',estado:'Pendiente',detalle:'Reporte inicial'},
-  {id:2,tipo:'Movimientos de Inventario',fecha:'2025-11-02',sucursal:'Sucursal B',responsable:'Ana Gómez',estado:'Aprobado',detalle:'Movimiento de productos'},
-];
-
-// Llenar filtros
-const filterSucursal=document.getElementById('filterSucursal');
-sucursales.forEach(s => filterSucursal.innerHTML+=`<option value="${s}">${s}</option>`);
-const filterUsuario=document.getElementById('filterUsuario');
-usuarios.forEach(u => filterUsuario.innerHTML+=`<option value="${u}">${u}</option>`);
-
-// Modal
-const modal=document.getElementById('modal');
-function abrirModal(){ modal.style.display='flex'; resetForm(); }
-function cerrarModal(){ modal.style.display='none'; }
-function showToast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000); }
-
-// Render tabla y stats
-function renderTabla(list=reportes){
-  const tbody=document.getElementById('tbodyReportes'); tbody.innerHTML='';
-  list.forEach((r,i)=>{
-    tbody.innerHTML+=`<tr>
-      <td>${r.id}</td>
-      <td>${r.tipo}</td>
-      <td>${r.fecha}</td>
-      <td>${r.sucursal}</td>
-      <td>${r.responsable}</td>
-      <td>${r.estado}</td>
-      <td>${r.detalle}</td>
-      <td>
-        <button class="btn-edit" onclick="editarReporte(${i})"><i class="fas fa-edit"></i></button>
-        <button class="btn-delete" onclick="eliminarReporte(${i})"><i class="fas fa-trash"></i></button>
-      </td>
-    </tr>`;
-  });
-  actualizarStats(); actualizarCharts();
-}
-function actualizarStats(){
-  document.getElementById('totalReportes').textContent=reportes.length;
-  document.getElementById('pendientes').textContent=reportes.filter(r=>r.estado==='Pendiente').length;
-  document.getElementById('aprobados').textContent=reportes.filter(r=>r.estado==='Aprobado').length;
-  document.getElementById('cerrados').textContent=reportes.filter(r=>r.estado==='Cerrado').length;
+function showTab(tab){
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
 }
 
-// Filtrado y búsqueda
-document.getElementById('searchReporte').oninput=filtrar;
-filterSucursal.onchange=filterUsuario.onchange=filterTipo.onchange=filtrar;
-function filtrar(){
-  let term=document.getElementById('searchReporte').value.toLowerCase();
-  let suc=filterSucursal.value, usu=filterUsuario.value, tipo=filterTipo.value;
-  let filtered=reportes.filter(r=>
-    (!suc || r.sucursal===suc) &&
-    (!usu || r.responsable===usu) &&
-    (!tipo || r.tipo.includes(tipo)) &&
-    (Object.values(r).some(v=>v.toString().toLowerCase().includes(term)))
-  );
-  renderTabla(filtered);
+let dataStock=[], dataMovimientos=[], dataUsuarios=[], sucursales=[];
+
+async function cargarDatos(){
+  try {
+    const sucResp = await fetch('obtener_sucursales.php');
+    const sucData = await sucResp.json();
+    sucursales = (sucData.success && sucData.sucursales.length > 0) ? sucData.sucursales : ["Centro","Kennedy","Norte"];
+
+    const stockResp = await fetch('stock_por_sucursal.php');
+    dataStock = await stockResp.json();
+
+    const movResp = await fetch('movimientos_recientes.php');
+    dataMovimientos = await movResp.json();
+
+    const userResp = await fetch('obtener_todos_usuarios.php');
+    const userData = await userResp.json();
+    if(userData.success) dataUsuarios = userData.users;
+
+    renderStock(dataStock);
+    renderStockChart(dataStock);
+    renderMovimientos(dataMovimientos);
+    renderUsuarios(dataUsuarios);
+    renderResumenVentas(dataMovimientos);
+    llenarFiltros('stock');
+    llenarFiltros('movimientos');
+    actualizarKPIs();
+    verificarStockBajo();
+  } catch(e){ console.error("Error al cargar datos:", e); }
 }
 
-// Crear/Editar reportes
-const formReporte=document.getElementById('formReporte');
-const sucursalReporte=document.getElementById('sucursalReporte');
-const usuarioReporte=document.getElementById('usuarioReporte');
-// Llenar selects modal
-sucursales.forEach(s=>sucursalReporte.innerHTML+=`<option value="${s}">${s}</option>`);
-usuarios.forEach(u=>usuarioReporte.innerHTML+=`<option value="${u}">${u}</option>`);
-
-function resetForm(){ formReporte.reset(); document.getElementById('reporteId').value=''; }
-
-formReporte.onsubmit=e=>{
-  e.preventDefault();
-  const id=document.getElementById('reporteId').value || Date.now();
-  const nuevo={
-    id:id,
-    tipo:document.getElementById('tipoReporte').value,
-    fecha:document.getElementById('fechaReporte').value,
-    sucursal:document.getElementById('sucursalReporte').value,
-    responsable:document.getElementById('usuarioReporte').value,
-    estado:document.getElementById('estadoReporte').value,
-    detalle:document.getElementById('detalleReporte').value
-  };
-  const index=reportes.findIndex(r=>r.id==id);
-  if(index>=0){ reportes[index]=nuevo; showToast('Reporte actualizado'); }
-  else{ reportes.push(nuevo); showToast('Reporte creado'); }
-  renderTabla(); cerrarModal();
-};
-
-// Editar / Eliminar
-function editarReporte(i){
-  const r=reportes[i];
-  document.getElementById('reporteId').value=r.id;
-  document.getElementById('tipoReporte').value=r.tipo;
-  document.getElementById('fechaReporte').value=r.fecha;
-  document.getElementById('sucursalReporte').value=r.sucursal;
-  document.getElementById('usuarioReporte').value=r.responsable;
-  document.getElementById('estadoReporte').value=r.estado;
-  document.getElementById('detalleReporte').value=r.detalle;
-  abrirModal();
-}
-function eliminarReporte(i){ reportes.splice(i,1); renderTabla(); showToast('Reporte eliminado'); }
-
-// Export
-function exportarExcel(){ const ws=XLSX.utils.json_to_sheet(reportes); const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,"Reportes"); XLSX.writeFile(wb,"Reportes_Premium.xlsx"); }
-function exportarPDF(){ const { jsPDF }=window.jspdf; const doc=new jsPDF(); doc.text("Reportes Premium - Mediterranean",10,10); let y=20; reportes.forEach(r=>{ doc.text(`${r.id} | ${r.tipo} | ${r.fecha} | ${r.sucursal} | ${r.responsable} | ${r.estado}`,10,y); y+=10; }); doc.save("Reportes_Premium.pdf"); }
-
-// Charts
-let chartEstado=null, chartMovimientos=null;
-function actualizarCharts(){
-  // Estado
-  const ctxEstado=document.getElementById('chartEstado').getContext('2d');
-  const dataEstado={
-    labels:['Pendiente','Aprobado','Cerrado'],
-    datasets:[{label:'Estado Reportes',data:[reportes.filter(r=>r.estado==='Pendiente').length, reportes.filter(r=>r.estado==='Aprobado').length, reportes.filter(r=>r.estado==='Cerrado').length], backgroundColor:['#f59e0b','#10b981','#ef4444'] }]
-  };
-  if(chartEstado) chartEstado.destroy();
-  chartEstado=new Chart(ctxEstado,{type:'doughnut',data:dataEstado, options:{responsive:true, plugins:{legend:{position:'bottom'}}}});
-
-  // Movimientos por sucursal
-  const ctxMov=document.getElementById('chartMovimientos').getContext('2d');
-  const sucLabels=sucursales;
-  const movData=sucursales.map(s=>reportes.filter(r=>r.sucursal===s && r.tipo.includes('Movimientos')).length);
-  if(chartMovimientos) chartMovimientos.destroy();
-  chartMovimientos=new Chart(ctxMov,{type:'bar',data:{labels:sucLabels,datasets:[{label:'Movimientos',data:movData, backgroundColor:'#0ea5e9'}]}, options:{responsive:true, plugins:{legend:{display:false}}}});
+function actualizarKPIs(){
+  document.getElementById('kpi-stock').innerText='Stock total: '+dataStock.reduce((a,b)=>a+parseInt(b.stock||0),0);
+  document.getElementById('kpi-faltantes').innerText='Productos faltantes: '+dataStock.filter(p=>p.stock<=0).length;
+  document.getElementById('kpi-movimientos').innerText='Movimientos recientes: '+dataMovimientos.length;
+  document.getElementById('kpi-usuarios').innerText='Usuarios activos: '+dataUsuarios.length;
 }
 
-renderTabla();
+function verificarStockBajo(){
+  let bajos = dataStock.filter(p=>p.stock<=5);
+  document.getElementById('alert-stock').innerText = bajos.length>0 ? "⚠️ Productos con stock crítico: "+bajos.map(p=>`${p.nombre_producto} (${p.nombre_sucursal})`).join(", ") : "";
+}
+
+function renderStock(data){
+  const table = document.getElementById('tableStock');
+  table.innerHTML="<tr><th>Sucursal</th><th>Producto</th><th>Stock</th></tr>";
+  data.forEach(r=>{ table.innerHTML+=`<tr><td>${r.nombre_sucursal}</td><td>${r.nombre_producto}</td><td>${r.stock}</td></tr>`; });
+}
+
+function renderStockChart(data){
+  const ctx=document.getElementById('chartStock').getContext('2d');
+  const labels=data.map(r=>r.nombre_producto+' ('+r.nombre_sucursal+')');
+  const stocks=data.map(r=>parseInt(r.stock));
+  new Chart(ctx,{type:'bar',data:{labels,datasets:[{label:'Stock',data:stocks,backgroundColor:'#0ea5e9'}]},options:{responsive:true,plugins:{legend:{display:false}}}});
+}
+
+function renderMovimientos(data){
+  const table=document.getElementById('tableMovimientos');
+  table.innerHTML="<tr><th>ID</th><th>Producto</th><th>Sucursal</th><th>Tipo</th><th>Cantidad</th><th>Comentario</th><th>Fecha</th></tr>";
+  data.forEach(r=>{ table.innerHTML+=`<tr><td>${r.id}</td><td>${r.nombre_producto}</td><td>${r.nombre_sucursal}</td><td>${r.tipo_movimiento}</td><td>${r.cantidad}</td><td>${r.comentario}</td><td>${r.fecha}</td></tr>`; });
+}
+
+function renderUsuarios(data){
+  const table=document.getElementById('tableUsuarios');
+  table.innerHTML="<tr><th>ID</th><th>Nombre</th><th>Email</th><th>Rol</th><th>Foto</th></tr>";
+  data.forEach(r=>{ table.innerHTML+=`<tr><td>${r.id}</td><td>${r.usuarios}</td><td>${r.correo}</td><td>${r.rol}</td><td><img src="${r.foto}" width="48" height="48" style="border-radius:50%"></td></tr>`; });
+}
+
+function renderResumenVentas(data){
+  const ventasCtx=document.getElementById('chartVentas').getContext('2d');
+  const productos=[...new Set(data.map(d=>d.nombre_producto))];
+  const cantidades=productos.map(p=>data.filter(d=>d.nombre_producto===p).reduce((a,b)=>a+parseInt(b.cantidad||0),0));
+  new Chart(ventasCtx,{type:'pie',data:{labels:productos,datasets:[{data:cantidades,backgroundColor:productos.map(()=>`hsl(${Math.random()*360},70%,50%)`)}]},options:{responsive:true}});
+
+  const movCtx=document.getElementById('chartMovimientosTipo').getContext('2d');
+  const tipos=['Entrada','Salida'];
+  const counts=tipos.map(t=>data.filter(d=>d.tipo_movimiento===t).length);
+  new Chart(movCtx,{type:'doughnut',data:{labels:tipos,datasets:[{data:counts,backgroundColor:['#0ea5e9','#f43f5e']}]},options:{responsive:true}});
+}
+
+function llenarFiltros(tab){
+  if(tab==='stock'){
+    const suc=document.getElementById('filterSucursal');
+    const prod=document.getElementById('filterProducto');
+    suc.innerHTML='<option value="">Todas Sucursales</option>';
+    // Obtener sucursales únicas del stock
+    const sucursalesUnicas = [...new Set(dataStock.map(d => d.nombre_sucursal))];
+    sucursalesUnicas.forEach(s => suc.innerHTML += `<option>${s}</option>`);
+
+    const productos=[...new Set(dataStock.map(d=>d.nombre_producto))];
+    prod.innerHTML='<option value="">Todos Productos</option>';
+    productos.forEach(p=>prod.innerHTML+=`<option>${p}</option>`);
+  }
+  if(tab==='movimientos'){
+    const suc=document.getElementById('filterMovSucursal');
+    const prod=document.getElementById('filterMovProducto');
+    suc.innerHTML='<option value="">Todas Sucursales</option>';
+    const sucursalesUnicas = [...new Set(dataMovimientos.map(d => d.nombre_sucursal))];
+    sucursalesUnicas.forEach(s => suc.innerHTML += `<option>${s}</option>`);
+
+    const productos=[...new Set(dataMovimientos.map(d=>d.nombre_producto))];
+    prod.innerHTML='<option value="">Todos Productos</option>';
+    productos.forEach(p=>prod.innerHTML+=`<option>${p}</option>`);
+  }
+}
+
+
+cargarDatos();
 </script>
 </body>
 </html>
