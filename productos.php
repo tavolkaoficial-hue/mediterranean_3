@@ -1,6 +1,5 @@
 <?php
 include("conexion.php");
-header("Content-Type: application/json");
 
 // Carpeta para subir imágenes
 $uploadDir = "uploads/";
@@ -27,56 +26,46 @@ switch ($accion) {
         break;
 
 
-    /* === AGREGAR PRODUCTO === */
-   case "agregar":
-    $nombre        = $_POST['nombre'] ?? '';
-    $categoria = ($_POST['categoria'] === "__manual__") 
-    ? $_POST['categoria_manual'] 
-    : $_POST['categoria'];
+ case "agregar":
 
-$proveedor = ($_POST['proveedor'] === "__manual__") 
-    ? $_POST['proveedor_manual'] 
-    : $_POST['proveedor'];
+    // Recibir valores del formulario
+    $nombre         = $_POST['nombre'];
+    $categorias     = $_POST['categorias'];
+    $proveedores    = $_POST['proveedores'];
+    $precio_compra  = $_POST['precio_compra'];
+    $precio_venta   = $_POST['precio_venta'];
+    $stock          = $_POST['stock'];
+    $sucursal       = $_POST['sucursal'];
+    $descripcion    = $_POST['descripcion'];
+    $estado         = $_POST['estado'];
 
-    $precio_compra = floatval($_POST['precio_compra'] ?? 0);
-    $precio_venta  = floatval($_POST['precio_venta'] ?? 0);
-    $stock         = intval($_POST['stock'] ?? 0);
-    $descripcion   = $_POST['descripcion'] ?? '';
-    $estado        = $_POST['estado'] ?? 'Activo';
-    $sucursal      = $_POST['sucursal'] ?? ''; // 👈 ahora guardamos directamente el nombre
+    // Procesar imagen
+    $img = "";
+    if (!empty($_FILES['img']['name'])) {
+        $nombreImg = time() . "_" . basename($_FILES['img']['name']);
+        $rutaImg = "uploads/" . $nombreImg;
 
-    // Manejo de imagen
-    $ruta = '';
-    if (isset($_FILES['img']) && $_FILES['img']['error'] === 0) {
-        $imgName = time() . "_" . basename($_FILES['img']['name']);
-        $ruta = "uploads/" . $imgName;
-        move_uploaded_file($_FILES['img']['tmp_name'], $ruta);
+        if (move_uploaded_file($_FILES['img']['tmp_name'], $rutaImg)) {
+            $img = $rutaImg;
+        }
     }
 
-    $stmt = $conn->prepare("
-        INSERT INTO productos 
-        (nombre, categoria, proveedor, precio_compra, precio_venta, stock, sucursal, descripcion, estado, img)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    ");
-    $stmt->bind_param("sssddissss",
-        $nombre,
-        $categoria,
-        $proveedor,
-        $precio_compra,
-        $precio_venta,
-        $stock,
-        $sucursal,
-        $descripcion,
-        $estado,
-        $ruta
-    );
+    // Insertar en base de datos
+    $sql = "INSERT INTO productos 
+            (nombre, categorias, proveedores, precio_compra, precio_venta, stock, sucursal, img, descripcion, estado, fecha_actualizacion)
+            VALUES 
+            ('$nombre', '$categorias', '$proveedores', '$precio_compra', '$precio_venta', '$stock', '$sucursal', '$img', '$descripcion', '$estado', NOW())";
 
-    if ($stmt->execute()) {
-        echo json_encode(["success" => true]);
-    } else {
-        echo json_encode(["success" => false, "error" => $stmt->error]);
-    }
-    break;
+    $conn->query($sql);
+    if ($conn->error) {
+    echo json_encode(["error_sql" => $conn->error]);
+    exit;
+}
+
+
+    echo json_encode(["success" => true]);
+break;
+
 
 
 

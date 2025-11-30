@@ -268,8 +268,6 @@ img:hover{transform:scale(1.1) rotate(3deg);}
     <!-- Formulario agregar producto -->
     <form id="addForm">
       <input type="text" name="nombre" placeholder="Nombre del producto" required>
-      <input type="text" name="categoria" placeholder="Categoría" required>
-      <input type="text" name="proveedor" placeholder="Proveedor" required>
       <input type="number" name="precio_compra" placeholder="Precio compra ($)" required>
       <input type="number" name="precio_venta" placeholder="Precio venta ($)" required>
       <input type="number" name="stock" placeholder="Stock actual" required>
@@ -279,8 +277,16 @@ img:hover{transform:scale(1.1) rotate(3deg);}
       <select id="sucursal" name="sucursal" required>
       <option value="">Cargando sucursales...</option>
       </select>
-
-
+      <!-- Selección de categorias -->
+      <label for="categorias">Categoría:</label>
+      <select id="categorias" name="categorias" required>
+      <option value="">Cargando categorías...</option>
+      </select>
+      <!-- Selección de proveedores -->
+      <label for="proveedores">Proveedor:</label>
+      <select id="proveedores" name="proveedores" required>
+      <option value="">Cargando proveedores...</option>
+      </select>
 
       <input type="file" name="img" accept="image/*" required>
       <textarea name="descripcion" placeholder="Descripción" required></textarea>
@@ -307,8 +313,8 @@ img:hover{transform:scale(1.1) rotate(3deg);}
           <tr>
             <th>Imagen</th>
             <th>Nombre</th>
-            <th>Categoría</th>
-            <th>Proveedor</th>
+            <th>Categorías</th>
+            <th>Proveedores</th>
             <th>Precio Compra</th>
             <th>Precio Venta</th>
             <th>Margen</th>
@@ -370,8 +376,8 @@ function renderProductos(lista=productos){
     tr.innerHTML=`
       <td><img src="${p.img}" alt="${p.nombre}"></td>
       <td>${p.nombre}</td>
-      <td>${p.categoria}</td>
-      <td>${p.proveedor}</td>
+      <td>${p.categorias}</td>
+      <td>${p.proveedores}</td>
       <td>$${p.precio_compra}</td>
       <td>$${p.precio_venta}</td>
       <td>${margen}%</td>
@@ -409,8 +415,54 @@ async function cargarSucursales() {
   }
 }
 
+/* ===== Cargar categorias desde base de datos ===== */
+async function cargarCategorias() {
+  try {
+    const res = await fetch("obtener_categorias.php");
+    const data = await res.json();
+    const select = document.getElementById("categorias");
+    select.innerHTML = '<option value="">Seleccione una categoría</option>';
+    if (data.success) {
+      data.categorias.forEach(nombre => {
+        const opt = document.createElement("option");
+        opt.value = nombre;
+        opt.textContent = nombre;
+        select.appendChild(opt);
+      });
+    } else {
+      select.innerHTML = '<option value="">Error cargando categorias</option>';
+    }
+  } catch (e) {
+    console.error("Error cargando categorias:", e);
+  }
+}
+
+/* ===== Cargar proveedores desde base de datos ===== */
+async function cargarProveedores() {
+  try {
+    const res = await fetch("obtener_proveedores.php");
+    const data = await res.json();
+    const select = document.getElementById("proveedores");
+    select.innerHTML = '<option value="">Seleccione un proveedor</option>';
+    if (data.success) {
+      data.proveedores.forEach(nombre => {
+        const opt = document.createElement("option");
+        opt.value = nombre;
+        opt.textContent = nombre;
+        select.appendChild(opt);
+      });
+    } else {
+      select.innerHTML = '<option value="">Error cargando proveedores</option>';
+    }
+  } catch (e) {
+    console.error("Error cargando proveedores:", e);
+  }
+}
+
 
 cargarSucursales();
+cargarCategorias();
+cargarProveedores();
 
 
 document.getElementById("addForm").addEventListener("submit", async e=>{e.preventDefault();const formData=new FormData(e.target);await agregarProducto(formData);e.target.reset();});

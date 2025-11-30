@@ -322,75 +322,94 @@ h1 { margin:15px 0 25px; text-shadow:0 0 15px rgba(0,0,0,0.6); }
   <h1>Panel de Utilidades</h1>
   <div class="container">
     <div class="util-grid">
-      <div class="util-card">
-        <i class="fas fa-database"></i>
-        <h3>Respaldo de Datos</h3>
-        <p>Genera copias de seguridad automáticas de la base de datos.</p>
-      </div>
-      <div class="util-card">
-        <i class="fas fa-sync"></i>
-        <h3>Sincronización</h3>
-        <p>Sincroniza inventarios entre sucursales de manera rápida y segura.</p>
-      </div>
-      <div class="util-card">
-        <i class="fas fa-user-shield"></i>
-        <h3>Gestión de Permisos</h3>
-        <p>Administra accesos y roles de usuarios en el sistema.</p>
-      </div>
-      <div class="util-card">
-        <i class="fas fa-chart-pie"></i>
-        <h3>Analítica Avanzada</h3>
-        <p>Accede a reportes visuales y estadísticas del negocio.</p>
-      </div>
-      <div class="util-card">
-        <i class="fas fa-cogs"></i>
-        <h3>Configuración</h3>
-        <p>Ajusta parámetros generales del sistema y preferencias.</p>
-      </div>
-      <div class="util-card">
-        <i class="fas fa-bug"></i>
-        <h3>Diagnóstico</h3>
-        <p>Detecta errores y genera registros de actividad del sistema.</p>
-      </div>
-      <div class="util-card">
-        <i class="fas fa-calculator"></i>
-        <h3>Calculadora</h3>
-        <p>Realiza operaciones rápidas directamente en el sistema.</p>
-        <div class="calculadora">
-          <input type="text" id="pantalla" readonly>
-          <br>
-          <button onclick="press('7')">7</button>
-          <button onclick="press('8')">8</button>
-          <button onclick="press('9')">9</button>
-          <button onclick="press('/')">÷</button>
-          <button onclick="press('4')">4</button>
-          <button onclick="press('5')">5</button>
-          <button onclick="press('6')">6</button>
-          <button onclick="press('*')">×</button>
-          <button onclick="press('1')">1</button>
-          <button onclick="press('2')">2</button>
-          <button onclick="press('3')">3</button>
-          <button onclick="press('-')">−</button>
-          <button onclick="press('0')">0</button>
-          <button onclick="press('.')">.</button>
-          <button onclick="calcular()">=</button>
-          <button onclick="press('+')">+</button>
-          <button onclick="limpiar()" style="width:98%">C</button>
-        </div>
-      </div>
-      <div class="util-card">
-        <i class="fas fa-barcode"></i>
-        <h3>Generador de Códigos de Barras</h3>
-        <p>Introduce un valor y genera un código de barras instantáneo.</p>
-        <div class="barra-container">
-          <input type="text" id="codigoInput" placeholder="Escribe un código">
-          <button onclick="generarCodigo()">Generar</button>
-          <br><br>
-          <svg id="barcode"></svg>
-        </div>
-      </div>
+
+  <!-- 1. Respaldo de Base de Datos -->
+  <div class="util-card" onclick="window.location.href='backup.php'">
+    <i class="fas fa-database"></i>
+    <h3>Respaldo de Base de Datos</h3>
+    <p>Genera copias de seguridad completas del sistema.</p>
+  </div>
+
+  <!-- 2. Sincronización entre Sucursales -->
+  <div class="util-card" onclick="window.location.href='sync.html'">
+    <i class="fas fa-sync"></i>
+    <h3>Sincronización</h3>
+    <p>Sincroniza inventarios entre sucursales.</p>
+  </div>
+
+  <!-- 3. Gestión de Usuarios y Permisos -->
+  <div class="util-card" onclick="window.location.href='usuarios.html'">
+    <i class="fas fa-user-shield"></i>
+    <h3>Gestión de Permisos</h3>
+    <p>Administra accesos y roles del sistema.</p>
+  </div>
+
+  <!-- 4. Analítica y Reportes -->
+  <div class="util-card" onclick="window.location.href='reportes.html'">
+    <i class="fas fa-chart-pie"></i>
+    <h3>Analítica Avanzada</h3>
+    <p>Reportes visuales y estadísticas del negocio.</p>
+  </div>
+
+  <!-- 5. Configuración del Sistema -->
+  <div class="util-card" onclick="window.location.href='configuracion.html'">
+    <i class="fas fa-cogs"></i>
+    <h3>Configuración</h3>
+    <p>Ajusta parámetros y preferencias globales.</p>
+  </div>
+
+  <!-- 6. Diagnóstico y Logs -->
+  <div class="util-card" onclick="window.location.href='diagnostico.html'">
+    <i class="fas fa-bug"></i>
+    <h3>Diagnóstico</h3>
+    <p>Analiza errores y revisa registros del sistema.</p>
+  </div>
+
+  <!-- 7. Calculadora -->
+  <div class="util-card">
+    <i class="fas fa-calculator"></i>
+    <h3>Calculadora</h3>
+    <p>Realiza operaciones rápidas directamente en el sistema.</p>
+
+    <div class="calculadora">
+      <input type="text" id="pantalla" readonly>
+      <br>
+      <button onclick="press('7')">7</button>
+      <button onclick="press('8')">8</button>
+      <button onclick="press('9')">9</button>
+      <button onclick="press('/')">÷</button>
+      <button onclick="press('4')">4</button>
+      <button onclick="press('5')">5</button>
+      <button onclick="press('6')">6</button>
+      <button onclick="press('*')">×</button>
+      <button onclick="press('1')">1</button>
+      <button onclick="press('2')">2</button>
+      <button onclick="press('3')">3</button>
+      <button onclick="press('-')">−</button>
+      <button onclick="press('0')">0</button>
+      <button onclick="press('.')">.</button>
+      <button onclick="calcular()">=</button>
+      <button onclick="press('+')">+</button>
+      <button onclick="limpiar()" style="width:98%">C</button>
     </div>
   </div>
+
+  <!-- 8. Generador de código de barras -->
+  <div class="util-card">
+    <i class="fas fa-barcode"></i>
+    <h3>Generador de Códigos de Barras</h3>
+    <p>Introduce un valor y genera un código de barras instantáneo.</p>
+
+    <div class="barra-container">
+      <input type="text" id="codigoInput" placeholder="Escribe un código">
+      <button onclick="generarCodigo()">Generar</button>
+      <br><br>
+      <svg id="barcode"></svg>
+    </div>
+  </div>
+
+</div>
+
 </div>
 <div class="sidebar">
   <a href="mediterranean.php"><i class="fas fa-home"></i> Menu Principal</a>

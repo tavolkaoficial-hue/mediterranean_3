@@ -2,22 +2,154 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Dashboard Ejecutivo Premium - Mediterranean</title>
+<title>Resportes - Mediterranean</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 /* === Estilos generales === */
-body { margin:0; font-family: Arial,sans-serif; background:#0d1117; color:#fff; }
-.sidebar { position: fixed; top:0; left:0; width:240px; height:100%; background:#0a1f3d; padding-top:40px; display:flex; flex-direction:column; gap:20px; box-shadow:2px 0 25px rgba(0,0,0,0.8); }
-.sidebar a { color:#00f2fe; text-decoration:none; padding:12px 20px; font-weight:bold; border-radius:8px; display:flex; align-items:center; gap:10px; transition:all 0.3s; }
-.sidebar a:hover, .sidebar a.active { background: rgba(255,255,255,0.1); transform:translateX(6px) scale(1.05); }
-.main-content { margin-left:260px; padding: 20px 40px; }
+body { margin:0; font-family: Arial,sans-serif; background:#02275e; color:#fff; }
+
+
+
+.container { width: 100%; max-width: 1250px; margin: 0 auto; }
+.table-container { width: 100%; border-radius: 15px; margin-top: 10px; box-shadow: inset 0 0 10px rgba(0,0,0,0.3); overflow: visible !important; max-height: none !important; }
+form{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:10px;justify-content:space-between;}
+form input,form textarea,form button{padding:12px;border:none;border-radius:10px;flex:1 1 calc(25% - 12px);outline:none;transition:all 0.3s ease;}
+form textarea{flex:1 1 100%;resize:none;}
+form input,form textarea{background:rgba(255, 255, 255, 0.8);color:black;}
+form input:focus,form textarea:focus{transform:scale(1.05);box-shadow:0 0 10px #00f2fe;}
+form button{background:linear-gradient(90deg,#00f2fe,#4facfe);color:white;font-weight:bold;cursor:pointer;flex:1 1 100%;}
+form button:hover{transform:scale(1.05);box-shadow:0 0 15px #00f2fe;}
+table{width:100%;border-collapse:collapse;background:rgba(255,255,255,0.08);}
+th,td{padding:12px;text-align:center;}
+thead th{position:sticky;top:0;background:rgba(0,0,0,0.6);color:#fff;z-index:2;}
+img{width:80px;border-radius:12px;transition:transform 0.3s ease;}
+img:hover{transform:scale(1.1) rotate(3deg);}
+.disponible{color:#00ff7f;font-weight:bold;text-shadow:0 0 8px #00ff7f;animation:pulse 1.5s infinite;}
+.agotado{color:#ff4c4c;font-weight:bold;text-shadow:0 0 8px #ff4c4c;animation:blink 1s infinite;}
+#searchInput{padding:10px;width:100%;border-radius:8px;border:none;margin-bottom:10px;color:black;}
+/* ===== Sidebar ===== */
+.sidebar{
+  position:fixed;
+  top:0;left:0;
+  width:240px;height:100%;
+  background:linear-gradient(135deg,#050d1c,#0a1f3d,#0e2a47,#122f68);
+  background-size:400% 400%;
+  animation:sidebarAnim 10s ease infinite;
+  padding-top:40px;
+  display:flex;flex-direction:column;gap:20px;
+  z-index:1000;
+  box-shadow:2px 0 25px rgba(0,0,0,0.8);
+  overflow:hidden;
+}
+.sidebar::before{
+  content:"";
+  position:absolute;top:0;left:0;width:100%;height:100%;
+  background:radial-gradient(circle,rgba(0,242,254,0.4) 1px,transparent 1px);
+  background-size:40px 40px;
+  animation:moverPuntos 6s linear infinite;
+  opacity:0.6;
+}
+.sidebar::after{
+  content:"";
+  position:absolute;top:0;left:0;width:100%;height:100%;
+  background:linear-gradient(transparent,rgba(0,242,254,0.1),transparent);
+  animation:brillo 4s linear infinite;
+}
+.sidebar a{
+  color:#00f2fe;
+  text-decoration:none;
+  padding:12px 20px;
+  font-weight:bold;
+  transition:all 0.3s ease;
+  border-radius:8px;
+  margin:0 15px;
+  text-shadow:0 0 8px #00f2fe,0 0 15px #4facfe;
+  display:flex;align-items:center;gap:10px;
+  position:relative;z-index:2;
+}
+.sidebar a:hover,.sidebar a.active{
+  background:rgba(255,255,255,0.1);
+  color:#fff;
+  transform:translateX(6px) scale(1.05);
+  box-shadow:0 0 15px #00f2fe,inset 0 0 10px #00f2fe;
+}
+/* ===== Footer fijo ===== */
+.copyright-fixed {
+  position: fixed;
+  bottom: 0;
+  left: 240px;
+  width: calc(100% - 240px);
+  text-align: center;
+  background: linear-gradient(90deg, #004e92, #00c6ff);
+  color: #ffffff;
+  font-size: 13px;
+  padding: 10px 0;
+  font-family: "Poppins", Arial, sans-serif;
+  box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.25);
+  z-index: 9999;
+  border-top-left-radius: 12px;
+}
+.copyright-fixed a {
+  color: #caf0f8;
+  text-decoration: none;
+  font-weight: 500;
+  margin-left: 5px;
+  transition: color 0.3s, text-decoration 0.3s;
+}
+copyright-fixed a:hover {
+  color: #90e0ef;
+  text-decoration: underline;
+}
+
+/* ===== Modal Política ===== */
+.policy-modal {
+  display: none;
+  position: fixed;
+  z-index: 99999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+  justify-content: center;
+  align-items: center;
+}
+.policy-content {
+  background: #ffffff;
+  color: #000;
+  padding: 25px;
+  border-radius: 15px;
+  width: 80%;
+  max-width: 600px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.3);
+  animation: fadeIn 0.3s ease;
+}
+.close-policy {
+  float: right;
+  font-size: 24px;
+  cursor: pointer;
+  color: #004e92;
+  font-weight: bold;
+}
+.close-policy:hover { color: #00c6ff; }
+.main-content {
+    margin-left: 260px;   /* 240 del sidebar + 20 de espacio */
+    padding: 20px 40px;
+}
+#bgCanvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;}
+.logo{margin-top:5px;animation:bounceIn 1.5s ease forwards;}
+.logo img{width:150px;height:auto;box-shadow:0 0 25px rgba(0,242,254,0.7);transition:transform 0.3s ease,box-shadow 0.3s ease;}
+.logo img:hover{transform:scale(1.05);box-shadow:0 0 40px rgba(0,242,254,1);}
+h1{margin:15px 0 15px;text-shadow:0 0 15px rgba(0,0,0,0.6);animation:slideDown 1s ease-out;}
+
 h1 { margin-bottom:20px; }
 .kpi-cards { display:flex; gap:20px; flex-wrap:wrap; margin-bottom:30px; }
 .kpi-card { flex:1; min-width:220px; background: rgba(0,242,254,0.1); padding:20px; border-radius:12px; text-align:center; box-shadow:0 4px 15px rgba(0,0,0,0.4); transition:all 0.3s; }
-.kpi-card.low-stock { background: rgba(255,50,50,0.2); color:#ffcccc; }
+.kpi-card.low-stock { background: rgba(255,50,50,0.2); color:#ffffff; }
 .kpi-card:hover { transform:scale(1.05); }
 .tabs { display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap; }
 .tabs button { background:#00f2fe; color:#000; border:none; padding:10px 15px; font-weight:bold; border-radius:8px; cursor:pointer; }
@@ -36,17 +168,81 @@ tbody tr:hover { background: rgba(0,242,254,0.15); }
 .actions button:hover { transform:scale(1.05); }
 .chart-container { background: rgba(255,255,255,0.05); padding:20px; border-radius:12px; margin-bottom:20px; }
 .alert { color:#ff5555; font-weight:bold; margin-bottom:10px; }
+
+/* Animaciones */
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideDown{from{opacity:0;transform:translateY(-30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.1);opacity:0.8}}
+@keyframes blink{0%,50%,100%{opacity:1}25%,75%{opacity:0}}
+@keyframes bounceIn{0%{transform:scale(0.3);opacity:0}50%{transform:scale(1.1);opacity:1}70%{transform:scale(0.9)}100%{transform:scale(1)}}
+@keyframes moverFondo{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@keyframes sidebarAnim{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@keyframes moverPuntos{from{background-position:0 0}to{background-position:40px 40px}}
+@keyframes brillo{from{transform:translateY(-100%)}to{transform:translateY(100%)}}
+
+/* --- Gráfico encima del fondo animado --- */
+.chart-container {
+    position: relative;
+    z-index: 5;
+    background: rgba(0,0,0,0.32);
+    border-radius: 12px;
+    padding: 20px;
+}
+
+/* --- FIX 2: Colores de textos en el gráfico (labels, porcentajes, nombres) --- */
+.chartjs-render-monitor, .chartjs-size-monitor {
+    color: #ffffff !important;
+}
+
+/* Si tu gráfico usa canvas: */
+canvas {
+    color: #ffffff !important;
+}
+
+/* --- FIX 3: Asegurar que el gráfico quede encima del fondo animado --- */
+.chart-container {
+    position: relative;
+    z-index: 5;
+    background: rgba(0,0,0,0.32);
+}
+
+
+
 </style>
 </head>
 <body>
 
+
+<footer class="copyright-fixed">
+  © 2025 Mediterranean Technologies  
+  | <a href="#" id="openPolicy">Política de Privacidad y Seguridad</a>
+</footer>
+
+<!-- Modal Política -->
+<div id="policyModal" class="policy-modal">
+  <div class="policy-content">
+    <span class="close-policy">&times;</span>
+    <h2>Política de Privacidad y Seguridad</h2>
+    <p>En Mediterranean Technologies, valoramos tu privacidad...</p>
+    <p><a href="politica-completa.html">Leer política completa</a></p>
+  </div>
+</div>
+
 <div class="sidebar">
-  <a href="#"><i class="fas fa-home"></i> Menu Principal</a>
-  <a href="#" class="active"><i class="fas fa-chart-bar"></i> Reportes</a>
+  <a href="mediterranean.php"><i class="fas fa-home"></i> Menu Principal</a>
+  <a href="productos.html"><i class="fas fa-box"></i> Productos</a>
+  <a href="sucursales.html"><i class="fas fa-store"></i> Sucursales</a>
+  <a href="usuarios.html"><i class="fas fa-users"></i> Usuarios</a>
+  <a href="reportes.html"class="active"><i class="fas fa-boxes"></i> Reportes</a>
+  <a href="utilidades.html" ><i class="fas fa-tools"></i> Utilidades</a>
 </div>
 
 <div class="main-content">
-  <h1>Dashboard Ejecutivo Premium</h1>
+  <div class="logo"><img src="images/LogoMediterranean1992.png" alt="logo"></div>
+  <h1>Reportes</h1>
+  <canvas id="bgCanvas"></canvas>
+  
 
   <div class="kpi-cards">
     <div class="kpi-card" id="kpi-stock">Stock total: 0</div>
@@ -111,8 +307,33 @@ tbody tr:hover { background: rgba(0,242,254,0.15); }
     <div class="chart-container"><canvas id="chartMovimientosTipo" height="200"></canvas></div>
   </div>
 </div>
-
 <script>
+/* ===== Fondo partículas ===== */
+const canvas=document.getElementById("bgCanvas");
+const ctx=canvas.getContext("2d");
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+let particles=[];
+class Particle{
+  constructor(){
+    this.x=Math.random()*canvas.width;
+    this.y=Math.random()*canvas.height;
+    this.radius=Math.random()*2+1;
+    this.speedX=(Math.random()-0.5)*1;
+    this.speedY=(Math.random()-0.5)*1;
+  }
+  draw(){ctx.beginPath();ctx.arc(this.x,this.y,this.radius,0,Math.PI*2);ctx.fillStyle="rgba(255,255,255,0.7)";ctx.fill();}
+  update(){this.x+=this.speedX;this.y+=this.speedY;if(this.x<0||this.x>canvas.width)this.speedX*=-1;if(this.y<0||this.y>canvas.height)this.speedY*=-1;this.draw();}
+}
+function initParticles(){particles=[];for(let i=0;i<120;i++){particles.push(new Particle());}}
+function connectParticles(){for(let a=0;a<particles.length;a++){for(let b=a;b<particles.length;b++){let dx=particles[a].x-particles[b].x;let dy=particles[a].y-particles[b].y;let dist=Math.sqrt(dx*dx+dy*dy);if(dist<120){ctx.beginPath();ctx.strokeStyle=`rgba(0,242,254,${1-dist/120})`;ctx.lineWidth=1;ctx.moveTo(particles[a].x,particles[a].y);ctx.lineTo(particles[b].x,particles[b].y);ctx.stroke();}}}}
+function animateParticles(){ctx.clearRect(0,0,canvas.width,canvas.height);particles.forEach(p=>p.update());connectParticles();requestAnimationFrame(animateParticles);}
+initParticles();
+animateParticles();
+window.addEventListener("resize",()=>{canvas.width=window.innerWidth;canvas.height=window.innerHeight;initParticles();});
+
+
+
 function showTab(tab){
   document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
   document.getElementById('tab-' + tab).classList.add('active');
@@ -166,12 +387,86 @@ function renderStock(data){
   data.forEach(r=>{ table.innerHTML+=`<tr><td>${r.nombre_sucursal}</td><td>${r.nombre_producto}</td><td>${r.stock}</td></tr>`; });
 }
 
-function renderStockChart(data){
-  const ctx=document.getElementById('chartStock').getContext('2d');
-  const labels=data.map(r=>r.nombre_producto+' ('+r.nombre_sucursal+')');
-  const stocks=data.map(r=>parseInt(r.stock));
-  new Chart(ctx,{type:'bar',data:{labels,datasets:[{label:'Stock',data:stocks,backgroundColor:'#0ea5e9'}]},options:{responsive:true,plugins:{legend:{display:false}}}});
+function renderStockChart(data) {
+    const ctx = document.getElementById('chartStock').getContext('2d');
+
+    const labels = data.map(r => r.nombre_producto + ' (' + r.nombre_sucursal + ')');
+    const stocks = data.map(r => parseInt(r.stock));
+
+    // === Degradado moderno ===
+    const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+    gradient.addColorStop(0, "#4fc3f7");   // celeste claro
+    gradient.addColorStop(1, "#0288d1");   // azul fuerte
+
+    // === Borde y sombra para las barras ===
+    const shadowPlugin = {
+        id: 'shadowPlugin',
+        beforeDraw: (chart) => {
+            const ctx = chart.ctx;
+            ctx.save();
+            ctx.shadowColor = "rgba(0, 242, 254, 0.35)";
+            ctx.shadowBlur = 18;
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 4;
+        },
+        afterDraw: (chart) => {
+            chart.ctx.restore();
+        }
+    };
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels,
+            datasets: [{
+                label: 'Stock',
+                data: stocks,
+                backgroundColor: gradient,
+                borderRadius: 10,   // esquinas redondeadas
+                borderWidth: 2,
+                borderColor: "#00e5ff"
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false },
+
+                // === Tooltip Moderno ===
+                tooltip: {
+                    titleColor: "#ffffff",
+                    bodyColor: "#ffffff",
+                    backgroundColor: "rgba(0,0,0,0.75)",
+                    borderColor: "#00e5ff",
+                    borderWidth: 1,
+                    padding: 12,
+                    bodyFont: { size: 13, weight: "bold" }
+                }
+            },
+
+            // === Estilos de ejes y textos ===
+            scales: {
+                x: {
+                    ticks: {
+                        color: "#ffffff",
+                        font: { size: 12 }
+                    },
+                    grid: { color: "rgba(255,255,255,0.12)" }
+                },
+                y: {
+                    ticks: {
+                        color: "#ffffff",
+                        font: { size: 12 }
+                    },
+                    grid: { color: "rgba(255,255,255,0.12)" }
+                }
+            }
+        },
+        plugins: [shadowPlugin]
+    });
 }
+
+
 
 function renderMovimientos(data){
   const table=document.getElementById('tableMovimientos');
@@ -225,6 +520,10 @@ function llenarFiltros(tab){
 
 
 cargarDatos();
+/* ===== Modal Política ===== */
+document.getElementById("openPolicy").onclick=()=>{document.getElementById("policyModal").style.display="flex";};
+document.querySelector(".close-policy").onclick=()=>{document.getElementById("policyModal").style.display="none";};
+window.onclick=e=>{if(e.target==document.getElementById("policyModal")) document.getElementById("policyModal").style.display="none";}
 </script>
 </body>
 </html>
