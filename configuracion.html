@@ -3,40 +3,295 @@
 <head>
 <meta charset="UTF-8">
 <title>Configuración - Mediterranean</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 <style>
-body { margin:0; font-family: Arial; background:#0d1117; color:white; }
-.container { margin-left:260px; padding:40px; }
-.box { background:rgba(255,255,255,0.06); padding:20px; border-radius:12px; }
-h1 { text-shadow:0 0 15px rgba(0,242,254,0.6); }
+  /* ===== Fondo ===== */
+#background {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: linear-gradient(135deg,#004e92,#0a1f44);
+  z-index: -2;
+}
+#particles {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  z-index: -1;
+  pointer-events: none;
+}
+/* ===== Fondo Canvas ===== */
+#bgCanvas {
+  position: fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  z-index:-2;
+}
+/* ——— ESTILO AQUI (MISMO PROFESIONAL QUE TE DI ANTES) ——— */
+:root{
+  --bg:#071021;
+  --card: rgba(255,255,255,0.06);
+  --accent:#00eaff;
+  --sidebar-bg: linear-gradient(135deg,#050d1c,#0a1f3d,#0e2a47,#122f68);
+}
+*{ box-sizing:border-box; margin:0; padding:0; font-family:Inter,system-ui,Arial; }
+body{ background:linear-gradient(135deg,#041226,#052a3a); min-height:100vh; color:#eaf6ff }
 
-.sidebar { position:fixed; top:0; left:0; width:240px; background:#0a1f3d; height:100%; padding-top:40px; }
-.sidebar a { text-decoration:none; color:#00f2fe; padding:12px 20px; display:block; }
-.sidebar a:hover { background:rgba(255,255,255,0.1); color:white; }
+/* ===== Sidebar ===== */
+.sidebar {
+  position: fixed;
+  top: 0; left: 0;
+  width: 240px; height: 100%;
+  background: linear-gradient(135deg,#050d1c,#0a1f3d,#0e2a47,#122f68);
+  background-size: 400% 400%;
+  animation: sidebarAnim 10s ease infinite;
+  padding-top: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  z-index: 1000;
+  box-shadow: 2px 0 25px rgba(0,0,0,0.8);
+  overflow: hidden;
+}
+.sidebar::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: radial-gradient(circle,rgba(0,242,254,0.4) 1px,transparent 1px);
+  background-size: 40px 40px;
+  animation: moverPuntos 6s linear infinite;
+  opacity: 0.6;
+}
+.sidebar a {
+  color: #00f2fe;
+  text-decoration: none;
+  padding: 12px 20px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  margin: 0 15px;
+  text-shadow: 0 0 8px #00f2fe, 0 0 15px #4facfe;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+  z-index: 2;
+}
+.sidebar a:hover,
+.sidebar a.active {
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  transform: translateX(6px) scale(1.05);
+  box-shadow: 0 0 15px #00f2fe, inset 0 0 10px #00f2fe;
+}
+@keyframes sidebarAnim { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+@keyframes moverPuntos { from{background-position:0 0} to{background-position:40px 40px} }
 
-.logo { position:absolute; top:10px; left:260px; }
-.logo img { width:160px; filter:drop-shadow(0 0 5px #00f2fe); }
+/* ===== Animaciones ===== */
+@keyframes fadeInUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+@keyframes moverFondo {0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@keyframes sidebarAnim {0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@keyframes moverPuntos {from{background-position:0 0}to{background-position:40px 40px}}
+@keyframes brillo {from{transform:translateY(-100%)}to{transform:translateY(100%)}}
 
-footer { position:fixed; bottom:0; left:240px; width:calc(100% - 240px); background:#004e92; color:white; text-align:center; padding:10px; }
+
+
+.sidebar img {
+  width: 120px;
+  height: auto;
+  margin: 0 auto 15px auto;
+  display: block;
+  filter: drop-shadow(0 0 6px rgba(0,242,254,0.4));
+}
+
+/* Contenido */
+.main{ margin-left:260px; padding:40px }
+h1{ font-size:26px; margin-bottom:18px; color:var(--accent); display:flex; gap:10px }
+.box{ background:var(--card); padding:25px; border-radius:14px; border:1px solid rgba(255,255,255,.05); }
+
+/* Inputs */
+input, select{
+  width:100%; padding:10px; margin-top:6px; border-radius:8px;
+  background:#0b1b2b; border:1px solid rgba(255,255,255,0.08); color:white;
+}
+
+button{
+  background:var(--accent); border:none; padding:12px 20px; border-radius:10px;
+  font-weight:bold; cursor:pointer; margin-top:15px; color:#052026;
+}
+button:hover{ filter:brightness(1.15); }
+
+/* Footer */
+footer{ position:fixed; bottom:0; left:240px; width:calc(100% - 240px); text-align:center;
+  padding:12px; background:rgba(0,242,254,0.15); backdrop-filter:blur(6px); }
+
+/* Responsive */
+@media(max-width:900px){
+  .sidebar{ width:100%; height:auto; position:relative; }
+  .main{ margin-left:0; }
+  footer{ left:0; width:100%; position:relative; }
+}
 </style>
 </head>
-<body>
 
-<div class="sidebar">
-  <a href="mediterranean.php"><i class="fas fa-home"></i> Menú Principal</a>
-  <a href="utilidades.html"><i class="fas fa-cogs"></i> Volver a Utilidades</a>
+<body>
+  <div id="background"></div>
+<canvas id="particles"></canvas>
+
+
+<!-- Sidebar -->
+ <div class="sidebar">
+  <img src="images/LogoMediterranean1992.png" alt="Logo Mediterranean">
+
+  <a href="mediterranean.php"><i class="fas fa-home"></i> Menu Principal</a>
+  <a href="productos.html"><i class="fas fa-boxes"></i> Productos</a>
+  <a href="sucursales.html"><i class="fas fa-store"></i> Sucursales</a>
+  <a href="usuarios.html"><i class="fas fa-users"></i> Usuarios</a>
+  <a href="reportes.html"><i class="fas fa-chart-bar"></i> Reportes</a>
+  <a href="utilidades.html"><i class="fas fa-cogs"></i> Utilidades</a>
+   <a href="utilidades.html"><i class="fa-solid fa-arrow-left"></i> Volver</a>  
 </div>
 
-<div class="logo"><img src="images/LogoMediterranean1992.png"></div>
+<!-- Contenido -->
+<div class="main">
+  <h1><i class="fas fa-cogs"></i> Configuración General</h1>
 
-<div class="container">
-  <h1><i class="fas fa-cogs"></i> Configuración</h1>
   <div class="box">
-    <p>Aquí podrás ajustar parámetros generales del sistema.</p>
+
+    <label>Nombre de la empresa</label>
+    <input id="nombre_empresa" type="text">
+
+    <label>Logo (ruta o archivo)</label>
+    <input id="logo" type="text">
+
+    <label>Modo oscuro</label>
+    <select id="modo_oscuro">
+      <option value="si">Sí</option>
+      <option value="no">No</option>
+    </select>
+
+    <label>Margen por defecto (%)</label>
+    <input id="margen_default" type="number" step="0.01">
+
+    <label>Sucursal principal</label>
+    <input id="sucursal_principal" type="text">
+
+    <button onclick="guardarConfig()">Guardar cambios</button>
   </div>
 </div>
 
-<footer>© 2025 Mediterranean Technologies</footer>
+<script>
+// Cargar configuración
+async function cargarConfig(){
+  const r = await fetch("config_cargar.php");
+  const c = await r.json();
+  document.getElementById("nombre_empresa").value = c.nombre_empresa;
+  document.getElementById("logo").value = c.logo;
+  document.getElementById("modo_oscuro").value = c.modo_oscuro;
+  document.getElementById("margen_default").value = c.margen_default;
+  document.getElementById("sucursal_principal").value = c.sucursal_principal;
+}
+
+async function guardarConfig(){
+  const data = {
+    nombre_empresa: document.getElementById("nombre_empresa").value,
+    logo: document.getElementById("logo").value,
+    modo_oscuro: document.getElementById("modo_oscuro").value,
+    margen_default: document.getElementById("margen_default").value,
+    sucursal_principal: document.getElementById("sucursal_principal").value,
+  };
+
+  const r = await fetch("config_guardar.php", {
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify(data)
+  });
+
+  const res = await r.json();
+
+  if(res.ok){ alert("Configuración guardada correctamente ✔"); }
+  else{ alert("Error: "+res.error); }
+}
+
+cargarConfig();
+</script>
+
+<script>
+  // ===== Fondo de partículas =====
+window.onload = function() {
+  const canvas = document.getElementById("particles");
+  const ctx = canvas.getContext("2d");
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  let particles = [];
+
+  class Particle {
+    constructor() {
+      this.x = Math.random() * canvas.width;
+      this.y = Math.random() * canvas.height;
+      this.radius = Math.random() * 2 + 1;
+      this.speedX = (Math.random() - 0.5) * 1;
+      this.speedY = (Math.random() - 0.5) * 1;
+    }
+    draw() {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(0,242,254,0.7)";
+      ctx.fill();
+    }
+    update() {
+      this.x += this.speedX;
+      this.y += this.speedY;
+      if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+      if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+      this.draw();
+    }
+  }
+
+  function initParticles() {
+    particles = [];
+    for (let i = 0; i < 120; i++) particles.push(new Particle());
+  }
+
+  function connectParticles() {
+    for (let a = 0; a < particles.length; a++) {
+      for (let b = a; b < particles.length; b++) {
+        let dx = particles[a].x - particles[b].x;
+        let dy = particles[a].y - particles[b].y;
+        let dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 120) {
+          ctx.beginPath();
+          ctx.strokeStyle = `rgba(0,242,254,${1 - dist / 120})`;
+          ctx.lineWidth = 1;
+          ctx.moveTo(particles[a].x, particles[a].y);
+          ctx.lineTo(particles[b].x, particles[b].y);
+          ctx.stroke();
+        }
+      }
+    }
+  }
+
+  function animateParticles() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => p.update());
+    connectParticles();
+    requestAnimationFrame(animateParticles);
+  }
+
+  initParticles();
+  animateParticles();
+
+  window.addEventListener("resize", () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    initParticles();
+  });
+};
+</script>
 
 </body>
 </html>
